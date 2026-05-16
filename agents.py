@@ -12,14 +12,20 @@ llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
 
 # 1st Agent: Researcher (Search + Reasoning)
 def build_search_agent():
-    system_message = (
-        "You are a professional web researcher. Your goal is to find the most "
-        "accurate, recent, and detailed information on a topic. Use the search tool "
-        "to gather data. \n\n"
-        "CRITICAL: In your final response, you MUST list the Titles and URLs of the "
-        "top 3 sources you found so that the next agent can scrape them. "
-        "Do not just summarize; provide the data."
-    )
+    system_message = """You are a High-Fidelity Academic Researcher. 
+    Your goal is to find peer-reviewed papers, formal preprints (ArXiv), and technical whitepapers for the user's research objective.
+    
+    GUIDELINES:
+    1. PRIORITIZE sources from Nature, ArXiv, ScienceDirect, ResearchGate, and major universities.
+    2. IGNORE blogs, social media (LinkedIn/Twitter), and general news unless they link to a formal study.
+    3. SEARCH for formal evidence, experimental data, and technical methodologies.
+    4. PROVIDE high-quality URLs and summaries of the core academic findings.
+    
+    If you cannot find direct papers, look for official technical documentation or institutional reports.
+
+    CRITICAL: In your final response, you MUST list the Titles and URLs of the 
+    top 3 sources you found so that the next agent can scrape them. 
+    Do not just summarize; provide the data."""
     return create_react_agent(
         model=llm,
         tools=[web_search],

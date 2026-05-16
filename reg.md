@@ -1,6 +1,5 @@
 import streamlit as st
 import time
-import random
 from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain
 
 st.set_page_config(
@@ -54,10 +53,6 @@ html, body, [class*="css"] {
     color: #1e1b4b;
     margin: 0 auto 1.5rem;
     letter-spacing: -0.02em;
-    text-align: center;
-}
-.hero h1 a {
-    display: none !important;
 }
 .hero h1 span {
     color: #5b21b6;
@@ -73,8 +68,6 @@ html, body, [class*="css"] {
     font-style: italic;
     line-height: 1.7;
     opacity: 0.9;
-    text-align: center;
-    display: block;
 }
 
 /* ── Divider ── */
@@ -282,42 +275,12 @@ st.markdown("""
 <div class="divider"></div>
 """, unsafe_allow_html=True)
 
-# ── Handle Suggestion Click (Before Widget Instantiation) ─────────────────────
-if "pending_suggestion" in st.session_state:
-    st.session_state.topic_field = st.session_state.pending_suggestion
-    st.session_state.stage = "search"
-    del st.session_state.pending_suggestion
-
-# ── Placeholder & Suggestion Persistence ──────────────────────────────────────
-PLACEHOLDERS = [
-    "e.g. Advancements in CRISPR gene editing for 2025",
-    "e.g. The impact of DeepSeek-V3 on the LLM ecosystem",
-    "e.g. Future of Solid-State Batteries in EVs",
-    "e.g. Quantum Computing breakthroughs in financial modeling",
-    "e.g. Ethical implications of NeuroLink technology",
-    "e.g. Vertical farming vs traditional agriculture in 2030",
-    "e.g. The role of AI in drug discovery for rare diseases"
-]
-
-SUGGESTIONS = [
-    "DeepSeek-V3 Architecture", "Sora's Impact on Video Production", 
-    "Liquid AI World Models", "Grok-3 Training Clusters", 
-    "Gemini 2.0 Agentic Capabilities", "Agentic Workflows in Enterprise",
-    "Solid-State Battery Breakthroughs", "Quantum Supremacy 2025",
-    "Mars Colonization Logistics", "Vertical Farming Scalability"
-]
-
-if "active_placeholder" not in st.session_state:
-    st.session_state.active_placeholder = random.choice(PLACEHOLDERS)
-if "active_suggestions" not in st.session_state:
-    st.session_state.active_suggestions = random.sample(SUGGESTIONS, 3)
-
 col_input, col_spacer, col_pipeline = st.columns([5, 0.6, 4])
 
 with col_input:
     topic_input = st.text_input(
         "RESEARCH OBJECTIVE",
-        placeholder=st.session_state.active_placeholder,
+        placeholder="e.g. Advancements in CRISPR gene editing for 2025",
         key="topic_field"
     )
     if st.button("Synthesize Data"):
@@ -328,39 +291,11 @@ with col_input:
         else:
             st.warning("Please define a research objective.")
     
-    # Interactive Suggestion Chips
-    st.markdown('<div class="suggestion-chip-container" style="margin-top:2rem; display:flex; align-items:center; flex-wrap:wrap; gap: 0.8rem;">', unsafe_allow_html=True)
-    st.markdown('<span style="font-family:\'DM Mono\', monospace; font-size:0.8rem; color:#9ca3af; letter-spacing:0.1em; margin-right: 0.5rem;">SUGGESTIONS:</span>', unsafe_allow_html=True)
-    
-    # Target suggestion chips specifically
-    st.markdown("""
-        <style>
-        .suggestion-chip-container div[data-testid="stButton"] button {
-            background: rgba(91, 33, 182, 0.7) !important;
-            border: 2px solid #5b21b6 !important;
-            border-radius: 12px !important;
-            padding: 0.5rem 1.4rem !important;
-            font-size: 0.9rem !important;
-            color: #ffffff !important;
-            font-family: 'DM Sans', sans-serif !important;
-            backdrop-filter: blur(10px) !important;
-            transition: all 0.2s !important;
-            width: auto !important;
-            height: auto !important;
-        }
-        .suggestion-chip-container div[data-testid="stButton"] button:hover {
-            background: rgba(91, 33, 182, 0.9) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(91, 33, 182, 0.3) !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    for suggestion in st.session_state.active_suggestions:
-        if st.button(suggestion, key=f"btn_{suggestion}"):
-            st.session_state.pending_suggestion = suggestion
-            st.session_state.results = {}
-            st.rerun()
+    st.markdown('<div style="margin-top:2rem; display:flex; align-items:center; flex-wrap:wrap;">', unsafe_allow_html=True)
+    st.markdown('<span style="font-family:\'DM Mono\', monospace; font-size:0.8rem; color:#9ca3af; margin-right:0.8rem; letter-spacing:0.1em;">SUGGESTIONS:</span>', unsafe_allow_html=True)
+    examples = ["Web3 Security", "Quantum Supremacy", "Vertical Farming"]
+    for ex in examples:
+        st.markdown(f'<span class="try-chip">{ex}</span>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_pipeline:

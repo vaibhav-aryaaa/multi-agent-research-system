@@ -13,7 +13,19 @@ tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 @tool
 def web_search(query: str) -> str:
     """Search the web for recent and reliable information. Returns Titles, URLs, and high-quality snippets."""
-    results = tavily.search(query=query, search_depth="advanced", max_results=5)
+    # Elite academic domains to prioritize
+    ACADEMIC_DOMAINS = [
+        "arxiv.org", "nature.com", "sciencedirect.com", 
+        "researchgate.net", "scholar.google.com", "jstor.org",
+        "ieee.org", "science.org", "frontiersin.org", "mdpi.com"
+    ]
+    
+    results = tavily.search(
+        query=query,
+        search_depth="advanced",
+        max_results=5,
+        include_domains=ACADEMIC_DOMAINS
+    )
     
     out = []
     for r in results['results']:
