@@ -8,7 +8,8 @@ from tools import web_search, scrape_url
 
 load_dotenv()
 
-llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+llm = ChatGroq(model=model_name, temperature=0)
 
 # 1st Agent: Researcher (Search + Reasoning)
 def build_search_agent():
@@ -67,21 +68,20 @@ be detailed, factual and professional."""),
 
 writer_chain = writer_prompt | llm | StrOutputParser()
 
-# Critic Chain (LCEL)
+from pydantic import BaseModel, Field
+
+# Critic Output Schema
+class CriticFeedback(BaseModel):
+    score: float = Field(description="Numerical evaluation score from 1.0 to 10.0")
+    critique: str = Field(description="Detailed critique and constructive feedback evaluating the report")
+
+# Critic Chain (Structured Output)
 critic_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a sharp and constructive research critic. Be honest and specific."),
+    ("system", "You are a sharp and constructive research critic. Be honest and specific. Evaluate the report and provide a numeric score between 1.0 and 10.0 along with detailed constructive critique."),
     ("human", """Review the research report below and evaluate it strictly.
 
 Report:
-{report}
-
-Respond in this exact format:
-
-Score: X/10
-
-Critique: [your feedback]
-
-..."""),
+{report}"""),
 ])
 
-critic_chain = critic_prompt | llm | StrOutputParser()
+critic_chain = critic_prompt | llm.with_structured_output(CriticFeedback)

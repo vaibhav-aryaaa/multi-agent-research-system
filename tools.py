@@ -1,11 +1,9 @@
-from requests import request
-from langchain.tools import tool
-import requests
-from bs4 import BeautifulSoup
-from tavily import TavilyClient
 import os
 from dotenv import load_dotenv
+from langchain.tools import tool
+from tavily import TavilyClient
 from rich import print
+
 load_dotenv()
 
 tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))

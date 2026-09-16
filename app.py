@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 import random
-from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain
+from graph import graph, run_pipeline
 
 st.set_page_config(
     page_title="AgentFlow · Multi-Agent Research",
@@ -285,7 +285,7 @@ st.markdown("""
 # ── Handle Suggestion Click (Before Widget Instantiation) ─────────────────────
 if "pending_suggestion" in st.session_state:
     st.session_state.topic_field = st.session_state.pending_suggestion
-    st.session_state.stage = "search"
+    st.session_state.stage = "running"
     del st.session_state.pending_suggestion
 
 # ── Placeholder & Suggestion Persistence ──────────────────────────────────────
@@ -323,7 +323,7 @@ with col_input:
     if st.button("Synthesize Data"):
         if topic_input:
             st.session_state.results = {}
-            st.session_state.stage = "search"
+            st.session_state.stage = "running"
             st.rerun()
         else:
             st.warning("Please define a research objective.")
@@ -366,45 +366,67 @@ with col_input:
 with col_pipeline:
     st.markdown('<div style="font-family:\'Playfair Display\', serif; font-size:1.6rem; font-weight:700; color:#1e1b4b; margin-bottom:1.8rem; letter-spacing:0.02em;">Pipeline Workflow</div>', unsafe_allow_html=True)
     
-    s = st.session_state.stage
-    render_step("01", "Researcher", "running" if s=="search" else ("done" if s in ["reader","writer","critic","finished"] else "waiting"), "Scanning high-authority web sources")
-    render_step("02", "Deep Reader", "running" if s=="reader" else ("done" if s in ["writer","critic","finished"] else "waiting"), "Parsing & extracting structured content")
-    render_step("03", "Synthesis", "running" if s=="writer" else ("done" if s in ["critic","finished"] else "waiting"), "Writing the final report")
-    render_step("04", "Quality Assurance", "running" if s=="critic" else ("done" if s=="finished" else "waiting"), "Evaluating for bias and accuracy")
+    step1_ph = st.empty()
+    step2_ph = st.empty()
+    step3_ph = st.empty()
+    step4_ph = st.empty()
 
-if st.session_state.stage != "idle" and st.session_state.stage != "finished":
+    def update_steps(active_step: str):
+        with step1_ph:
+            render_step("01", "Researcher", "running" if active_step == "researcher" else ("done" if active_step in ["reader", "writer", "critic", "finished"] else "waiting"), "Scanning high-authority web sources")
+        with step2_ph:
+            render_step("02", "Deep Reader", "running" if active_step == "reader" else ("done" if active_step in ["writer", "critic", "finished"] else "waiting"), "Parsing & extracting structured content")
+        with step3_ph:
+            render_step("03", "Synthesis", "running" if active_step == "writer" else ("done" if active_step in ["critic", "finished"] else "waiting"), "Writing the final report")
+        with step4_ph:
+            render_step("04", "Quality Assurance", "running" if active_step == "critic" else ("done" if active_step == "finished" else "waiting"), "Evaluating for bias and accuracy")
+
+if st.session_state.stage == "idle":
+    update_steps("idle")
+
+elif st.session_state.stage == "running":
     topic = st.session_state.topic_field
+    update_steps("researcher")
     
-    if st.session_state.stage == "search":
-        agent = build_search_agent()
-        res = agent.invoke({"messages": [("user", f"Search for: {topic}")]})
-        st.session_state.results["search"] = res["messages"][-1].content
-        st.session_state.stage = "reader"
-        st.rerun()
+    initial_state = {
+        "topic": topic,
+        "search_results": "",
+        "scraped_content": "",
+        "report": "",
+        "feedback": "",
+        "score": None,
+    }
+    
+    current_state = dict(initial_state)
+    
+    for step_output in graph.stream(initial_state, stream_mode="updates"):
+        for node_name, node_state in step_output.items():
+            current_state.update(node_state)
+            if node_name == "researcher":
+                update_steps("reader")
+            elif node_name == "reader":
+                update_steps("writer")
+            elif node_name == "writer":
+                update_steps("critic")
+            elif node_name == "critic":
+                update_steps("finished")
+    
+    critic_display = f"Score: {current_state.get('score')}/10\n\nCritique: {current_state.get('feedback', '')}" if current_state.get("score") is not None else current_state.get("feedback", "")
+    
+    st.session_state.results = {
+        "search": current_state.get("search_results", ""),
+        "reader": current_state.get("scraped_content", ""),
+        "writer": current_state.get("report", ""),
+        "critic": critic_display,
+        "score": current_state.get("score"),
+        "feedback": current_state.get("feedback", "")
+    }
+    st.session_state.stage = "finished"
+    st.rerun()
 
-    elif st.session_state.stage == "reader":
-        agent = build_reader_agent()
-        res = agent.invoke({"messages": [("user", f"Read and extract deep info for: {topic}. Results: {st.session_state.results['search']}")]})
-        st.session_state.results["reader"] = res["messages"][-1].content
-        st.session_state.stage = "writer"
-        st.rerun()
-
-    elif st.session_state.stage == "writer":
-        res = writer_chain.invoke({
-            "topic": topic,
-            "research": f"SEARCH:\n{st.session_state.results['search']}\n\nCONTENT:\n{st.session_state.results['reader']}"
-        })
-        st.session_state.results["writer"] = res
-        st.session_state.stage = "critic"
-        st.rerun()
-
-    elif st.session_state.stage == "critic":
-        res = critic_chain.invoke({"report": st.session_state.results["writer"]})
-        st.session_state.results["critic"] = res
-        st.session_state.stage = "finished"
-        st.rerun()
-
-if st.session_state.stage == "finished":
+elif st.session_state.stage == "finished":
+    update_steps("finished")
+    
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     
     col_app1, col_app2 = st.columns(2)
