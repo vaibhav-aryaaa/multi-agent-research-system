@@ -395,6 +395,9 @@ elif st.session_state.stage == "running":
         "report": "",
         "feedback": "",
         "score": None,
+        "retry_count": 0,
+        "retry_enabled": True,
+        "_retrying_search": False,
     }
     
     current_state = dict(initial_state)
@@ -419,7 +422,8 @@ elif st.session_state.stage == "running":
         "writer": current_state.get("report", ""),
         "critic": critic_display,
         "score": current_state.get("score"),
-        "feedback": current_state.get("feedback", "")
+        "feedback": current_state.get("feedback", ""),
+        "retry_count": current_state.get("retry_count", 0),
     }
     st.session_state.stage = "finished"
     st.rerun()

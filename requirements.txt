@@ -6,8 +6,7 @@ langgraph==1.2.0
 tavily-python==0.7.24
 python-dotenv==1.2.2
 streamlit==1.57.0
-beautifulsoup4==4.14.3
-requests==2.34.2
+rich==15.0.0
 pydantic==2.13.4
 typing-extensions==4.15.0
 orjson==3.11.9
