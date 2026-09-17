@@ -4,9 +4,11 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
+from agents import get_groq_model
+
 load_dotenv()
 
-model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+model_name = get_groq_model()
 llm = ChatGroq(model=model_name, temperature=0)
 
 baseline_prompt = ChatPromptTemplate.from_messages([

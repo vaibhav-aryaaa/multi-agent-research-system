@@ -6,9 +6,38 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from tools import web_search, scrape_url
 
+from groq import Groq
+
 load_dotenv()
 
-model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+def get_groq_model() -> str:
+    env_model = os.getenv("GROQ_MODEL")
+    if env_model:
+        return env_model
+    
+    preferred_models = [
+        "llama-3.3-70b-versatile",
+        "llama-3.1-70b-versatile",
+        "llama-3.1-8b-instant",
+        "llama3-70b-8192",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "qwen/qwen3.8-27b",
+    ]
+    try:
+        client = Groq()
+        available = {m.id for m in client.models.list().data}
+        for model in preferred_models:
+            if model in available:
+                return model
+        for m in available:
+            if not any(x in m for x in ["whisper", "guard", "safeguard", "orpheus"]):
+                return m
+    except Exception:
+        pass
+    return "llama-3.3-70b-versatile"
+
+model_name = get_groq_model()
 llm = ChatGroq(model=model_name, temperature=0)
 
 # 1st Agent: Researcher (Search + Reasoning)
