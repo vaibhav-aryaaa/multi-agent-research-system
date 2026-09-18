@@ -38,7 +38,7 @@ def get_groq_model() -> str:
     return "llama-3.3-70b-versatile"
 
 model_name = get_groq_model()
-llm = ChatGroq(model=model_name, temperature=0)
+llm = ChatGroq(model=model_name, temperature=0, max_retries=3)
 
 # 1st Agent: Researcher (Search + Reasoning)
 def build_search_agent():

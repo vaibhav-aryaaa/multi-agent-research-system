@@ -9,7 +9,7 @@ from agents import get_groq_model
 load_dotenv()
 
 model_name = get_groq_model()
-llm = ChatGroq(model=model_name, temperature=0)
+llm = ChatGroq(model=model_name, temperature=0, max_retries=3)
 
 baseline_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are an expert research writer. Write clear, structured and insightful reports based purely on your own knowledge."),
