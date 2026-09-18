@@ -99,8 +99,6 @@ def route_after_critic(state: ResearchState) -> str:
     if score is None or score >= QUALITY_THRESHOLD or retry_count >= MAX_RETRIES:
         return "end"
 
-    state["retry_count"] = retry_count + 1
-
     # Heuristic: inspect critic feedback for indications that new research/evidence is needed
     feedback_lower = (state.get("feedback") or "").lower()
     insufficient_signals = ["insufficient sources", "lacks evidence", "no citations", "unsupported"]
