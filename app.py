@@ -402,31 +402,35 @@ elif st.session_state.stage == "running":
     
     current_state = dict(initial_state)
     
-    for step_output in graph.stream(initial_state, stream_mode="updates"):
-        for node_name, node_state in step_output.items():
-            current_state.update(node_state)
-            if node_name == "researcher":
-                update_steps("reader")
-            elif node_name == "reader":
-                update_steps("writer")
-            elif node_name == "writer":
-                update_steps("critic")
-            elif node_name == "critic":
-                update_steps("finished")
-    
-    critic_display = f"Score: {current_state.get('score')}/10\n\nCritique: {current_state.get('feedback', '')}" if current_state.get("score") is not None else current_state.get("feedback", "")
-    
-    st.session_state.results = {
-        "search": current_state.get("search_results", ""),
-        "reader": current_state.get("scraped_content", ""),
-        "writer": current_state.get("report", ""),
-        "critic": critic_display,
-        "score": current_state.get("score"),
-        "feedback": current_state.get("feedback", ""),
-        "retry_count": current_state.get("retry_count", 0),
-    }
-    st.session_state.stage = "finished"
-    st.rerun()
+    try:
+        for step_output in graph.stream(initial_state, stream_mode="updates"):
+            for node_name, node_state in step_output.items():
+                current_state.update(node_state)
+                if node_name == "researcher":
+                    update_steps("reader")
+                elif node_name == "reader":
+                    update_steps("writer")
+                elif node_name == "writer":
+                    update_steps("critic")
+                elif node_name == "critic":
+                    update_steps("finished")
+        
+        critic_display = f"Score: {current_state.get('score')}/10\n\nCritique: {current_state.get('feedback', '')}" if current_state.get("score") is not None else current_state.get("feedback", "")
+        
+        st.session_state.results = {
+            "search": current_state.get("search_results", ""),
+            "reader": current_state.get("scraped_content", ""),
+            "writer": current_state.get("report", ""),
+            "critic": critic_display,
+            "score": current_state.get("score"),
+            "feedback": current_state.get("feedback", ""),
+            "retry_count": current_state.get("retry_count", 0),
+        }
+        st.session_state.stage = "finished"
+        st.rerun()
+    except Exception as e:
+        st.session_state.stage = "idle"
+        st.error(f"Pipeline error: {str(e)}. Please verify API keys / rate limits and try again.")
 
 elif st.session_state.stage == "finished":
     update_steps("finished")

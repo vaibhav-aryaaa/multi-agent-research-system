@@ -21,14 +21,15 @@ def web_search(query: str) -> str:
     results = tavily.search(
         query=query,
         search_depth="advanced",
-        max_results=5,
+        max_results=3,
         include_domains=ACADEMIC_DOMAINS
     )
     
     out = []
-    for r in results['results']:
+    for r in results.get('results', []):
+        snippet = (r.get('content') or '')[:600]
         out.append(
-            f"Title: {r['title']}\nURL: {r['url']}\nSnippet: {r['content']}\n"
+            f"Title: {r.get('title', 'N/A')}\nURL: {r.get('url', 'N/A')}\nSnippet: {snippet}\n"
         )
     return "\n-----\n".join(out)
 
@@ -37,11 +38,11 @@ def scrape_url(url: str) -> str:
     """Scrape and return clean text content from a given URL. Use this for deep-dives into a specific source."""
     try:
         extraction = tavily.extract(urls=[url])
-        if extraction and extraction['results']:
+        if extraction and extraction.get('results'):
             content = extraction['results'][0].get('raw_content', '')
             if not content:
-                 content = extraction['results'][0].get('content', '')
-            return content[:5000]
+                content = extraction['results'][0].get('content', '')
+            return content[:2500]
         return "Extraction failed: No content found at this URL."
     except Exception as e:
         return f"Failed to scrape URL: {str(e)}. Please try a different source."
