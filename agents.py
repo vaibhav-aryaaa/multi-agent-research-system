@@ -21,7 +21,7 @@ model_name = get_groq_model()
 print(f"MODEL: {model_name}")
 
 api_key = os.getenv("GROQ_API_KEY") or "fake_key_for_offline"
-llm = ChatGroq(model=model_name, api_key=api_key, temperature=0, max_retries=3)
+llm = ChatGroq(model=model_name, api_key=api_key, temperature=0, max_retries=0)
 
 # LEGACY: Unused in deterministic retrieval (kept for backward compatibility)
 def build_search_agent():

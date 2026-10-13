@@ -70,7 +70,7 @@ NAV_BOILERPLATE_PATTERNS = [
     r"^download pdf",
     r"^order reprints",
     r"^version notes",
-    r"^\*?\s*article\b",
+    r"^\*?\s*article\s*$",
     r"^\*?\s*open access",
     r"^author to whom correspondence",
     r"^\d+\s*pages$",

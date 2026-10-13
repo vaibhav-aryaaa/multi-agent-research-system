@@ -11,3 +11,9 @@ rich==15.0.0
 pydantic==2.13.4
 typing-extensions==4.15.0
 orjson==3.11.9
+sentence-transformers==5.5.0
+scikit-learn==1.8.0
+numpy==2.4.4
+joblib==1.5.3
+datasets==5.1.0
+torch==2.12.0

@@ -161,6 +161,53 @@ def test_all_scenarios():
     assert "In research articles and patents several methods have been proposed" in cleaned_mdpi
     print("[PASS] Unit Test: clean_scraped_text strips markdown images, links, and boilerplate on MDPI sample")
 
+    # Unit Test: Narrowed article boilerplate regex does not strip content lines
+    test_article_text = (
+        "* Article\n"
+        "Article 12 discusses Casimir forces in microcavities.\n"
+        "Articles published in Nature describe similar findings."
+    )
+    cleaned_article = clean_scraped_text(test_article_text)
+    assert "* Article" not in cleaned_article.split("\n")
+    assert "Article 12 discusses Casimir forces in microcavities." in cleaned_article
+    assert "Articles published in Nature describe similar findings." in cleaned_article
+    print("[PASS] Unit Test: Narrowed article pattern strips exact boilerplate line while preserving content lines")
+
+    # Unit Test: ChatGroq max_retries is 0 so rate-limit waiting is always visible
+    from agents import llm
+    assert llm.max_retries == 0, f"Expected llm.max_retries == 0, got {llm.max_retries}"
+    print("[PASS] Unit Test: ChatGroq max_retries is 0")
+
+    # Unit Test: extract_claims extracts factual sentences and excludes headings & Sources section
+    from faithfulness.claims import extract_claims
+    sample_report = (
+        "# Research Report: Quantum Hall Effect\n\n"
+        "## Introduction\n"
+        "The Quantum Hall Effect is an extraordinary phenomenon observed in two-dimensional electron systems at low temperatures.\n"
+        "Strong magnetic fields lead to quantized Hall conductance.\n\n"
+        "## Key Findings\n"
+        "* Graphene exhibits an anomalous integer quantum Hall effect at room temperature.\n"
+        "* Fractional charges emerge from strongly correlated electron states in high magnetic fields.\n"
+        "* Edge states remain topologically protected against backscattering from non-magnetic impurities.\n\n"
+        "### Sources\n"
+        "1. Klitzing et al., Physical Review Letters, 1980. https://doi.org/10.1103/PhysRevLett.45.494\n"
+        "2. Novoselov et al., Nature, 2005. https://nature.com/articles/nature04233\n"
+    )
+    claims = extract_claims(sample_report)
+    assert len(claims) == 5, f"Expected 5 claims, got {len(claims)}: {claims}"
+    assert "The Quantum Hall Effect is an extraordinary phenomenon observed in two-dimensional electron systems at low temperatures." in claims
+    assert "Strong magnetic fields lead to quantized Hall conductance." in claims
+    assert "Graphene exhibits an anomalous integer quantum Hall effect at room temperature." in claims
+    assert "Fractional charges emerge from strongly correlated electron states in high magnetic fields." in claims
+    assert "Edge states remain topologically protected against backscattering from non-magnetic impurities." in claims
+    # Ensure headings and sources are excluded
+    for c in claims:
+        assert not c.startswith("#")
+        assert "Klitzing" not in c
+        assert "Novoselov" not in c
+        assert "https://" not in c
+    print("[PASS] Unit Test: extract_claims extracts clean factual sentences, excluding headings and Sources")
+
     with tempfile.TemporaryDirectory() as tmpdir:
         # Scenario 1: fixed mode, critic score 4.0
         # exactly one pass, retry_count == 0, exactly 1 record in attempts.
@@ -271,7 +318,8 @@ def test_all_scenarios():
         required_fields = [
             "run_id", "system", "topic", "model_name",
             "final_report", "contexts", "retry_count",
-            "quality_threshold", "final_score", "attempts"
+            "quality_threshold", "queries_used", "used_urls",
+            "final_score", "attempts"
         ]
         for field in required_fields:
             assert field in data, f"Missing field '{field}' in logged JSON"

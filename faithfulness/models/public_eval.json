@@ -1,0 +1,20 @@
+{
+  "dataset": "nyu-mll/glue/mnli",
+  "n_samples_total": 30000,
+  "n_test_samples": 3000,
+  "best_C": 0.2,
+  "accuracy": 0.7216666666666667,
+  "precision": 0.7143778207607995,
+  "recall": 0.7386666666666667,
+  "f1": 0.7263192395935759,
+  "confusion_matrix": [
+    [
+      1057,
+      443
+    ],
+    [
+      392,
+      1108
+    ]
+  ]
+}

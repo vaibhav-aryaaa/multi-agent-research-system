@@ -58,6 +58,8 @@ def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> st
         "contexts": contexts,
         "retry_count": result.get("retry_count", 0),
         "quality_threshold": result.get("quality_threshold", float(os.getenv("QUALITY_THRESHOLD", str(QUALITY_THRESHOLD)))),
+        "queries_used": result.get("queries_used", []),
+        "used_urls": result.get("used_urls", []),
         "final_score": result.get("score"),
         "attempts": result.get("attempts", []),
     }
