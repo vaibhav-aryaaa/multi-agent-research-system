@@ -1,3 +1,4 @@
+import os
 import operator
 import re
 import time
@@ -90,8 +91,9 @@ def record_token_usage(source_name: str, usage_dict_or_response: Any):
         TOKEN_USAGE["completion_tokens"] += completion
         TOKEN_USAGE["total_tokens"] += total
         print(f"[{source_name}] Tokens: prompt={prompt}, completion={completion}, total={total}")
-        if TOKEN_USAGE["total_tokens"] > 20000:
-            raise RuntimeError(f"STOP CONDITION: Total token usage ({TOKEN_USAGE['total_tokens']}) exceeded 20,000 limit.")
+        token_limit = int(os.getenv("TOKEN_LIMIT_PER_RUN", "60000"))
+        if TOKEN_USAGE["total_tokens"] > token_limit:
+            raise RuntimeError(f"STOP CONDITION: Total token usage ({TOKEN_USAGE['total_tokens']}) exceeded {token_limit} limit.")
 
 class TokenUsageCallback(BaseCallbackHandler):
     """Callback handler to track LLM token usage across all LCEL chains."""
@@ -126,21 +128,18 @@ def invoke_with_retry(runnable, inputs, max_attempts: int = 3, model_label: str 
     target_model = model_label or model_name
     for attempt in range(1, max_attempts + 1):
         try:
-            try:
-                return runnable.invoke(inputs, config={"callbacks": [TOKEN_CALLBACK]})
-            except TypeError:
-                return runnable.invoke(inputs)
+            return runnable.invoke(inputs, config={"callbacks": [TOKEN_CALLBACK]})
         except Exception as e:
+            status_code = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
             err_msg = str(e)
-            err_type = type(e).__name__
             
             # Check for 413 (request too large): raise immediately
-            if "413" in err_msg or "too large" in err_msg.lower():
+            if status_code == 413:
                 print(f"Error 413: Request too large for {target_model}. Raising immediately.")
                 raise RuntimeError(f"REQUEST TOO LARGE (413): {err_msg}") from e
 
             # Check for 400 tool_use_failed / invalid_request_error: retry once (max 2 attempts)
-            if "tool_use_failed" in err_msg.lower() or "invalid_request_error" in err_msg.lower() or "400" in err_msg:
+            if status_code == 400:
                 if attempt < 2:
                     print(f"HTTP 400 error ({err_msg[:100]}...), retrying with exponential backoff (attempt {attempt}/2)")
                     time.sleep(2.0 * attempt)
@@ -149,7 +148,7 @@ def invoke_with_retry(runnable, inputs, max_attempts: int = 3, model_label: str 
                     raise
                 
             # Check for Rate Limit (429)
-            if "RateLimitError" in err_type or "429" in err_msg or "rate_limit" in err_msg.lower() or "rate limit" in err_msg.lower():
+            if status_code == 429:
                 # Daily limit hit (TPD / tokens per day): fail fast
                 if "tokens per day" in err_msg.lower() or "tpd" in err_msg.lower():
                     raise RuntimeError(f"DAILY TOKEN LIMIT HIT for {target_model}. Stop and wait for reset or change tier.") from e
@@ -375,7 +374,16 @@ def writer_node(state: ResearchState) -> dict:
 
 def critic_node(state: ResearchState) -> dict:
     report = state.get("report", "")
-    critic_output = invoke_with_retry(DEPS.critic_chain, {"report": report})
+    search_results = state.get("search_results", "")
+    scraped_content = state.get("scraped_content", "")
+    research_combined = (
+        f"SEARCH RESULTS : \n {search_results} \n\n"
+        f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
+    )
+    critic_output = invoke_with_retry(DEPS.critic_chain, {
+        "report": report,
+        "research": research_combined,
+    })
 
     if isinstance(critic_output, CriticFeedback):
         score = float(critic_output.score)

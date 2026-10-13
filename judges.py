@@ -8,6 +8,8 @@ class JudgeVerdict(TypedDict):
 
 def llm_judge(state: dict) -> JudgeVerdict:
     """Accept if the critic's score >= QUALITY_THRESHOLD. If score is None, accept."""
+    import os
+    threshold = float(os.getenv("QUALITY_THRESHOLD", str(QUALITY_THRESHOLD)))
     score = state.get("score")
     if score is None:
         return JudgeVerdict(
@@ -15,16 +17,16 @@ def llm_judge(state: dict) -> JudgeVerdict:
             score=None,
             reason="Critic score was unparseable; accepting by default.",
         )
-    if score >= QUALITY_THRESHOLD:
+    if score >= threshold:
         return JudgeVerdict(
             accept=True,
             score=score,
-            reason=f"Critic score {score:.1f} meets quality threshold {QUALITY_THRESHOLD:.1f}.",
+            reason=f"Critic score {score:.1f} meets quality threshold {threshold:.1f}.",
         )
     return JudgeVerdict(
         accept=False,
         score=score,
-        reason=f"Critic score {score:.1f} below quality threshold {QUALITY_THRESHOLD:.1f}.",
+        reason=f"Critic score {score:.1f} below quality threshold {threshold:.1f}.",
     )
 
 def classifier_judge(state: dict) -> JudgeVerdict:

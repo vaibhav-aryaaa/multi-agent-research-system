@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from langchain_core.tools import tool
 from tavily import TavilyClient
 from rich import print
+from retrieval import clean_scraped_text
 
 load_dotenv()
 
@@ -70,7 +71,8 @@ def scrape_url(url: str) -> str:
                 content = extraction['results'][0].get('raw_content', '')
                 if not content:
                     content = extraction['results'][0].get('content', '')
-                return content[:2500]
+                cleaned = clean_scraped_text(content)
+                return cleaned[:2500]
             return "Extraction failed: No content found at this URL."
         except Exception as e:
             last_error = e

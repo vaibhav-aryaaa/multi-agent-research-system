@@ -136,8 +136,11 @@ class CriticFeedback(BaseModel):
 
 # Critic Chain (Structured Output via json_schema)
 critic_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a sharp and constructive research critic. Be honest and specific. Evaluate the report and provide a numeric score between 1.0 and 10.0 along with detailed constructive critique, and indicate whether additional research evidence is required."),
-    ("human", """Review the research report below and evaluate it strictly.
+    ("system", "You are a sharp, constructive, and evidence-aware research critic. Judge whether each claim in the report is supported by the research, flag unsupported or invented claims and citations, evaluate the report with a numeric score between 1.0 and 10.0 along with detailed constructive critique, and set needs_more_research only if evidence is missing."),
+    ("human", """Review the research report below against the provided research evidence and evaluate it strictly. Judge whether each claim in the report is supported by the research, flag unsupported or invented claims and citations, and set needs_more_research only if evidence is missing.
+
+Research Evidence:
+{research}
 
 Report:
 {report}"""),

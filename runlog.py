@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 from agents import model_name as default_model_name
+from config import QUALITY_THRESHOLD
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
@@ -56,6 +57,7 @@ def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> st
         "final_report": result.get("report", ""),
         "contexts": contexts,
         "retry_count": result.get("retry_count", 0),
+        "quality_threshold": result.get("quality_threshold", float(os.getenv("QUALITY_THRESHOLD", str(QUALITY_THRESHOLD)))),
         "final_score": result.get("score"),
         "attempts": result.get("attempts", []),
     }

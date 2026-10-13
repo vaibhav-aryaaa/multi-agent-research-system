@@ -64,3 +64,53 @@ def build_fallback_query(topic: str, critique: str) -> str:
     if keywords:
         return f"{topic} {keywords}".strip()
     return topic.strip()
+
+NAV_BOILERPLATE_PATTERNS = [
+    r"^skip to content",
+    r"^download pdf",
+    r"^order reprints",
+    r"^version notes",
+    r"^\*?\s*article\b",
+    r"^\*?\s*open access",
+    r"^author to whom correspondence",
+    r"^\d+\s*pages$",
+    r"^this article belongs to the special issue",
+]
+
+def clean_scraped_text(text: str) -> str:
+    """Clean scraped text deterministically before character capping.
+    
+    Strips markdown images, link syntax, navigation/boilerplate lines,
+    and collapses whitespace.
+    """
+    if not text:
+        return ""
+        
+    # 1. Remove markdown images: ![alt](url)
+    text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
+    
+    # 2. Convert markdown links [text](url) to just text
+    text = re.sub(r"\[([^\]]+)\]\([^\)]*\)", r"\1", text)
+    
+    # 3. Filter lines
+    lines = text.split("\n")
+    cleaned_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        lower = stripped.lower()
+        if any(re.search(pat, lower) for pat in NAV_BOILERPLATE_PATTERNS):
+            continue
+        if stripped in ["*", "\\*", "---"]:
+            continue
+        cleaned_lines.append(stripped)
+        
+    cleaned_text = "\n\n".join(cleaned_lines)
+    
+    # 4. Collapse consecutive spaces / whitespace
+    cleaned_text = re.sub(r"[ \t]+", " ", cleaned_text)
+    cleaned_text = re.sub(r"\n{3,}", "\n\n", cleaned_text)
+    
+    return cleaned_text.strip()
+

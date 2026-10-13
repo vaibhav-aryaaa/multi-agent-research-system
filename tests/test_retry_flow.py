@@ -16,12 +16,12 @@ from graph import (
     route_after_critic,
     MAX_RETRIES,
 )
-from retrieval import parse_search_results, build_fallback_query
+from retrieval import parse_search_results, build_fallback_query, clean_scraped_text
 
 class FakeWebSearch:
     def __init__(self):
         self.queries = []
-    def invoke(self, inputs):
+    def invoke(self, inputs, config=None):
         query = inputs["query"] if isinstance(inputs, dict) else str(inputs)
         self.queries.append(query)
         if len(self.queries) == 1:
@@ -40,7 +40,7 @@ class FakeScraper:
         self.scraped_urls = []
         self.fail_first_n = fail_first_n
         self.calls = 0
-    def invoke(self, inputs):
+    def invoke(self, inputs, config=None):
         url = inputs["url"] if isinstance(inputs, dict) else str(inputs)
         self.scraped_urls.append(url)
         self.calls += 1
@@ -83,7 +83,9 @@ class FakeCritic:
         self.scores = list(scores)
         self.needs_more_research_list = list(needs_more_research_list)
         self.calls = 0
+        self.invoked_inputs = []
     def invoke(self, inputs, config=None):
+        self.invoked_inputs.append(inputs)
         idx = min(self.calls, len(self.scores) - 1)
         score = self.scores[idx]
         nmr = self.needs_more_research_list[min(self.calls, len(self.needs_more_research_list) - 1)]
@@ -130,6 +132,35 @@ def test_all_scenarios():
     assert parsed[1]["url"] == "https://nature.com/articles/casimir-123"
     print("[PASS] Unit Test: parse_search_results correctly extracts URL, title, and snippet")
 
+    # Unit Test: clean_scraped_text on MDPI sample
+    mdpi_sample = (
+        "[Skip to Content](#main)\n\n"
+        "[![MDPI](https://mdpi-res.com/logo.svg)](/)\n\n"
+        "[Download PDF\n PDF](/article.pdf)\n\n"
+        "* Article\n"
+        "* ![Open Access](https://mdpi-res.com/open-access.svg)\n\n"
+        "23 May 2019\n\n"
+        "18 Pages\n\n"
+        "# Extraction of Zero-Point Energy from the Vacuum\n\n"
+        "Department of Electrical Engineering, University of Colorado\n\n"
+        "Author to whom correspondence should be addressed.\n\n"
+        "[Atoms](/journal/atoms)\n"
+        "**2019**, *7*(2), 51;\n\n"
+        "Order Reprints\n\n"
+        "## Abstract\n\n"
+        "In research articles and patents several methods have been proposed for zero-point energy extraction."
+    )
+    cleaned_mdpi = clean_scraped_text(mdpi_sample)
+    assert "![MDPI]" not in cleaned_mdpi
+    assert "![Open Access]" not in cleaned_mdpi
+    assert "[Skip to Content]" not in cleaned_mdpi
+    assert "Skip to Content" not in cleaned_mdpi
+    assert "Download PDF" not in cleaned_mdpi
+    assert "Order Reprints" not in cleaned_mdpi
+    assert "Extraction of Zero-Point Energy from the Vacuum" in cleaned_mdpi
+    assert "In research articles and patents several methods have been proposed" in cleaned_mdpi
+    print("[PASS] Unit Test: clean_scraped_text strips markdown images, links, and boilerplate on MDPI sample")
+
     with tempfile.TemporaryDirectory() as tmpdir:
         # Scenario 1: fixed mode, critic score 4.0
         # exactly one pass, retry_count == 0, exactly 1 record in attempts.
@@ -145,7 +176,11 @@ def test_all_scenarios():
         assert len(searcher.queries) == 1
         assert searcher.queries[0] == "Test Topic 1", f"First pass search query must equal topic, got {searcher.queries[0]}"
         assert len(q_writer.invoked_inputs) == 0, "Query writer must NOT be called on pass 0"
-        print("[PASS] Scenario 1: fixed mode on low score does exactly 1 pass (first-pass query == topic)")
+        # Evidence-aware critic checks:
+        assert len(cr.invoked_inputs) == 1
+        assert "research" in cr.invoked_inputs[0] and "report" in cr.invoked_inputs[0]
+        assert "SEARCH RESULTS :" in cr.invoked_inputs[0]["research"]
+        print("[PASS] Scenario 1: fixed mode on low score does exactly 1 pass (critic received research evidence)")
 
         # Scenario 2: adaptive_llm, score 4.0 then 8.0, needs_more_research=False
         # goes to the writer, retry_count == 1, final report differs from first,
@@ -236,7 +271,7 @@ def test_all_scenarios():
         required_fields = [
             "run_id", "system", "topic", "model_name",
             "final_report", "contexts", "retry_count",
-            "final_score", "attempts"
+            "quality_threshold", "final_score", "attempts"
         ]
         for field in required_fields:
             assert field in data, f"Missing field '{field}' in logged JSON"
