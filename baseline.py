@@ -5,6 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 from agents import get_groq_model
+from runlog import save_run
 
 load_dotenv()
 
@@ -30,10 +31,15 @@ baseline_chain = baseline_prompt | llm | StrOutputParser()
 def run_baseline(topic: str) -> dict:
     """Run single-prompt baseline with no agents, tools, or retrieval (System 1)."""
     report = baseline_chain.invoke({"topic": topic})
-    return {
+    result = {
         "topic": topic,
-        "report": report
+        "report": report,
+        "attempts": [],
+        "retry_count": 0,
+        "score": None,
     }
+    save_run(result, system="baseline")
+    return result
 
 if __name__ == "__main__":
     topic = input("\nEnter a research topic: ")

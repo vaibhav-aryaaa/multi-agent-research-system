@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import random
 from graph import graph, run_pipeline
+from runlog import save_run
 
 st.set_page_config(
     page_title="AgentFlow · Multi-Agent Research",
@@ -391,13 +392,19 @@ elif st.session_state.stage == "running":
     initial_state = {
         "topic": topic,
         "search_results": "",
+        "latest_search_results": "",
         "scraped_content": "",
         "report": "",
         "feedback": "",
         "score": None,
+        "attempt": 0,
         "retry_count": 0,
+        "decision": "",
+        "judge": "llm",
         "retry_enabled": True,
-        "_retrying_search": False,
+        "used_urls": [],
+        "queries_used": [],
+        "attempts": [],
     }
     
     current_state = dict(initial_state)
@@ -415,6 +422,7 @@ elif st.session_state.stage == "running":
                 elif node_name == "critic":
                     update_steps("finished")
         
+        save_run(current_state, system="adaptive_llm")
         critic_display = f"Score: {current_state.get('score')}/10\n\nCritique: {current_state.get('feedback', '')}" if current_state.get("score") is not None else current_state.get("feedback", "")
         
         st.session_state.results = {

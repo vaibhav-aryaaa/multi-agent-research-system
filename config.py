@@ -1,0 +1,2 @@
+QUALITY_THRESHOLD: float = 7.0
+MAX_RETRIES: int = 3

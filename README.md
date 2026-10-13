@@ -2,7 +2,10 @@
 
 ![AgentFlow Logo](https://raw.githubusercontent.com/vaibhav-aryaaa/multi-agent-research-system/main/assets/logo.png)
 
-**AgentFlow** is a production-grade, multi-agent AI research platform designed to synthesize high-fidelity, academic-quality manuscripts. Powered by **LangGraph** and **Llama 3.3 70B**, it orchestrates a specialized team of AI agents to crawl the deep web, extract scholarly data, and produce refined research reports.
+**AgentFlow** is a production-grade, multi-agent AI research platform designed to synthesize high-fidelity, academic-quality manuscripts. Powered by **LangGraph** and **openai/gpt-oss-120b** (via Groq), it orchestrates a specialized team of AI agents to crawl the deep web, extract scholarly data, and produce refined research reports.
+
+> [!NOTE]
+> **Methodology Note**: All systems use `gpt-oss-120b` via Groq because the planned Llama model (`llama-3.3-70b-versatile`) was not available on our access tier. The original planned model is preserved as part of the methodology history.
 
 ![Dashboard Preview](https://raw.githubusercontent.com/vaibhav-aryaaa/multi-agent-research-system/main/assets/dashboard.png)
 
@@ -27,7 +30,7 @@ The system utilizes a sequential agentic pipeline:
 
 ## 🛠️ Tech Stack
 
-- **LLM**: Groq (Llama 3.3 70B Versatile)
+- **LLM**: Groq (`openai/gpt-oss-120b`; originally planned `llama-3.3-70b-versatile`)
 - **Orchestration**: LangGraph / LangChain
 - **Search & Extraction**: Tavily AI (Scholar Mode enabled)
 - **Frontend**: Streamlit (Custom CSS Glassmorphism)
