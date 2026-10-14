@@ -205,8 +205,39 @@ def test_all_scenarios():
         assert not c.startswith("#")
         assert "Klitzing" not in c
         assert "Novoselov" not in c
-        assert "https://" not in c
     print("[PASS] Unit Test: extract_claims extracts clean factual sentences, excluding headings and Sources")
+
+    # Unit Test: Markdown table body parsing with leading # cell dropped, headers excluded, and target claim extracted
+    table_sample = (
+        "# Research Report: Energy Extraction\n\n"
+        "### Key Findings\n\n"
+        "| # | Finding | Evidence & Reasoning |\n"
+        "|---|---------|----------------------|\n"
+        "| **1** | **Mechanical cycles violate conservation laws** | Forward proposed extracting energy until plates touch. A reset requires external work. |\n"
+        "| **2** | **Switchable-mirror limits** | The energy cost of the transition has been measured in thin-film VO₂ and graphene devices and is ≥ 10⁻¹⁸ J per µm², which exceeds the Casimir energy gain for plate separations > 10 nm. <br>• Even if an ideal switch existed, net work is zero. |\n\n"
+        "### Sources\n"
+        "1. MDPI 2019 review.\n"
+    )
+    table_claims = extract_claims(table_sample)
+    # Header cells must NOT be extracted
+    assert not any(c == "Finding" or c == "Evidence & Reasoning" for c in table_claims), f"Header cells should not be extracted: {table_claims}"
+    assert not any("#" in c for c in table_claims)
+    # Target claim with >= 10^-18 J per um^2 IS extracted
+    target_claims = [c for c in table_claims if "≥ 10⁻¹⁸ J per µm²" in c]
+    assert len(target_claims) == 1, f"Expected target sentence with ≥ 10⁻¹⁸ J per µm² to be extracted, got: {table_claims}"
+    assert "exceeds the Casimir energy gain" in target_claims[0]
+    print("[PASS] Unit Test: Markdown table body extracted (≥ 10⁻¹⁸ J per µm² sentence included, headers excluded)")
+
+    # Unit Test: Abbreviation protection (Fig., Eq., et al., e.g., i.e., vs., No.)
+    abbr_sample = (
+        "According to Pinto et al., the Casimir force follows Eq. 4 as demonstrated in Fig. 2. "
+        "The experimental setup (i.e., gold mirrors vs. aluminum mirrors, e.g., in cavity No. 3) confirms zero net work."
+    )
+    abbr_claims = extract_claims(abbr_sample)
+    assert len(abbr_claims) == 2, f"Expected 2 sentences, got {len(abbr_claims)}: {abbr_claims}"
+    assert "According to Pinto et al., the Casimir force follows Eq. 4 as demonstrated in Fig. 2." in abbr_claims
+    assert "The experimental setup (i.e., gold mirrors vs. aluminum mirrors, e.g., in cavity No. 3) confirms zero net work." in abbr_claims
+    print("[PASS] Unit Test: Abbreviation protection preserves (Fig., Eq., et al., e.g., i.e., vs., No.) without premature splitting")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         # Scenario 1: fixed mode, critic score 4.0

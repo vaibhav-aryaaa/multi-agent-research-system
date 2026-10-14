@@ -1,25 +1,76 @@
 """Claim extraction and evidence passage splitting module for faithfulness evaluation.
 
 Design Principles:
-- extract_claims: Extracts atomic, factual claims from the report body, strictly
-  excluding metadata, markdown headers, tables, and the Sources bibliography.
-- Sentence splitting uses a deterministic regex splitter documenting punctuation boundaries
-  to ensure 100% reproducible, offline execution without external corpus downloads.
+- extract_claims: Extracts atomic, factual claims from the report body, stopping before Sources.
+  Parses markdown table body rows (skipping header/separator rows, dropping leading numeric # cells).
+  Cleans <br> tags, asterisks, and LaTeX blocks. Protects abbreviations from premature splitting.
 - split_evidence: Splits retrieved evidence into fine-grained passages (~1-3 sentences, <= 400 chars).
 """
 
 import re
 from typing import List
 
+# Abbreviations to protect from sentence boundary detection
+ABBREVIATION_PATTERNS = [
+    (r"\b(Fig|Figs)\.", r"\1@@DOT@@"),
+    (r"\b(Eq|Eqs)\.", r"\1@@DOT@@"),
+    (r"\bet\s+al\.", r"et al@@DOT@@"),
+    (r"\be\.g\.", r"e@@DOT@@g@@DOT@@"),
+    (r"\bi\.e\.", r"i@@DOT@@e@@DOT@@"),
+    (r"\b(vs|v)\.", r"\1@@DOT@@"),
+    (r"\bNo\.", r"No@@DOT@@"),
+]
+
+def clean_report_text(text: str) -> str:
+    """Clean markdown text: convert <br> to space, strip ** and *, and remove LaTeX blocks."""
+    if not text:
+        return ""
+    # 1. Convert <br>, <br/>, <br /> to space
+    text = re.sub(r"(?i)<br\s*/?>", " ", text)
+    # 2. Remove LaTeX display blocks \[ ... \] and inline blocks \( ... \)
+    text = re.sub(r"\\\[[\s\S]*?\\\]", "", text)
+    text = re.sub(r"\\\([\s\S]*?\\\)", "", text)
+    # 3. Remove ** and *
+    text = text.replace("**", "").replace("*", "")
+    # 4. Clean bullets, reference citations [1], [2], etc.
+    text = text.replace("•", " ")
+    text = re.sub(r"\[\d+\]", "", text)
+    return text
+
+def protect_abbreviations(text: str) -> str:
+    """Replace periods in known abbreviations with temporary placeholders."""
+    for pattern, replacement in ABBREVIATION_PATTERNS:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+    return text
+
+def unprotect_abbreviations(text: str) -> str:
+    """Restore periods in protected abbreviations."""
+    return text.replace("@@DOT@@", ".")
+
+def is_table_separator(cells: List[str]) -> bool:
+    """Check if table row is a markdown separator (e.g., |---|---|)."""
+    return len(cells) > 0 and all(re.match(r"^:?-+:?$", c) for c in cells if c)
+
+def is_table_header(cells: List[str]) -> bool:
+    """Check if table row is a header row (e.g., | # | Finding | Evidence & Reasoning |)."""
+    if not cells:
+        return False
+    first_clean = re.sub(r"[*_\s]", "", cells[0]).lower()
+    if first_clean in ["#", "no", "no.", "id", "item"]:
+        return True
+    header_keywords = {"finding", "findings", "evidence", "reasoning", "evidence & reasoning", "claim", "claims", "topic"}
+    if any(c.lower() in header_keywords for c in cells):
+        return True
+    return False
+
 def extract_claims(report: str) -> List[str]:
     """Extract factual claim sentences from a report body, stopping before Sources.
     
-    Excludes:
-    - Sources section and bibliography
-    - Markdown headings (#, ##, etc.) and horizontal rules (---)
-    - Table formatting lines (|)
-    - Short fragments (< 6 words)
-    - Bare URLs
+    Features:
+    - Parses table body rows (skips header and separator rows, splits on |, drops leading numeric # cell).
+    - Cleans <br> tags to space, strips ** and *, and removes LaTeX blocks.
+    - Protects abbreviations (Fig., Eq., et al., e.g., i.e., vs., No.) from sentence splitting.
+    - Excludes Sources section, headings (#, ##), and fragments under 6 words.
     """
     if not report:
         return []
@@ -29,47 +80,68 @@ def extract_claims(report: str) -> List[str]:
     parts = re.split(sources_pattern, report, maxsplit=1)
     body = parts[0]
 
-    # 2. Process line by line to filter out structural markdown
+    # 2. Process lines and table rows
     content_lines = []
     for line in body.splitlines():
         stripped = line.strip()
         if not stripped:
             continue
-        # Drop markdown headings
+        # Drop markdown headings (#, ##, etc.)
         if stripped.startswith("#"):
             continue
-        # Drop horizontal rules
+        # Drop horizontal rules (---, ***, ___)
         if re.match(r"^[-*_]{3,}$", stripped):
             continue
-        # Drop markdown table borders and table rows
-        if stripped.startswith("|") or "|---" in stripped:
-            continue
-        # Clean leading list bullets, numbered lists, or bold markers
-        cleaned_line = re.sub(r"^[\s*\-•>]+", "", stripped)
-        cleaned_line = re.sub(r"^\d+[\.\)]\s*", "", cleaned_line)
-        cleaned_line = re.sub(r"^\[\d+\]\s*", "", cleaned_line)
-        if cleaned_line:
-            content_lines.append(cleaned_line)
+        
+        # Parse table rows
+        if "|" in stripped:
+            cells = [c.strip() for c in stripped.strip("|").split("|")]
+            # Skip separator rows
+            if is_table_separator(cells):
+                continue
+            # Skip header rows
+            if is_table_header(cells):
+                continue
+            
+            # Body row: drop leading numeric # cell if present
+            first_clean = re.sub(r"[*_\s]", "", cells[0])
+            if first_clean.isdigit():
+                cells = cells[1:]
+                
+            for c in cells:
+                cleaned_cell = clean_report_text(c).strip()
+                if cleaned_cell:
+                    content_lines.append(cleaned_cell)
+        else:
+            cleaned = clean_report_text(stripped)
+            # Clean leading list bullets or numbered item markers
+            cleaned = re.sub(r"^[\s*\-•>]+", "", cleaned)
+            cleaned = re.sub(r"^\d+[\.\)]\s*", "", cleaned)
+            cleaned = cleaned.strip()
+            if cleaned:
+                content_lines.append(cleaned)
 
-    text_to_split = " ".join(content_lines)
+    # Combine into a single text block
+    text_block = " ".join(content_lines)
 
-    # 3. Sentence splitter: regex based on punctuation followed by capital/quote
-    # Documented choice: avoids heavy NLTK punkt download while reliably handling abbreviations
-    raw_sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"'\(])", text_to_split)
+    # 3. Protect abbreviations before splitting
+    protected_text = protect_abbreviations(text_block)
 
+    # 4. Split sentences at punctuation boundary
+    raw_sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"'\(])", protected_text)
+
+    # 5. Restore abbreviations and filter valid factual claims
     claims: List[str] = []
     for s in raw_sentences:
-        clean_s = s.strip()
-        # Clean markdown bold/italic tags
-        clean_s = clean_s.replace("**", "").replace("__", "").strip()
-        # Strip trailing reference brackets like [1], [2], [MDPI 2019]
-        clean_s = re.sub(r"\[\d+\]", "", clean_s).strip()
-        
+        clean_s = unprotect_abbreviations(s).strip()
+        # Collapse whitespace
+        clean_s = re.sub(r"\s+", " ", clean_s)
+
         # Drop bare URLs
         if re.match(r"^https?://\S+$", clean_s):
             continue
-        
-        # Word count check: drop very short fragments (under 6 words)
+
+        # Drop short fragments (under 6 words)
         words = [w for w in clean_s.split() if re.search(r"\w", w)]
         if len(words) < 6:
             continue
@@ -105,7 +177,6 @@ def split_evidence(search_results: str, scraped_content: str) -> List[str]:
 
     passages: List[str] = []
     for block in combined_raw:
-        # Split block into individual sentences
         sentences = re.split(r"(?<=[.!?])\s+", block.strip())
         current_chunk: List[str] = []
         current_len = 0
