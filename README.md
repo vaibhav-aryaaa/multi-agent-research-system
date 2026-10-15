@@ -75,6 +75,44 @@ This app is optimized for **Streamlit Community Cloud**.
 
 ---
 
+## ⚖️ Faithfulness Classifiers (System 4)
+
+AgentFlow incorporates learned faithfulness classifiers to serve as independent, measurable retry judges:
+- **Logistic Regression Baseline (`lr`)**: Fast baseline using frozen `all-MiniLM-L6-v2` embeddings and handcrafted sentence-pair features (`[claim, evidence, |diff|, prod, cos_sim]`).
+- **DistilBERT Cross-Encoder (`cross_encoder`)**: Fine-tuned judge that reads claim and retrieved evidence jointly (`premise=passage, hypothesis=claim`, max pooling over top-$k$ passages) to detect hallucinations and ungrounded assertions.
+
+### Training the Cross-Encoder on Google Colab GPU
+1. Open Google Colab and set runtime to **GPU (T4)**.
+2. Clone this repository and install dependencies:
+   ```bash
+   pip install -r requirements.txt transformers accelerate
+   ```
+3. Run the training script (trains on 100k balanced pairs from GLUE MNLI):
+   ```bash
+   python -m faithfulness.train_cross_encoder
+   ```
+   *(Optional: pass `--push_to_hub <username>/<model_name>` with `HF_TOKEN` set to upload directly to Hugging Face Hub).*
+4. Download the trained model folder and place it in `faithfulness/models/cross_encoder/`.
+
+### Environment Configuration & Hub Loading
+Set `FAITHFULNESS_CE_PATH` to point to your local model directory or Hugging Face Hub repo id:
+```bash
+export FAITHFULNESS_CE_PATH="faithfulness/models/cross_encoder"
+```
+Heavy libraries (`torch`, `transformers`) are loaded lazily to ensure the web UI and non-classifier modes start instantly without PyTorch initialization overhead.
+
+### In-Domain Evaluation Rule & Decision Gate
+- Public MNLI serves only as pre-training data. Real system performance is decided on human-labeled in-domain evidence from actual pipeline runs:
+  ```bash
+  python -m faithfulness.evaluate --backend lr
+  python -m faithfulness.evaluate --backend cross_encoder
+  python scripts/compare_backends.py
+  ```
+- **Selection Rule**: The default backend (`CLASSIFIER_BACKEND`) is chosen strictly based on higher **DEV** macro-F1 (never heldout).
+- **Decision Gate**: The chosen classifier must achieve $\ge 0.70$ heldout macro-F1 to serve as the System 4 retry judge.
+
+---
+
 ## 📄 License
 MIT License - Copyright (c) 2024 Vaibhav Arya
 

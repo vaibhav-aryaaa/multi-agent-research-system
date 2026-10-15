@@ -1,0 +1,23 @@
+{
+  "model": "distilbert-base-uncased",
+  "dataset": "nyu-mll/glue/mnli",
+  "split": "validation_matched",
+  "num_rows": 50,
+  "smoke": true,
+  "accuracy": 0.44,
+  "precision": 0.13333333333333333,
+  "recall": 0.11764705882352941,
+  "f1": 0.125,
+  "macro_f1": 0.35661764705882354,
+  "confusion_matrix": [
+    [
+      20,
+      13
+    ],
+    [
+      15,
+      2
+    ]
+  ],
+  "domain_shift_warning": "MNLI premises are single sentences, whereas our evidence is retrieved web text. In-domain human-labeled validation is required for real task reporting."
+}
