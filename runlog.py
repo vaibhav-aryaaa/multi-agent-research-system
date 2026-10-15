@@ -45,6 +45,7 @@ def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> st
     timestamp_str = now.strftime("%Y%m%d_%H%M%S")
     short_hash = uuid.uuid4().hex[:6]
     run_id = f"{timestamp_str}_{short_hash}"
+    result["run_id"] = run_id
     
     contexts = build_contexts(result, system)
     

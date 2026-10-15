@@ -16,6 +16,8 @@ import sys
 import glob
 import json
 import time
+import re
+import argparse
 import numpy as np
 import pandas as pd
 from typing import List, Dict, Any, Optional
@@ -27,6 +29,7 @@ sys.path.insert(0, PROJECT_ROOT)
 from faithfulness.claims import extract_claims_with_stats, split_evidence
 from faithfulness.embedder import embed
 from graph import run_pipeline
+from retrieval import clean_scraped_text
 
 DEV_TOPICS_PATH = os.path.join(PROJECT_ROOT, "data", "dev_topics.txt")
 RESULTS_DIR = os.path.join(PROJECT_ROOT, "results")
@@ -83,6 +86,90 @@ def sample_claims_spread(claims: List[str], max_k: int = 12, seed: int = 42) -> 
     return selected
 
 
+def is_link_or_keyword_list(text: str) -> bool:
+    """Detect if a passage is primarily a link-list, keyword-list, or metadata block."""
+    t = text.lower()
+    if re.search(r"\b(keywords?|quick links?|tags|categories)\s*:", t):
+        return True
+    if text.count(";") >= 3 and len(text.split()) < 25:
+        return True
+    if text.startswith("http://") or text.startswith("https://"):
+        return True
+    if re.search(r"^\s*[-*•]\s*\[", text) and text.count("[") >= 2:
+        return True
+    return False
+
+
+def clean_evidence_passages(contexts: List[str]) -> List[str]:
+    """Clean raw evidence contexts before passage extraction.
+    
+    Rules:
+    - For search-result contexts: keep ONLY the Snippet: text, drop Title: and URL: lines.
+    - For scraped contexts: pass through clean_scraped_text (fixes old Casimir examples).
+    - Replace [...] with ' … '.
+    - Convert markdown links [text](url) to their text.
+    - Collapse all whitespace including newlines to single spaces.
+    - Drop link-list or keyword-list passages.
+    """
+    cleaned_blocks: List[str] = []
+    for ctx in contexts:
+        if not ctx or not isinstance(ctx, str):
+            continue
+
+        # 1. Distinguish search-result contexts from scraped contexts
+        if "Snippet:" in ctx:
+            # Keep only the Snippet: text
+            parts = re.split(r"Snippet:\s*", ctx, maxsplit=1)
+            raw = parts[1] if len(parts) > 1 else ctx
+            lines = []
+            for line in raw.splitlines():
+                if re.match(r"^\s*(?:#+\s*)?(?:Title|URL):\s*", line, re.I):
+                    continue
+                # Strip inline Title: or URL: occurrences if present
+                line_clean = re.sub(r"(?:#+\s*)?Title:\s*", "", line, flags=re.I)
+                line_clean = re.sub(r"URL:\s*https?://\S+", "", line_clean, flags=re.I)
+                line_clean = re.sub(r"URL:\s*", "", line_clean, flags=re.I)
+                if line_clean.strip():
+                    lines.append(line_clean.strip())
+            text = "\n".join(lines)
+        else:
+            # Scraped context
+            text = clean_scraped_text(ctx)
+
+        # 2. Text cleanups across all contexts
+        text = re.sub(r"\[\s*\.{2,}\s*\]", " … ", text)
+        text = text.replace("[…]", " … ")
+        text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
+        text = re.sub(r"\[([^\]]+)\]\([^\)]*\)", r"\1", text)
+        text = re.sub(r"\[\s*\]\([^\)]*\)", "", text)
+
+        cleaned_blocks.append(text)
+
+    # 3. Split into passages
+    combined_raw = "\n\n".join(cleaned_blocks)
+    raw_passages = split_evidence("", combined_raw)
+
+    passages: List[str] = []
+    for p in raw_passages:
+        p = re.sub(r"\[\s*\.{2,}\s*\]", " … ", p)
+        p = p.replace("[…]", " … ")
+        p = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", p)
+        p = re.sub(r"\[([^\]]+)\]\([^\)]*\)", r"\1", p)
+        p = re.sub(r"\[\s*\]\([^\)]*\)", "", p)
+        p = re.sub(r"(?:#+\s*)?Title:\s*", "", p, flags=re.I)
+        p = re.sub(r"URL:\s*https?://\S+", "", p, flags=re.I)
+        p = re.sub(r"URL:\s*", "", p, flags=re.I)
+
+        if is_link_or_keyword_list(p):
+            continue
+
+        p = re.sub(r"\s+", " ", p).strip()
+        if len(p) >= 20 and not is_link_or_keyword_list(p):
+            passages.append(p)
+
+    return passages
+
+
 def process_report_for_claims(
     report_id: str,
     topic: str,
@@ -95,11 +182,8 @@ def process_report_for_claims(
         print(f"  [WARN] No claims extracted for report {report_id}")
         return []
 
-    # Assemble passages from accumulated contexts
-    raw_evidence = "\n\n".join(contexts) if isinstance(contexts, list) else str(contexts)
-    passages = split_evidence("", raw_evidence)
-    if not passages and contexts:
-        passages = [str(c).strip() for c in contexts if str(c).strip()]
+    # Clean evidence and assemble passages
+    passages = clean_evidence_passages(contexts if isinstance(contexts, list) else [str(contexts)])
 
     # Embed claims and passages
     c_embs = embed(claims)
@@ -119,7 +203,8 @@ def process_report_for_claims(
         else:
             ev1, ev2 = "", ""
 
-        claim_pairs.append((claim, ev1, ev2))
+        clean_c = re.sub(r"\s+", " ", claim).strip()
+        claim_pairs.append((clean_c, ev1, ev2))
 
     # Sample up to 12 claims spread across report
     selected_indices = sample_claims_spread(claims, max_k=12, seed=42)
@@ -141,6 +226,14 @@ def process_report_for_claims(
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Collect claims for human annotation")
+    parser.add_argument(
+        "--existing-only",
+        action="store_true",
+        help="Only process existing result JSONs from results/ and docs/examples/ without making API calls",
+    )
+    args, unknown = parser.parse_known_args()
+
     print("=" * 80)
     print("PHASE 3 PART D: CLAIM COLLECTION PIPELINE")
     print("=" * 80)
@@ -157,6 +250,7 @@ def main():
             with open(fpath, "r", encoding="utf-8") as f:
                 data = json.load(f)
             rep_id = data.get("run_id") or os.path.splitext(os.path.basename(fpath))[0]
+            rep_id = re.sub(r"_(fixed|adaptive_llm|baseline)$", "", rep_id)
             top = data.get("topic", "Casimir Energy Extraction")
             rep_text = data.get("final_report") or data.get("report") or ""
             ctx = data.get("contexts", [])
@@ -164,7 +258,7 @@ def main():
             rep_rows = process_report_for_claims(rep_id, top, rep_text, ctx)
             all_rows.extend(rep_rows)
             rows_per_topic[f"Casimir ({rep_id[:15]})"] = len(rep_rows)
-            print(f"  Ingested {len(rep_rows)} claims from {os.path.basename(fpath)}")
+            print(f"  Ingested {len(rep_rows)} claims from {os.path.basename(fpath)} (report_id={rep_id})")
         except Exception as exc:
             print(f"  [ERROR] Failed to ingest {fpath}: {exc}")
 
@@ -187,8 +281,8 @@ def main():
         cached_result = find_existing_result(topic)
         if cached_result is not None:
             source_file = os.path.basename(cached_result.get("_source_file", "results/"))
-            rep_id = cached_result.get("run_id") or source_file.replace(".json", "")
-            print(f"  [RESUME] Found existing run log ({source_file}). Reusing.")
+            rep_id = cached_result.get("run_id") or re.sub(r"_(fixed|adaptive_llm|baseline)$", "", source_file.replace(".json", ""))
+            print(f"  [RESUME] Found existing run log ({source_file}) with report_id={rep_id}. Reusing.")
             rep_text = cached_result.get("final_report") or cached_result.get("report") or ""
             ctx = cached_result.get("contexts", [])
 
@@ -198,11 +292,16 @@ def main():
             processed_topics.add(topic)
             continue
 
+        if args.existing_only:
+            print(f"  [SKIP] No existing run log for '{topic}' (--existing-only active).")
+            missing_topics.append(topic)
+            continue
+
         # Execute real pipeline in fixed mode (no retries)
         print("  Running fixed-mode pipeline (one pass, no retries)...")
         try:
             state = run_pipeline(topic, mode="fixed")
-            rep_id = state.get("run_id", f"run_{idx}")
+            rep_id = state.get("run_id") or f"run_{idx}"
             rep_text = state.get("report", "")
             # Reconstruct contexts from final state
             from runlog import build_contexts
@@ -259,6 +358,28 @@ def main():
         print(f"  Ev 1:      {r['evidence_top1'][:120]}...")
         print(f"  Ev 2:      {r['evidence_top2'][:120]}...")
         print(f"  Label:     '{r['label']}'")
+
+    # 6. Verification of evidence cleanliness
+    print("\n--- Step 6: Evidence Cleanliness Audit ---")
+    ev1_s = df_out["evidence_top1"].astype(str)
+    ev2_s = df_out["evidence_top2"].astype(str)
+    claim_s = df_out["claim"].astype(str)
+
+    t_cnt = int((ev1_s.str.contains("Title:") | ev2_s.str.contains("Title:") | claim_s.str.contains("Title:")).sum())
+    u_cnt = int((ev1_s.str.contains("URL:") | ev2_s.str.contains("URL:") | claim_s.str.contains("URL:")).sum())
+    nl_cnt = int((ev1_s.str.contains("\n") | ev2_s.str.contains("\n") | claim_s.str.contains("\n")).sum())
+    ml_regex = r"\[.*?\]\(.*?\)"
+    ml_cnt = int((ev1_s.str.contains(ml_regex) | ev2_s.str.contains(ml_regex) | claim_s.str.contains(ml_regex)).sum())
+
+    print(f"Rows with 'Title:':       {t_cnt}")
+    print(f"Rows with 'URL:':         {u_cnt}")
+    print(f"Rows with markdown links: {ml_cnt}")
+    print(f"Rows with hard newlines:  {nl_cnt}")
+    assert t_cnt == 0, f"Found {t_cnt} rows with 'Title:'"
+    assert u_cnt == 0, f"Found {u_cnt} rows with 'URL:'"
+    assert ml_cnt == 0, f"Found {ml_cnt} rows with markdown links"
+    assert nl_cnt == 0, f"Found {nl_cnt} rows with hard newlines"
+    print("Verification PASSED: All 4 cleanliness counts are strictly 0.")
 
 
 if __name__ == "__main__":

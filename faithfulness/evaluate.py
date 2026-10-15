@@ -14,7 +14,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from typing import List, Dict, Any, Tuple
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedGroupKFold
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -97,8 +97,15 @@ def load_and_validate_labeled_data(csv_path: str, skip_sample_gate: bool = False
             col_map[col] = "evidence_top2"
         elif c_lower in ("evidence", "passage", "context", "research"):
             col_map[col] = "evidence"
+        elif c_lower in ("topic", "query", "subject"):
+            col_map[col] = "topic"
 
     df = df_raw.rename(columns=col_map)
+    if "topic" not in df.columns:
+        if "report_id" in df.columns:
+            df["topic"] = df["report_id"]
+        else:
+            df["topic"] = "default_topic"
 
     if "claim" not in df.columns:
         raise ValueError(f"CSV must contain 'claim' column. Found columns: {list(df.columns)}")
@@ -146,6 +153,7 @@ def load_and_validate_labeled_data(csv_path: str, skip_sample_gate: bool = False
         row_dict = dict(row)
         row_dict["label"] = int(clean_lbl)
         row_dict["claim"] = str(row["claim"]).strip()
+        row_dict["topic"] = str(row.get("topic", "default_topic")).strip()
 
         # Build passage list directly: do NOT re-split with split_evidence
         passages: List[str] = []
@@ -274,18 +282,27 @@ def evaluate_backend(
     print(f"FAITHFULNESS EVALUATION — BACKEND: {backend.upper()}")
     print("=" * 70)
 
-    # Stratified 50/50 dev / heldout split
-    indices = np.arange(len(df))
-    dev_idx, heldout_idx = train_test_split(
-        indices,
-        test_size=0.5,
-        random_state=seed,
-        stratify=labels,
-    )
+    # Split dev / heldout by topic (StratifiedGroupKFold, 2 splits, grouped on topic)
+    groups = df["topic"].astype(str).to_numpy()
+    if len(np.unique(groups)) >= 2:
+        sgkf = StratifiedGroupKFold(n_splits=2, shuffle=True, random_state=seed)
+        dev_idx, heldout_idx = next(sgkf.split(df, y=labels, groups=groups))
+    else:
+        indices = np.arange(len(df))
+        dev_idx, heldout_idx = train_test_split(
+            indices,
+            test_size=0.5,
+            random_state=seed,
+            stratify=labels,
+        )
 
     y_dev = labels[dev_idx]
     y_heldout = labels[heldout_idx]
-    print(f"Split: Dev={len(dev_idx)} rows, Heldout={len(heldout_idx)} rows")
+    dev_topics = sorted(list(set(groups[dev_idx])))
+    heldout_topics = sorted(list(set(groups[heldout_idx])))
+    print(f"Split: Dev={len(dev_idx)} rows ({len(dev_topics)} topics), Heldout={len(heldout_idx)} rows ({len(heldout_topics)} topics)")
+    print(f"  Dev topics:     {dev_topics}")
+    print(f"  Heldout topics: {heldout_topics}")
 
     # Score full dataset with selected backend
     if backend == "lr":
@@ -349,6 +366,8 @@ def evaluate_backend(
         "n_total": len(df),
         "n_dev": len(dev_idx),
         "n_heldout": len(heldout_idx),
+        "dev_topics": dev_topics,
+        "heldout_topics": heldout_topics,
         "selected_tau": best_tau,
         "dev_macro_f1": dev_macro_f1,
         "heldout_metrics": {

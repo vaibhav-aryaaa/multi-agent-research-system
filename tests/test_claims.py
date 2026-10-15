@@ -98,25 +98,27 @@ def test_target_unicode_sentence_still_extracted():
 
 
 def test_evaluate_label_rules_and_split():
-    """Test evaluate.py with Part D format, strict label validation, dropping blank/?, and stratified split."""
-    # Create synthetic DataFrame
+    """Test evaluate.py with Part D format, strict label validation, dropping blank/?, and topic-grouped split."""
+    # Create synthetic DataFrame with 4 distinct topics
     # 20 samples: 10 ones, 10 zeros, plus 2 blank/?, plus 1 invalid row
+    topics = ["Casimir Engine", "Perovskite Solar", "CRISPR Editing", "Solid-State Battery"]
     data = []
-    for i in range(10):
-        data.append({
-            "topic": "Casimir Engine",
-            "claim": f"Supported claim {i} stating verified physics facts.",
-            "evidence_top1": f"Top evidence 1 passage for claim {i}.",
-            "evidence_top2": f"Top evidence 2 passage for claim {i}.",
-            "label": "1",
-        })
-        data.append({
-            "topic": "Casimir Engine",
-            "claim": f"Unsupported claim {i} stating invented nonphysical numbers.",
-            "evidence_top1": f"Top evidence 1 passage for unverified {i}.",
-            "evidence_top2": f"Top evidence 2 passage for unverified {i}.",
-            "label": "0",
-        })
+    for t_idx, topic in enumerate(topics):
+        # 5 rows per topic (10 total ones and 10 total zeros across 4 topics)
+        # Topic 0: 3 ones, 2 zeros
+        # Topic 1: 2 ones, 3 zeros
+        # Topic 2: 3 ones, 2 zeros
+        # Topic 3: 2 ones, 3 zeros
+        n_ones = 3 if t_idx % 2 == 0 else 2
+        for i in range(5):
+            is_one = i < n_ones
+            data.append({
+                "topic": topic,
+                "claim": f"Claim {t_idx}_{i} stating research facts for {topic}.",
+                "evidence_top1": f"Top evidence 1 passage for claim {t_idx}_{i}.",
+                "evidence_top2": f"Top evidence 2 passage for claim {t_idx}_{i}.",
+                "label": "1" if is_one else "0",
+            })
     # Add unannotated rows (blank and ?)
     data.append({
         "topic": "Casimir Engine",
@@ -155,11 +157,10 @@ def test_evaluate_label_rules_and_split():
         with pytest.raises(ValueError, match="Invalid label 'unclear' at row 24"):
             load_and_validate_labeled_data(bad_csv, skip_sample_gate=True)
 
-        # 3. Test evaluate_backend runs end-to-end with stub scorer
+        # 3. Test evaluate_backend runs end-to-end with stub scorer and topic grouping
         class StubModel:
             def predict_proba(self, X):
                 # Return synthetic probabilities based on feature shape
-                # Class 1 prob = 0.8 for first 10, 0.2 for second 10
                 n = X.shape[0]
                 probs = np.full((n, 2), 0.5)
                 probs[:, 1] = 0.7
@@ -176,10 +177,11 @@ def test_evaluate_label_rules_and_split():
         assert eval_res["n_total"] == 20
         assert eval_res["n_dev"] == 10
         assert eval_res["n_heldout"] == 10
+        assert set(eval_res["dev_topics"]).isdisjoint(set(eval_res["heldout_topics"])), "Dev and heldout topics must be disjoint!"
         assert "accuracy" in eval_res["heldout_metrics"]
         assert "always_supported" in eval_res["baselines_heldout"]
         assert "cosine_threshold" in eval_res["baselines_heldout"]
-        print("[PASS] Unit Test: evaluate.py validates labels, drops ?, and computes split metrics.")
+        print("[PASS] Unit Test: evaluate.py validates labels, drops ?, and splits dev/heldout by topic.")
 
 
 def run_all():
