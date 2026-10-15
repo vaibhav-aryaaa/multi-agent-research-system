@@ -23,13 +23,12 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-from faithfulness.claims import split_evidence
 from faithfulness.embedder import embed
 from faithfulness.features import build_claim_features
 
 MODELS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
 DEFAULT_LR_PATH = os.path.join(MODELS_DIR, "faithfulness_lr.joblib")
-DEFAULT_CSV_PATH = os.path.join("data", "dev_claims_labeled.csv")
+DEFAULT_CSV_PATH = os.path.join("data", "validation_claims_labeled.csv")
 
 
 def parse_args():
@@ -38,7 +37,7 @@ def parse_args():
         "--csv",
         type=str,
         default=DEFAULT_CSV_PATH,
-        help="Path to human-labeled claims CSV (claim, evidence, label)",
+        help="Path to human-labeled claims CSV (claim, evidence_top1, evidence_top2, label)",
     )
     parser.add_argument(
         "--backend",
@@ -59,60 +58,151 @@ def parse_args():
         default=42,
         help="Random seed for 50/50 stratified split (default: 42)",
     )
+    parser.add_argument(
+        "--skip_sample_gate",
+        action="store_true",
+        help="Skip 100-row sample size verification gate (for testing purposes)",
+    )
     return parser.parse_args()
 
 
-def load_labeled_data(csv_path: str) -> pd.DataFrame:
-    """Load labeled dataset and validate required fields."""
+def load_and_validate_labeled_data(csv_path: str, skip_sample_gate: bool = False) -> pd.DataFrame:
+    """Load labeled dataset, drop unannotated/unusable rows, and strictly validate label syntax and balance.
+    
+    Accepts columns:
+    - claim
+    - evidence_top1 and evidence_top2 (preferred; used directly without re-splitting)
+    - evidence (backward compatibility)
+    - label (must be strictly 0 or 1; blank or '?' are dropped and counted)
+    """
     if not os.path.exists(csv_path):
         raise FileNotFoundError(
             f"Labeled CSV not found at '{csv_path}'.\n"
-            "Phase 3 Part D requires collecting and human-labeling claims in data/dev_claims_labeled.csv first."
+            "Phase 3 Part D requires collecting and human-labeling claims in data/validation_claims_labeled.csv first."
         )
 
-    df = pd.read_csv(csv_path)
+    df_raw = pd.read_csv(csv_path)
 
     # Normalize column names
     col_map = {}
-    for col in df.columns:
+    for col in df_raw.columns:
         c_lower = col.strip().lower()
         if c_lower in ("claim", "hypothesis", "statement"):
             col_map[col] = "claim"
-        elif c_lower in ("evidence", "passage", "context", "research"):
-            col_map[col] = "evidence"
         elif c_lower in ("label", "supported", "target", "annotation"):
             col_map[col] = "label"
+        elif c_lower in ("evidence_top1", "top1_evidence", "evidence_1"):
+            col_map[col] = "evidence_top1"
+        elif c_lower in ("evidence_top2", "top2_evidence", "evidence_2"):
+            col_map[col] = "evidence_top2"
+        elif c_lower in ("evidence", "passage", "context", "research"):
+            col_map[col] = "evidence"
 
-    df = df.rename(columns=col_map)
-    required = ["claim", "evidence", "label"]
-    for req in required:
-        if req not in df.columns:
-            raise ValueError(f"CSV must contain '{req}' column. Found columns: {list(df.columns)}")
+    df = df_raw.rename(columns=col_map)
 
-    # Clean labels to binary 0 or 1
-    def clean_label(val):
-        if isinstance(val, (int, np.integer)):
-            return int(val)
-        if isinstance(val, (float, np.floating)):
-            return int(val)
-        s = str(val).strip().lower()
-        if s in ("1", "true", "supported", "entailment", "yes"):
-            return 1
-        return 0
+    if "claim" not in df.columns:
+        raise ValueError(f"CSV must contain 'claim' column. Found columns: {list(df.columns)}")
+    if "label" not in df.columns:
+        raise ValueError(f"CSV must contain 'label' column. Found columns: {list(df.columns)}")
 
-    df["label"] = df["label"].apply(clean_label)
-    df["claim"] = df["claim"].astype(str).str.strip()
-    df["evidence"] = df["evidence"].astype(str).str.strip()
-    return df
+    has_top_evidence = "evidence_top1" in df.columns or "evidence_top2" in df.columns
+    has_single_evidence = "evidence" in df.columns
+
+    if not has_top_evidence and not has_single_evidence:
+        raise ValueError(
+            "CSV must contain either ('evidence_top1', 'evidence_top2') or a single 'evidence' column. "
+            f"Found: {list(df.columns)}"
+        )
+
+    # Label validation and filtering
+    dropped_unlabeled = 0
+    valid_rows = []
+
+    for idx, row in df.iterrows():
+        val = row["label"]
+        row_display_idx = idx + 2  # 1-indexed plus header line for easy human tracking
+
+        # Check if empty, NaN, or '?'
+        if pd.isna(val):
+            dropped_unlabeled += 1
+            continue
+
+        str_val = str(val).strip()
+        if str_val == "" or str_val == "?":
+            dropped_unlabeled += 1
+            continue
+
+        # Strict acceptance of 0 or 1 only
+        if str_val in ("0", "0.0"):
+            clean_lbl = 0
+        elif str_val in ("1", "1.0"):
+            clean_lbl = 1
+        else:
+            raise ValueError(
+                f"Invalid label '{val}' at row {row_display_idx}. "
+                "Only 0 or 1 are accepted; blank or '?' are ignored."
+            )
+
+        row_dict = dict(row)
+        row_dict["label"] = int(clean_lbl)
+        row_dict["claim"] = str(row["claim"]).strip()
+
+        # Build passage list directly: do NOT re-split with split_evidence
+        passages: List[str] = []
+        if has_top_evidence:
+            for ev_col in ("evidence_top1", "evidence_top2"):
+                if ev_col in row and pd.notna(row[ev_col]):
+                    ev_text = str(row[ev_col]).strip()
+                    if ev_text:
+                        passages.append(ev_text)
+        elif has_single_evidence and pd.notna(row["evidence"]):
+            ev_text = str(row["evidence"]).strip()
+            if ev_text:
+                passages.append(ev_text)
+
+        row_dict["passages"] = passages
+        valid_rows.append(row_dict)
+
+    df_clean = pd.DataFrame(valid_rows)
+
+    if dropped_unlabeled > 0:
+        print(f"Dropped {dropped_unlabeled} unannotated rows (blank or '?').")
+
+    if len(df_clean) == 0:
+        raise ValueError(f"No usable labeled rows found in {csv_path}.")
+
+    # Label balance check
+    labels = df_clean["label"].to_numpy()
+    n_pos = int(np.sum(labels == 1))
+    n_neg = int(np.sum(labels == 0))
+    total_usable = len(df_clean)
+
+    print(f"Label Balance: Total Usable={total_usable} | Class 1 (Supported)={n_pos} | Class 0 (Unsupported)={n_neg}")
+
+    if not skip_sample_gate:
+        if total_usable < 100:
+            raise ValueError(
+                f"Dataset has {total_usable} usable rows (< 100 required). "
+                "The protocol requires at least 100 human-labeled rows to report evaluation metrics."
+            )
+        if n_pos < 20 or n_neg < 20:
+            raise ValueError(
+                f"Severe class imbalance: Class 1 has {n_pos} rows, Class 0 has {n_neg} rows. "
+                "Both classes must have at least 20 rows to compute stratified metrics reliably."
+            )
+
+    return df_clean
 
 
-def score_dataset_lr(df: pd.DataFrame, lr_path: str = DEFAULT_LR_PATH) -> Tuple[np.ndarray, np.ndarray]:
+def score_dataset_lr(df: pd.DataFrame, lr_path: str = DEFAULT_LR_PATH, model_stub: Any = None) -> Tuple[np.ndarray, np.ndarray]:
     """Score claims with Logistic Regression baseline."""
-    if not os.path.exists(lr_path):
-        raise FileNotFoundError(f"LR model artifact not found at '{lr_path}'. Run 'python -m faithfulness.train' first.")
-
-    artifact = joblib.load(lr_path)
-    model = artifact["model"]
+    if model_stub is not None:
+        model = model_stub
+    else:
+        if not os.path.exists(lr_path):
+            raise FileNotFoundError(f"LR model artifact not found at '{lr_path}'. Run 'python -m faithfulness.train' first.")
+        artifact = joblib.load(lr_path)
+        model = artifact["model"]
 
     probs = []
     top1_cosines = []
@@ -120,12 +210,7 @@ def score_dataset_lr(df: pd.DataFrame, lr_path: str = DEFAULT_LR_PATH) -> Tuple[
     print(f"Embedding and scoring {len(df)} samples with Logistic Regression backend...")
     for _, row in df.iterrows():
         claim = row["claim"]
-        evidence_text = row["evidence"]
-
-        # Parse passages from evidence
-        passages = split_evidence("", evidence_text)
-        if not passages:
-            passages = [evidence_text] if evidence_text else []
+        passages = row["passages"]
 
         c_emb = embed([claim])[0]
         if passages:
@@ -142,7 +227,7 @@ def score_dataset_lr(df: pd.DataFrame, lr_path: str = DEFAULT_LR_PATH) -> Tuple[
     return np.array(probs, dtype=np.float32), np.array(top1_cosines, dtype=np.float32)
 
 
-def score_dataset_cross_encoder(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+def score_dataset_cross_encoder(df: pd.DataFrame, model_stub: Any = None) -> Tuple[np.ndarray, np.ndarray]:
     """Score claims with DistilBERT Cross-Encoder."""
     from faithfulness.cross_encoder import score_claims
 
@@ -152,13 +237,9 @@ def score_dataset_cross_encoder(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarra
     print(f"Scoring {len(df)} samples with Cross-Encoder backend...")
     for _, row in df.iterrows():
         claim = row["claim"]
-        evidence_text = row["evidence"]
+        passages = row["passages"]
 
-        passages = split_evidence("", evidence_text)
-        if not passages:
-            passages = [evidence_text] if evidence_text else []
-
-        scored = score_claims([claim], passages, k=3)
+        scored = score_claims([claim], passages, k=3, model=model_stub)
         probs.append(scored[0]["p_supported"])
         top1_cosines.append(scored[0]["top1_cosine"])
 
@@ -183,14 +264,15 @@ def evaluate_backend(
     backend: str = "lr",
     output_path: str = None,
     seed: int = 42,
+    skip_sample_gate: bool = False,
+    model_stub: Any = None,
 ) -> Dict[str, Any]:
-    df = load_labeled_data(csv_path)
+    df = load_and_validate_labeled_data(csv_path, skip_sample_gate=skip_sample_gate)
     labels = df["label"].to_numpy()
 
     print("=" * 70)
     print(f"FAITHFULNESS EVALUATION — BACKEND: {backend.upper()}")
     print("=" * 70)
-    print(f"Total labeled samples: {len(df)} (Positives: {np.sum(labels == 1)}, Negatives: {np.sum(labels == 0)})")
 
     # Stratified 50/50 dev / heldout split
     indices = np.arange(len(df))
@@ -207,9 +289,9 @@ def evaluate_backend(
 
     # Score full dataset with selected backend
     if backend == "lr":
-        probs, cos_sims = score_dataset_lr(df)
+        probs, cos_sims = score_dataset_lr(df, model_stub=model_stub)
     elif backend == "cross_encoder":
-        probs, cos_sims = score_dataset_cross_encoder(df)
+        probs, cos_sims = score_dataset_cross_encoder(df, model_stub=model_stub)
     else:
         raise ValueError(f"Unknown backend: {backend}")
 
@@ -310,6 +392,7 @@ def main():
         backend=args.backend,
         output_path=args.output,
         seed=args.seed,
+        skip_sample_gate=args.skip_sample_gate,
     )
 
 
