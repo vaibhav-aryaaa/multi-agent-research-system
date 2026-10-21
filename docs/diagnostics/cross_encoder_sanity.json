@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-10-21T18:48:35.333833",
+  "model_path": "vaibhavarya/distilbert-faithfulness-nli",
+  "n_samples": 500,
+  "seed": 42,
+  "path_a_score_claims": {
+    "accuracy": 0.848,
+    "macro_f1": 0.8479781088476741
+  },
+  "path_b_transformers_direct": {
+    "accuracy": 0.848,
+    "macro_f1": 0.8479781088476741
+  },
+  "parity_max_abs_diff": 1.4901161193847656e-06,
+  "fixed_pairs": [
+    {
+      "pair_id": "guitar_entailment",
+      "evidence": "A man is playing a guitar on stage.",
+      "claim": "A man is playing an instrument.",
+      "p_supported": 0.9714373350143433,
+      "top1_cosine": 0.6476970911026001
+    },
+    {
+      "pair_id": "cat_contradiction",
+      "evidence": "The cat is sleeping on the couch.",
+      "claim": "The cat is running outside.",
+      "p_supported": 0.06440508365631104,
+      "top1_cosine": 0.4549280107021332
+    },
+    {
+      "pair_id": "casimir_claim_a",
+      "evidence": "The Casimir effect is an attractive force between two uncharged conducting plates in a vacuum.",
+      "claim": "Two uncharged metal plates in a vacuum attract each other.",
+      "p_supported": 0.2188786119222641,
+      "top1_cosine": 0.7500362992286682
+    },
+    {
+      "pair_id": "casimir_claim_b",
+      "evidence": "The Casimir effect is an attractive force between two uncharged conducting plates in a vacuum.",
+      "claim": "The Casimir effect makes uncharged plates repel each other strongly.",
+      "p_supported": 0.3092570900917053,
+      "top1_cosine": 0.8608380556106567
+    }
+  ],
+  "gate_passed": true
+}
