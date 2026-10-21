@@ -6,18 +6,23 @@ each pair with the cross-encoder, taking the maximum support probability.
 """
 
 import os
+from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional, Tuple
 import numpy as np
+
+load_dotenv()
 
 _CACHED_MODEL = None
 _CACHED_TOKENIZER = None
 _CACHED_DEVICE = None
+_LOADED_SOURCE = None
 
-DEFAULT_MODEL_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "models",
-    "cross_encoder",
-)
+DEFAULT_MODEL_PATH = "vaibhavarya/distilbert-faithfulness-nli"
+
+
+def get_loaded_source() -> Optional[str]:
+    """Return the model path or Hub ID loaded by the cross-encoder."""
+    return _LOADED_SOURCE
 
 
 def load_cross_encoder() -> Tuple[Any, Any, Any]:
@@ -26,12 +31,27 @@ def load_cross_encoder() -> Tuple[Any, Any, Any]:
     Heavy imports (torch, transformers) are kept inside this function so importing
     this module does not slow down startup or load PyTorch prematurely.
     """
-    global _CACHED_MODEL, _CACHED_TOKENIZER, _CACHED_DEVICE
+    global _CACHED_MODEL, _CACHED_TOKENIZER, _CACHED_DEVICE, _LOADED_SOURCE
 
     if _CACHED_MODEL is not None and _CACHED_TOKENIZER is not None:
         return _CACHED_MODEL, _CACHED_TOKENIZER, _CACHED_DEVICE
 
-    model_path = os.getenv("FAITHFULNESS_CE_PATH", DEFAULT_MODEL_PATH)
+    model_path = os.getenv("FAITHFULNESS_CE_PATH")
+    if not model_path:
+        raise RuntimeError(
+            "FAITHFULNESS_CE_PATH is unset in .env! "
+            "Must be set to the Hub repository ID (e.g. 'vaibhavarya/distilbert-faithfulness-nli') "
+            "or trained weights directory."
+        )
+
+    smoke_dirs = ["cross_encoder", "_smoke_cross_encoder_unused"]
+    for s_dir in smoke_dirs:
+        smoke_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", s_dir)
+        if os.path.exists(model_path) and os.path.abspath(model_path) == os.path.abspath(smoke_path):
+            raise RuntimeError(
+                f"Cross-encoder path '{model_path}' points to smoke-test artifact '{smoke_path}'. "
+                "Must point to the trained Hub model vaibhavarya/distilbert-faithfulness-nli."
+            )
 
     # If it is a local path and doesn't exist, provide a clear instructional error
     is_local_dir = os.path.exists(model_path)
@@ -66,6 +86,7 @@ def load_cross_encoder() -> Tuple[Any, Any, Any]:
     _CACHED_MODEL = model
     _CACHED_TOKENIZER = tokenizer
     _CACHED_DEVICE = device
+    _LOADED_SOURCE = model_path
 
     return _CACHED_MODEL, _CACHED_TOKENIZER, _CACHED_DEVICE
 

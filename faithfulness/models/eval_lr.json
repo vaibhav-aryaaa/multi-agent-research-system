@@ -1,5 +1,6 @@
 {
   "backend": "lr",
+  "model_source": "/Users/vaibhavarya/Developer/multi-agent-researcher/faithfulness/models/faithfulness_lr.joblib",
   "n_total": 252,
   "n_dev": 126,
   "n_heldout": 126,
@@ -42,6 +43,22 @@
         10
       ]
     ]
+  },
+  "score_distribution_heldout": {
+    "class_1": {
+      "n": 20,
+      "mean": 0.5797274112701416,
+      "std": 0.23274484276771545,
+      "min": 0.059767913073301315,
+      "max": 0.8592283725738525
+    },
+    "class_0": {
+      "n": 106,
+      "mean": 0.364514023065567,
+      "std": 0.23264390230178833,
+      "min": 0.011489580385386944,
+      "max": 0.9366227388381958
+    }
   },
   "heldout_metrics_by_source": {
     "report": {

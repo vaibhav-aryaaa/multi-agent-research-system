@@ -1,5 +1,6 @@
 {
   "backend": "cross_encoder",
+  "model_source": "vaibhavarya/distilbert-faithfulness-nli",
   "n_total": 252,
   "n_dev": 126,
   "n_heldout": 126,
@@ -20,82 +21,98 @@
     "Mechanisms of CRISPR-Cas9 off-target cleavage reduction using high-fidelity engineered variants",
     "Perpetual mechanical energy extraction from Casimir cavity forces"
   ],
-  "selected_tau": 0.49999999999999994,
-  "dev_macro_f1": 0.5092911983976856,
+  "selected_tau": 0.6599999999999999,
+  "dev_macro_f1": 0.8445084327437269,
   "heldout_metrics": {
-    "accuracy": 0.7063492063492064,
-    "precision": 0.13043478260869565,
-    "recall": 0.15,
-    "f1_binary": 0.13953488372093023,
-    "macro_f1": 0.48125069544898186,
+    "accuracy": 0.8888888888888888,
+    "precision": 0.6,
+    "recall": 0.9,
+    "f1_binary": 0.72,
+    "macro_f1": 0.8253465346534654,
     "bootstrap_95_ci": [
-      0.40563498333621023,
-      0.5714285714285714
+      0.7325471698113208,
+      0.9004127513831561
     ],
     "confusion_matrix": [
       [
-        86,
-        20
+        94,
+        12
       ],
       [
-        17,
-        3
+        2,
+        18
       ]
     ]
+  },
+  "score_distribution_heldout": {
+    "class_1": {
+      "n": 20,
+      "mean": 0.8574614524841309,
+      "std": 0.1473427712917328,
+      "min": 0.48332569003105164,
+      "max": 0.9839249849319458
+    },
+    "class_0": {
+      "n": 106,
+      "mean": 0.3048206865787506,
+      "std": 0.24981194734573364,
+      "min": 0.034709732979536057,
+      "max": 0.9736531376838684
+    }
   },
   "heldout_metrics_by_source": {
     "report": {
       "n": 96,
-      "accuracy": 0.8020833333333334,
-      "macro_f1": 0.44508670520231214
+      "accuracy": 0.9583333333333334,
+      "macro_f1": 0.6559139784946236
     },
     "synthetic": {
       "n": 30,
-      "accuracy": 0.4,
-      "macro_f1": 0.375
+      "accuracy": 0.6666666666666666,
+      "macro_f1": 0.5738636363636364
     }
   },
   "heldout_metrics_by_topic": {
     "Aerodynamic drag reduction techniques in hypersonic scramjet engine inlets": {
       "n": 18,
-      "accuracy": 0.7777777777777778,
-      "macro_f1": 0.6,
+      "accuracy": 0.8333333333333334,
+      "macro_f1": 0.7777777777777777,
       "note": "indicative"
     },
     "Ancient Roman pozzolanic concrete self-healing chemistry through lime clasts": {
       "n": 18,
-      "accuracy": 0.6111111111111112,
-      "macro_f1": 0.3793103448275862,
+      "accuracy": 0.8333333333333334,
+      "macro_f1": 0.8193979933110368,
       "note": "indicative"
     },
     "CRISPR-based gene drive containment strategies in wild mosquito populations": {
       "n": 18,
-      "accuracy": 0.6111111111111112,
-      "macro_f1": 0.3793103448275862,
+      "accuracy": 0.8888888888888888,
+      "macro_f1": 0.8392857142857143,
       "note": "indicative"
     },
     "Efficacy of mRNA therapeutic vaccines against personalized neoantigens in metastatic melanoma": {
       "n": 18,
-      "accuracy": 0.8333333333333334,
-      "macro_f1": 0.6516129032258065,
+      "accuracy": 0.9444444444444444,
+      "macro_f1": 0.9113300492610837,
       "note": "indicative"
     },
     "Mechanisms of CRISPR-Cas9 off-target cleavage reduction using high-fidelity engineered variants": {
       "n": 18,
-      "accuracy": 0.8333333333333334,
-      "macro_f1": 0.6516129032258065,
+      "accuracy": 0.7777777777777778,
+      "macro_f1": 0.7230769230769231,
       "note": "indicative"
     },
     "Perpetual mechanical energy extraction from Casimir cavity forces": {
       "n": 36,
-      "accuracy": 0.6388888888888888,
-      "macro_f1": 0.3898305084745763,
+      "accuracy": 0.9722222222222222,
+      "macro_f1": 0.8260869565217391,
       "note": "indicative"
     }
   },
   "calibration": {
-    "mean_p_supported_label_1": 0.4939938485622406,
-    "mean_p_supported_label_0": 0.49347084760665894
+    "mean_p_supported_label_1": 0.8574614524841309,
+    "mean_p_supported_label_0": 0.3048206865787506
   },
   "baselines_heldout": {
     "always_supported": {
@@ -108,6 +125,6 @@
       "accuracy": 0.7936507936507936
     }
   },
-  "gate_passed": false,
+  "gate_passed": true,
   "error_analysis_file": "/Users/vaibhavarya/Developer/multi-agent-researcher/faithfulness/models/error_analysis_cross_encoder.csv"
 }

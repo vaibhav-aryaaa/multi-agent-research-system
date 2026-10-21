@@ -11,5 +11,6 @@ hf_cache/
 *.npy
 *.npz
 faithfulness/models/cross_encoder/
+faithfulness/models/_smoke_cross_encoder_unused/
 *.safetensors
 

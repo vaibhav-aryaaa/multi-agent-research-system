@@ -13,6 +13,10 @@ import argparse
 import joblib
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
+
+# Ensure environment variables (.env) are loaded first
+load_dotenv()
 from typing import List, Dict, Any, Tuple
 from sklearn.model_selection import train_test_split, StratifiedGroupKFold
 from sklearn.metrics import (
@@ -311,11 +315,31 @@ def evaluate_backend(
 
     # Score full dataset with selected backend
     if backend == "lr":
-        probs, cos_sims = score_dataset_lr(df, model_stub=model_stub)
+        model_source = DEFAULT_LR_PATH
+        probs, cos_sims = score_dataset_lr(df, lr_path=DEFAULT_LR_PATH, model_stub=model_stub)
     elif backend == "cross_encoder":
+        ce_env = os.getenv("FAITHFULNESS_CE_PATH")
+        if not ce_env and model_stub is None:
+            raise RuntimeError(
+                "FAITHFULNESS_CE_PATH environment variable is unset in .env! "
+                "Must be set to the Hub repository ID (e.g. 'vaibhavarya/distilbert-faithfulness-nli') "
+                "or valid checkpoint."
+            )
+        smoke_dirs = ["cross_encoder", "_smoke_cross_encoder_unused"]
+        for s_dir in smoke_dirs:
+            smoke_path = os.path.join(MODELS_DIR, s_dir)
+            if ce_env and os.path.exists(ce_env) and os.path.abspath(ce_env) == os.path.abspath(smoke_path):
+                raise RuntimeError(
+                    f"FAITHFULNESS_CE_PATH resolved to smoke-test directory '{smoke_path}'! "
+                    "Refusing to evaluate. Must point to Hub model vaibhavarya/distilbert-faithfulness-nli."
+                )
         probs, cos_sims = score_dataset_cross_encoder(df, model_stub=model_stub)
+        from faithfulness.cross_encoder import get_loaded_source
+        model_source = get_loaded_source() or ce_env or "stub"
     else:
         raise ValueError(f"Unknown backend: {backend}")
+
+    print(f"\nModel Source Loaded: {model_source}")
 
     probs_dev = probs[dev_idx]
     probs_heldout = probs[heldout_idx]
@@ -443,6 +467,30 @@ def evaluate_backend(
     error_df[cols_to_save].to_csv(error_csv_path, index=False)
     print(f"\nSaved error analysis to: {error_csv_path} ({len(error_df)} error rows)")
 
+    # Distribution of p_supported per class on heldout
+    probs_1 = probs_heldout[y_heldout == 1]
+    probs_0 = probs_heldout[y_heldout == 0]
+    m1, s1, min1, max1 = float(np.mean(probs_1)), float(np.std(probs_1)), float(np.min(probs_1)), float(np.max(probs_1))
+    m0, s0, min0, max0 = float(np.mean(probs_0)), float(np.std(probs_0)), float(np.min(probs_0)), float(np.max(probs_0))
+
+    print("\nHELD-OUT P_SUPPORTED DISTRIBUTION PER CLASS:")
+    print(f"  Class 1 (Supported,   N={len(probs_1)}): mean={m1:.4f}, std={s1:.4f}, min={min1:.4f}, max={max1:.4f}")
+    print(f"  Class 0 (Unsupported, N={len(probs_0)}): mean={m0:.4f}, std={s0:.4f}, min={min0:.4f}, max={max0:.4f}")
+
+    # Top 10 worst FP and FN
+    fps = error_df[error_df["error_type"] == "FP"].sort_values(by="confidence", ascending=False)
+    fns = error_df[error_df["error_type"] == "FN"].sort_values(by="confidence", ascending=False)
+
+    print(f"\nTOP 10 WORST FALSE POSITIVES (Predicted 1, Label 0) [Total FP={len(fps)}]:")
+    for rank, (_, row_err) in enumerate(fps.head(10).iterrows(), 1):
+        print(f"  {rank}. [p_supp={row_err['p_supported']:.4f}] Claim: {row_err['claim'][:80]}...")
+        print(f"     Evidence: {str(row_err['evidence_top1'])[:100]}...")
+
+    print(f"\nTOP 10 WORST FALSE NEGATIVES (Predicted 0, Label 1) [Total FN={len(fns)}]:")
+    for rank, (_, row_err) in enumerate(fns.head(10).iterrows(), 1):
+        print(f"  {rank}. [p_supp={row_err['p_supported']:.4f}] Claim: {row_err['claim'][:80]}...")
+        print(f"     Evidence: {str(row_err['evidence_top1'])[:100]}...")
+
     print("-" * 70)
     print("BASELINES (on same heldout split):")
     print(f"  Always Supported: Macro-F1={b_always_f1:.4f}, Accuracy={b_always_acc:.4f}")
@@ -456,6 +504,7 @@ def evaluate_backend(
 
     results = {
         "backend": backend,
+        "model_source": model_source,
         "n_total": len(df),
         "n_dev": len(dev_idx),
         "n_heldout": len(heldout_idx),
@@ -471,6 +520,10 @@ def evaluate_backend(
             "macro_f1": macro_f1,
             "bootstrap_95_ci": [ci_lower, ci_upper],
             "confusion_matrix": cm,
+        },
+        "score_distribution_heldout": {
+            "class_1": {"n": int(len(probs_1)), "mean": m1, "std": s1, "min": min1, "max": max1},
+            "class_0": {"n": int(len(probs_0)), "mean": m0, "std": s0, "min": min0, "max": max0},
         },
         "heldout_metrics_by_source": metrics_by_source,
         "heldout_metrics_by_topic": metrics_by_topic,
