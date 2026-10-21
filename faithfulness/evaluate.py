@@ -154,6 +154,10 @@ def load_and_validate_labeled_data(csv_path: str, skip_sample_gate: bool = False
         row_dict["label"] = int(clean_lbl)
         row_dict["claim"] = str(row["claim"]).strip()
         row_dict["topic"] = str(row.get("topic", "default_topic")).strip()
+        if "source" in row and pd.notna(row["source"]):
+            row_dict["source"] = str(row["source"]).strip().lower()
+        else:
+            row_dict["source"] = "report"
 
         # Build passage list directly: do NOT re-split with split_evidence
         passages: List[str] = []
@@ -350,6 +354,30 @@ def evaluate_backend(
     print(f"  F1 (Binary):      {f1:.4f}")
     print(f"  Macro-F1:         {macro_f1:.4f}")
     print(f"  Confusion Matrix: {cm}")
+
+    # Per-source breakdown on heldout split
+    heldout_sources = (
+        df["source"].iloc[heldout_idx].astype(str).str.lower().to_numpy()
+        if "source" in df.columns
+        else np.array(["report"] * len(heldout_idx))
+    )
+    unique_sources = sorted(list(set(heldout_sources)))
+    metrics_by_source = {}
+    print("\nHELDOUT METRICS BY SOURCE:")
+    for src in unique_sources:
+        src_mask = (heldout_sources == src)
+        src_y = y_heldout[src_mask]
+        src_preds = preds_heldout[src_mask]
+        if len(src_y) > 0:
+            src_acc = float(accuracy_score(src_y, src_preds))
+            src_macro_f1 = float(f1_score(src_y, src_preds, average="macro", zero_division=0))
+            metrics_by_source[src] = {
+                "n": int(len(src_y)),
+                "accuracy": src_acc,
+                "macro_f1": src_macro_f1,
+            }
+            print(f"  Source '{src}' [N={len(src_y)}]: Macro-F1={src_macro_f1:.4f}, Accuracy={src_acc:.4f}")
+
     print("-" * 70)
     print("BASELINES (on same heldout split):")
     print(f"  Always Supported: Macro-F1={b_always_f1:.4f}, Accuracy={b_always_acc:.4f}")
@@ -378,6 +406,7 @@ def evaluate_backend(
             "macro_f1": macro_f1,
             "confusion_matrix": cm,
         },
+        "heldout_metrics_by_source": metrics_by_source,
         "baselines_heldout": {
             "always_supported": {
                 "macro_f1": b_always_f1,
