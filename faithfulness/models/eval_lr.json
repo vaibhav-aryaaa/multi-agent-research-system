@@ -1,0 +1,113 @@
+{
+  "backend": "lr",
+  "n_total": 252,
+  "n_dev": 126,
+  "n_heldout": 126,
+  "dev_topics": [
+    "Atmospheric methane emissions from Arctic permafrost thaw lakes and thermokarst formations",
+    "Deep-sea hydrothermal vent microbial metabolism and sulfur oxidation pathways",
+    "Microplastic accumulation and trophic transfer kinetics in marine pelagic food webs",
+    "Neurobiological mechanisms of synaptic pruning in adolescent brain development and schizophrenia susceptibility",
+    "Perovskite-silicon tandem solar cell degradation mechanisms under moisture and thermal stress",
+    "Quantum sensing of magnetic fields using nitrogen-vacancy centers in diamond for biomedical imaging",
+    "Solid-state electrolyte interface stability in lithium-metal batteries using sulfide-based solid electrolytes"
+  ],
+  "heldout_topics": [
+    "Aerodynamic drag reduction techniques in hypersonic scramjet engine inlets",
+    "Ancient Roman pozzolanic concrete self-healing chemistry through lime clasts",
+    "CRISPR-based gene drive containment strategies in wild mosquito populations",
+    "Efficacy of mRNA therapeutic vaccines against personalized neoantigens in metastatic melanoma",
+    "Mechanisms of CRISPR-Cas9 off-target cleavage reduction using high-fidelity engineered variants",
+    "Perpetual mechanical energy extraction from Casimir cavity forces"
+  ],
+  "selected_tau": 0.6599999999999999,
+  "dev_macro_f1": 0.7676297532273645,
+  "heldout_metrics": {
+    "accuracy": 0.8015873015873016,
+    "precision": 0.4,
+    "recall": 0.5,
+    "f1_binary": 0.4444444444444444,
+    "macro_f1": 0.6618357487922706,
+    "bootstrap_95_ci": [
+      0.5478744923419581,
+      0.7522754672358098
+    ],
+    "confusion_matrix": [
+      [
+        91,
+        15
+      ],
+      [
+        10,
+        10
+      ]
+    ]
+  },
+  "heldout_metrics_by_source": {
+    "report": {
+      "n": 96,
+      "accuracy": 0.9375,
+      "macro_f1": 0.6086956521739131
+    },
+    "synthetic": {
+      "n": 30,
+      "accuracy": 0.36666666666666664,
+      "macro_f1": 0.3301997649823737
+    }
+  },
+  "heldout_metrics_by_topic": {
+    "Aerodynamic drag reduction techniques in hypersonic scramjet engine inlets": {
+      "n": 18,
+      "accuracy": 0.6666666666666666,
+      "macro_f1": 0.5178571428571428,
+      "note": "indicative"
+    },
+    "Ancient Roman pozzolanic concrete self-healing chemistry through lime clasts": {
+      "n": 18,
+      "accuracy": 0.8888888888888888,
+      "macro_f1": 0.875,
+      "note": "indicative"
+    },
+    "CRISPR-based gene drive containment strategies in wild mosquito populations": {
+      "n": 18,
+      "accuracy": 0.7777777777777778,
+      "macro_f1": 0.6,
+      "note": "indicative"
+    },
+    "Efficacy of mRNA therapeutic vaccines against personalized neoantigens in metastatic melanoma": {
+      "n": 18,
+      "accuracy": 0.6666666666666666,
+      "macro_f1": 0.4,
+      "note": "indicative"
+    },
+    "Mechanisms of CRISPR-Cas9 off-target cleavage reduction using high-fidelity engineered variants": {
+      "n": 18,
+      "accuracy": 0.6111111111111112,
+      "macro_f1": 0.5418181818181818,
+      "note": "indicative"
+    },
+    "Perpetual mechanical energy extraction from Casimir cavity forces": {
+      "n": 36,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "note": "indicative"
+    }
+  },
+  "calibration": {
+    "mean_p_supported_label_1": 0.5797274112701416,
+    "mean_p_supported_label_0": 0.364514023065567
+  },
+  "baselines_heldout": {
+    "always_supported": {
+      "macro_f1": 0.136986301369863,
+      "accuracy": 0.15873015873015872
+    },
+    "cosine_threshold": {
+      "tau": 0.7499999999999999,
+      "macro_f1": 0.6756435643564356,
+      "accuracy": 0.7936507936507936
+    }
+  },
+  "gate_passed": false,
+  "error_analysis_file": "/Users/vaibhavarya/Developer/multi-agent-researcher/faithfulness/models/error_analysis_lr.csv"
+}

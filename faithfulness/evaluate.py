@@ -47,7 +47,8 @@ def parse_args():
         help="Classifier backend: 'lr' or 'cross_encoder' (default: lr)",
     )
     parser.add_argument(
-        "--output",
+        "--output", "--eval_output",
+        dest="output",
         type=str,
         default=None,
         help="Path to save evaluation JSON (default: faithfulness/models/indomain_eval_<backend>.json)",
@@ -334,6 +335,20 @@ def evaluate_backend(
     macro_f1 = float(f1_score(y_heldout, preds_heldout, average="macro", zero_division=0))
     cm = confusion_matrix(y_heldout, preds_heldout).tolist()
 
+    # Bootstrap 95% CI (1000 resamples, fixed seed) for heldout macro-F1
+    rng_boot = np.random.RandomState(seed)
+    n_boot = len(y_heldout)
+    boot_f1s = []
+    for _ in range(1000):
+        boot_idx = rng_boot.choice(n_boot, size=n_boot, replace=True)
+        boot_f1s.append(f1_score(y_heldout[boot_idx], preds_heldout[boot_idx], average="macro", zero_division=0))
+    ci_lower = float(np.percentile(boot_f1s, 2.5))
+    ci_upper = float(np.percentile(boot_f1s, 97.5))
+
+    # Calibration calculation: mean p_supported for label 1 vs label 0 on heldout
+    calib_mean_1 = float(np.mean(probs_heldout[y_heldout == 1])) if np.sum(y_heldout == 1) > 0 else 0.0
+    calib_mean_0 = float(np.mean(probs_heldout[y_heldout == 0])) if np.sum(y_heldout == 0) > 0 else 0.0
+
     # 3. Baselines on the SAME HELDOUT ROWS
     # Baseline A: Always "supported" (all 1s)
     always_1_preds = np.ones_like(y_heldout)
@@ -352,8 +367,9 @@ def evaluate_backend(
     print(f"  Precision:        {prec:.4f}")
     print(f"  Recall:           {rec:.4f}")
     print(f"  F1 (Binary):      {f1:.4f}")
-    print(f"  Macro-F1:         {macro_f1:.4f}")
+    print(f"  Macro-F1:         {macro_f1:.4f} (95% Bootstrap CI: [{ci_lower:.4f}, {ci_upper:.4f}])")
     print(f"  Confusion Matrix: {cm}")
+    print(f"  Calibration:      Mean p_supported: Label 1={calib_mean_1:.4f} | Label 0={calib_mean_0:.4f}")
 
     # Per-source breakdown on heldout split
     heldout_sources = (
@@ -377,6 +393,55 @@ def evaluate_backend(
                 "macro_f1": src_macro_f1,
             }
             print(f"  Source '{src}' [N={len(src_y)}]: Macro-F1={src_macro_f1:.4f}, Accuracy={src_acc:.4f}")
+
+    # Per-topic heldout breakdown (indicative due to small n)
+    heldout_topics_arr = groups[heldout_idx]
+    metrics_by_topic = {}
+    print("\nPER-TOPIC HELDOUT METRICS (indicative due to small n):")
+    for top in heldout_topics:
+        top_mask = (heldout_topics_arr == top)
+        top_y = y_heldout[top_mask]
+        top_preds = preds_heldout[top_mask]
+        top_acc = float(accuracy_score(top_y, top_preds)) if len(top_y) > 0 else 0.0
+        top_f1 = float(f1_score(top_y, top_preds, average="macro", zero_division=0)) if len(top_y) > 0 else 0.0
+        metrics_by_topic[top] = {
+            "n": int(len(top_y)),
+            "accuracy": top_acc,
+            "macro_f1": top_f1,
+            "note": "indicative",
+        }
+        print(f"  {top[:50]:<50} [N={len(top_y)}]: Acc={top_acc:.4f}, Macro-F1={top_f1:.4f}")
+
+    # Error analysis CSV export
+    heldout_df = df.iloc[heldout_idx].copy()
+    heldout_df["p_supported"] = probs_heldout
+    heldout_df["predicted"] = preds_heldout
+
+    error_types = []
+    confidences = []
+    for _, r in heldout_df.iterrows():
+        lbl = int(r["label"])
+        prd = int(r["predicted"])
+        p = float(r["p_supported"])
+        if prd == 1 and lbl == 0:
+            error_types.append("FP")
+            confidences.append(p)
+        elif prd == 0 and lbl == 1:
+            error_types.append("FN")
+            confidences.append(1.0 - p)
+        else:
+            error_types.append("")
+            confidences.append(0.0)
+    heldout_df["error_type"] = error_types
+    heldout_df["confidence"] = confidences
+
+    error_df = heldout_df[heldout_df["error_type"] != ""].sort_values(by="confidence", ascending=False)
+    if "evidence_top1" not in error_df.columns and "evidence" in error_df.columns:
+        error_df["evidence_top1"] = error_df["evidence"]
+    cols_to_save = ["claim", "evidence_top1", "label", "p_supported", "predicted", "error_type"]
+    error_csv_path = os.path.join(MODELS_DIR, f"error_analysis_{backend}.csv")
+    error_df[cols_to_save].to_csv(error_csv_path, index=False)
+    print(f"\nSaved error analysis to: {error_csv_path} ({len(error_df)} error rows)")
 
     print("-" * 70)
     print("BASELINES (on same heldout split):")
@@ -404,9 +469,15 @@ def evaluate_backend(
             "recall": rec,
             "f1_binary": f1,
             "macro_f1": macro_f1,
+            "bootstrap_95_ci": [ci_lower, ci_upper],
             "confusion_matrix": cm,
         },
         "heldout_metrics_by_source": metrics_by_source,
+        "heldout_metrics_by_topic": metrics_by_topic,
+        "calibration": {
+            "mean_p_supported_label_1": calib_mean_1,
+            "mean_p_supported_label_0": calib_mean_0,
+        },
         "baselines_heldout": {
             "always_supported": {
                 "macro_f1": b_always_f1,
@@ -419,6 +490,7 @@ def evaluate_backend(
             },
         },
         "gate_passed": passed_gate,
+        "error_analysis_file": error_csv_path,
     }
 
     if output_path is None:
