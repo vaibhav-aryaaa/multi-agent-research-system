@@ -58,6 +58,112 @@ SHORT_HEADER_WORDS = {
     "claim", "claims", "topic", "description", "source", "sources"
 }
 
+# Function words or incomplete clause endings (Rule b)
+TRAILING_INCOMPLETE_WORDS = {
+    "is", "are", "of", "to", "by", "the", "and", "roughly", "approximately", "about",
+    "was", "were", "be", "been", "being", "with", "that", "than", "as", "at", "in", "for", "from", "or"
+}
+
+# Comprehensive vocabulary for verb detection heuristic (Rule e)
+VERB_WORDS = {
+    # Auxiliaries & Modals
+    "is", "are", "was", "were", "be", "been", "being", "have", "has", "had",
+    "do", "does", "did", "can", "could", "will", "would", "shall", "should", "may", "might", "must",
+    # Academic & common verbs
+    "use", "uses", "used", "using", "make", "makes", "made", "making",
+    "take", "takes", "took", "taken", "taking", "find", "finds", "found", "finding",
+    "give", "gives", "gave", "given", "giving", "show", "shows", "showed", "shown", "showing",
+    "lead", "leads", "led", "leading", "cause", "causes", "caused", "causing",
+    "hold", "holds", "held", "holding", "set", "sets", "setting", "see", "sees", "saw", "seen", "seeing",
+    "know", "knows", "knew", "known", "knowing", "get", "gets", "got", "gotten", "getting",
+    "deliver", "delivers", "delivered", "delivering", "collect", "collects", "collected", "collecting",
+    "correspond", "corresponds", "corresponded", "corresponding",
+    "contribute", "contributes", "contributed", "contributing",
+    "amplify", "amplifies", "amplified", "amplifying",
+    "retain", "retains", "retained", "retaining", "exhibit", "exhibits", "exhibited", "exhibiting",
+    "propose", "proposes", "proposed", "proposing", "disrupt", "disrupts", "disrupted", "disrupting",
+    "impose", "imposes", "imposed", "imposing", "continue", "continues", "continued", "continuing",
+    "destabilize", "destabilizes", "destabilized", "destabilizing", "enforce", "enforces", "enforced", "enforcing",
+    "affect", "affects", "affected", "affecting", "dominate", "dominates", "dominated", "dominating",
+    "require", "requires", "required", "requiring", "produce", "produces", "produced", "producing",
+    "extract", "extracts", "extracted", "extracting", "generate", "generates", "generated", "generating",
+    "preclude", "precludes", "precluded", "precluding", "consume", "consumes", "consumed", "consuming",
+    "allow", "allows", "allowed", "allowing", "serve", "serves", "served", "serving",
+    "draw", "draws", "drew", "drawn", "drawing", "pull", "pulls", "pulled", "pulling",
+    "push", "pushes", "pushed", "pushing", "state", "states", "stated", "stating",
+    "note", "notes", "noted", "noting", "report", "reports", "reported", "reporting",
+    "measure", "measures", "measured", "measuring", "observe", "observes", "observed", "observing",
+    "conclude", "concludes", "concluded", "concluding", "classify", "classifies", "classified", "classifying",
+    "compare", "compares", "compared", "comparing", "reproduce", "reproduces", "reproduced", "reproducing",
+    "identify", "identifies", "identified", "identifying", "exploit", "exploits", "exploited", "exploiting",
+    "focus", "focuses", "focused", "focusing", "address", "addresses", "addressed", "addressing",
+    "stand", "stands", "stood", "standing", "lie", "lies", "lay", "lain", "lying",
+    "rely", "relies", "relied", "relying", "need", "needs", "needed", "needing",
+    "improve", "improves", "improved", "improving", "achieve", "achieves", "achieved", "achieving",
+    "alter", "alters", "altered", "altering", "harvest", "harvests", "harvested", "harvesting",
+    "convert", "converts", "converted", "converting", "supply", "supplies", "supplied", "supplying",
+    "reopen", "reopens", "reopened", "reopening", "obey", "obeys", "obeyed", "obeying",
+    "leave", "leaves", "left", "leaving", "introduce", "introduces", "introduced", "introducing",
+    "exist", "exists", "existed", "existing", "depend", "depends", "depended", "depending",
+    "interact", "interacts", "interacted", "interacting", "bind", "binds", "bound", "binding",
+    "inhibit", "inhibits", "inhibited", "inhibiting", "clear", "clears", "cleared", "clearing",
+    "degrade", "degrades", "degraded", "degrading", "emit", "emits", "emitted", "emitting",
+    "store", "stores", "stored", "storing", "drive", "drives", "drove", "driven", "driving",
+    "switch", "switches", "switched", "switching", "tap", "taps", "tapped", "tapping",
+    "act", "acts", "acted", "acting", "lose", "loses", "lost", "losing",
+    "gain", "gains", "gained", "gaining", "link", "links", "linked", "linking",
+    "correlate", "correlates", "correlated", "correlating", "prevent", "prevents", "prevented", "preventing",
+    "detect", "detects", "detected", "detecting", "synthesize", "synthesizes", "synthesized", "synthesizing",
+    "mediate", "mediates", "mediated", "mediating", "accumulate", "accumulates", "accumulated", "accumulating",
+    "prune", "prunes", "pruned", "pruning", "heal", "heals", "healed", "healing",
+    "suppress", "suppresses", "suppressed", "suppressing", "edit", "edits", "edited", "editing",
+    "target", "targets", "targeted", "targeting", "enhance", "enhances", "enhanced", "enhancing",
+    "form", "forms", "formed", "forming", "stabilize", "stabilizes", "stabilized", "stabilizing",
+    "accelerate", "accelerates", "accelerated", "accelerating", "capture", "captures", "captured", "capturing",
+    "compress", "compresses", "compressed", "compressing", "transfer", "transfers", "transferred", "transferring",
+    "ingest", "ingests", "ingested", "ingesting", "engulf", "engulfs", "engulfed", "engulfing",
+    "undergo", "undergoes", "underwent", "undergone", "undergoing", "govern", "governs", "governed", "governing",
+    "modulate", "modulates", "modulated", "modulating", "mitigate", "mitigates", "mitigated", "mitigating",
+    "induce", "induces", "induced", "inducing", "attenuate", "attenuates", "attenuated", "attenuating",
+    "express", "expresses", "expressed", "expressing", "catalyze", "catalyzes", "catalyzed", "catalyzing",
+    "infiltrate", "infiltrates", "infiltrated", "infiltrating", "possess", "possesses", "possessed", "possessing",
+    "exert", "exerts", "exerted", "exerting", "demonstrate", "demonstrates", "demonstrated", "demonstrating",
+    "indicate", "indicates", "indicated", "indicating", "suggest", "suggests", "suggested", "suggesting",
+    "confirm", "confirms", "confirmed", "confirming", "derive", "derives", "derived", "deriving",
+    "lower", "lowers", "lowered", "lowering", "raise", "raises", "raised", "raising",
+    "overcome", "overcomes", "overcame", "overcoming", "provide", "provides", "provided", "providing",
+    "operate", "operates", "operated", "operating", "verify", "verifies", "verified", "verifying",
+    "omit", "omits", "omitted", "omitting", "yield", "yields", "yielded", "yielding",
+    "utilize", "utilizes", "utilized", "utilizing", "decrease", "decreases", "decreased", "decreasing",
+    "enable", "enables", "enabled", "enabling"
+}
+
+NON_VERBS = {
+    "speed", "red", "bed", "feed", "seed", "need", "during", "thing", "spring", "ring", "wing", "king",
+    "something", "anything", "nothing", "everything", "ceiling", "morning", "evening", "warning", "building"
+}
+
+
+def has_verb(text: str) -> bool:
+    """Heuristic to check if a sentence/label contains at least one verb."""
+    # Strip parentheticals first so parenthetical citation verbs do not count
+    clean_no_parens = text
+    while "(" in clean_no_parens and ")" in clean_no_parens:
+        stripped = re.sub(r"\([^()]*\)", "", clean_no_parens)
+        if stripped == clean_no_parens:
+            break
+        clean_no_parens = stripped
+
+    tokens = [re.sub(r"^[^\w]+|[^\w]+$", "", w).lower() for w in clean_no_parens.split()]
+    tokens = [t for t in tokens if t]
+    for t in tokens:
+        if t in VERB_WORDS:
+            return True
+        if len(t) >= 5 and (t.endswith("ed") or t.endswith("ing") or t.endswith("izes") or t.endswith("ated") or t.endswith("ates")):
+            if t not in NON_VERBS:
+                return True
+    return False
+
 
 def protect_abbreviations(text: str) -> str:
     """Replace periods in known abbreviations with temporary placeholders."""
@@ -130,6 +236,10 @@ def extract_claims_with_stats(report: str) -> Tuple[List[str], Dict[str, Any]]:
     parts = re.split(sources_pattern, report, maxsplit=1)
     body = parts[0]
 
+    # Mask multiline display math and inline formulas before segment extraction
+    latex_pattern = re.compile(r"\\\[[\s\S]*?\\\]|\\\(.*?\\\)|\$\$[\s\S]*?\$\$")
+    body = latex_pattern.sub(" @@LATEX_FORMULA@@ ", body)
+
     # 2. Segment extraction: non-table lines, list items, and table cells
     segments: List[str] = []
     for line in body.splitlines():
@@ -169,35 +279,35 @@ def extract_claims_with_stats(report: str) -> Tuple[List[str], Dict[str, Any]]:
                     segments.append(part.strip())
 
     claims: List[str] = []
-    latex_pattern = re.compile(r"\\\[[\s\S]*?\\\]|\\\(.*?\\\)")
 
     # 3. Process each segment independently
-    for seg in segments:
+    for seg_idx, seg in enumerate(segments):
         seg = seg.strip()
         if not seg:
             continue
 
+        # If this segment is just a masked formula placeholder, count and skip
+        if seg == "@@LATEX_FORMULA@@" or "@@LATEX_FORMULA@@" in seg:
+            stats["dropped_latex"] += 1
+            continue
+
+        # Check if this segment directly preceded a masked formula segment (incomplete lead-in)
+        next_is_formula = (seg_idx + 1 < len(segments) and segments[seg_idx + 1] == "@@LATEX_FORMULA@@")
+
         # Add terminal punctuation if missing or ending with colon/semicolon
+        seg_ends_with_colon = bool(re.search(r"[:;]\s*$", seg))
         seg = re.sub(r"[:;]\s*$", "", seg)
         clean_punct = re.sub(r"[*_\s]+$", "", seg)
         if not re.search(r"[.!?]$", clean_punct):
             seg = seg + "."
 
-        # Replace LaTeX formulas with placeholder token before splitting
-        masked_seg = latex_pattern.sub(" @@LATEX_FORMULA@@ ", seg)
-
         # Protect abbreviations from false sentence breaks
-        prot_seg = protect_abbreviations(masked_seg)
+        prot_seg = protect_abbreviations(seg)
 
         # Split sentences within segment
         raw_sentences = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9\"'\(])", prot_seg)
 
-        for s in raw_sentences:
-            # If LaTeX was removed/present, drop sentence entirely and document
-            if "@@LATEX_FORMULA@@" in s:
-                stats["dropped_latex"] += 1
-                continue
-
+        for s_idx, s in enumerate(raw_sentences):
             clean_s = unprotect_abbreviations(s).strip()
             clean_s = clean_text(clean_s)
             clean_s = re.sub(r"\.\.+$", ".", clean_s)
@@ -223,9 +333,41 @@ def extract_claims_with_stats(report: str) -> Tuple[List[str], Dict[str, Any]]:
             if re.match(r"^https?://\S+$", clean_s):
                 continue
 
-            # Minimum 6 words
+            # --- Rule (a): LaTeX commands and formula delimiters ---
+            # Drop any claim containing a backslash followed by letters, \[, \(, or $
+            if re.search(r"\\[a-zA-Z]", clean_s) or re.search(r"\\\[|\\\(", clean_s) or "$" in clean_s:
+                stats["dropped_latex"] += 1
+                continue
+
+            # --- Rule (b): Incomplete lead-ins & trailing function words ---
+            # Drop if the last word before the final period is a function word or "roughly"
+            last_word_match = re.search(r"(\b[a-zA-Z]+)\b[^\w]*$", clean_s)
+            if last_word_match and last_word_match.group(1).lower() in TRAILING_INCOMPLETE_WORDS:
+                stats["dropped_non_claims"] += 1
+                continue
+            # Drop if this sentence was an incomplete clause directly preceding a masked equation
+            if next_is_formula and s_idx == len(raw_sentences) - 1 and seg_ends_with_colon:
+                stats["dropped_non_claims"] += 1
+                continue
+
+            # --- Rule (c): Lowercase start or citation scraps ---
+            stripped_start = re.sub(r"^[\s\"'“‘\(\[\{<]+", "", clean_s)
+            if stripped_start and stripped_start[0].islower():
+                stats["dropped_non_claims"] += 1
+                continue
+            if clean_s.strip().startswith("(") and (clean_s.strip().endswith(").") or clean_s.strip().endswith(")")):
+                stats["dropped_non_claims"] += 1
+                continue
+
+            # --- Rule (d): Under 7 words ---
             words = [w for w in clean_s.split() if re.search(r"\w", w)]
-            if len(words) < 6:
+            if len(words) < 7:
+                stats["dropped_non_claims"] += 1
+                continue
+
+            # --- Rule (e): Bullet labels / fragments that are noun phrases with no verb ---
+            if not has_verb(clean_s):
+                stats["dropped_non_claims"] += 1
                 continue
 
             claims.append(clean_s)

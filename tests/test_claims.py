@@ -5,6 +5,7 @@ Runs 100% offline with zero API calls or downloads.
 
 import os
 import sys
+import re
 import tempfile
 import numpy as np
 import pandas as pd
@@ -331,6 +332,72 @@ def test_merge_labeled_script():
             )
 
         print("[PASS] Unit Test: merge_labeled script verified.")
+
+
+def test_task_c2_fragment_filtering_rules_on_casimir_examples():
+    """Verify Task C2 fragment filtering rules (a)-(e) using the 15 Casimir examples."""
+    # (a) Any claim containing a LaTeX command (\ followed by letters) or \[, \(, $
+    ex1 = r"\approx \frac{\pi^{2}\hbar c}{240\,(10^{-8}\,\text{m})^{4}} \approx 1.3\times10^{3}\ \text{Pa},."
+    ex4 = r"U \approx \frac{F\,d}{2} \approx 6.5\times10^{-3}\ \text{J m}^{-2}."
+    assert extract_claims(ex1) == [], "Ex1 must be dropped by LaTeX rule (a)"
+    assert extract_claims(ex4) == [], "Ex4 must be dropped by LaTeX rule (a)"
+    assert extract_claims("The force is \\[ F = -A/d^4 \\] in vacuum.") == []
+    assert extract_claims("The energy $E = mc^2$ is conserved.") == []
+
+    # (b) Clause directly followed by a masked equation / trailing function words (is, are, roughly, etc.)
+    ex8 = "For ideal metal plates the force per unit area is."
+    ex5 = "which corresponds to a potential‑energy density of roughly."
+    assert extract_claims(ex8) == [], "Ex8 must be dropped by trailing function word rule (b)"
+    assert extract_claims(ex5) == [], "Ex5 must be dropped by trailing roughly / lowercase rule (b/c)"
+    assert extract_claims("The energy released during the stroke is of.") == []
+
+    # (c) Claims that start with a lowercase letter, or start with '(' and end with ').'
+    ex3 = "(Equation 3 in the arXiv pre‑print )."
+    assert extract_claims(ex3) == [], "Ex3 must be dropped by citation scrap rule (c)"
+    assert extract_claims("which yields a net energy deficit across cycles.") == []
+
+    # (d) Claims under 7 words
+    ex2 = "Nanofabrication tolerances (surface roughness, patch potentials)."
+    assert len(ex2.split()) < 7
+    assert extract_claims(ex2) == [], "Ex2 must be dropped by under 7 words rule (d)"
+
+    # (e) Bullet labels that are only a noun phrase with no verb
+    ex10 = "Quantitative illustration (using Eq. (1)): at a plate separation of 10 nm."
+    assert extract_claims(ex10) == [], "Ex10 must be dropped by noun phrase / no verb rule (e)"
+
+    # Valid claims (Examples 6, 7, 9, 11, 12, 13, 14, 15) must be KEPT
+    valid_samples = [
+        "Energy required to change reflectivity dominates the cycle budget.",
+        "Affect the magnitude and reproducibility of the Casimir pressure.",
+        "Needed to verify that no hidden energy inputs are omitted.",
+        "The Casimir attraction then pulls the plates together, generating piezoelectric voltage spikes.",
+        "The energy cost of step (c) is identified as the dominant loss channel.",
+        "Consequently a single static Casimir cavity cannot serve as a source of continuous power.",
+        "The 2026 Frontiers concept study introduces a Casimir‑piezoelectric drive (CPD) for spacecraft propulsion .",
+        "The reported thrust is supplementary and does not draw from the primary power budget.",
+    ]
+    for sample in valid_samples:
+        extracted = extract_claims(sample)
+        assert len(extracted) == 1, f"Expected 1 claim from '{sample}', got: {extracted}"
+
+    # Re-extract full Casimir report and verify counts
+    casimir_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "results",
+        "20261022_173252_91e49f_adaptive_classifier.json",
+    )
+    if os.path.exists(casimir_path):
+        import json
+        with open(casimir_path) as f:
+            rep = json.load(f)["final_report"]
+        claims = extract_claims(rep)
+        assert len(claims) == 36, f"Expected 36 claims (43 original - 7 dropped), got: {len(claims)}"
+        for c in claims:
+            assert not re.search(r"\\[a-zA-Z]", c), f"LaTeX leaked: {c}"
+            assert not c.startswith("("), f"Citation scrap leaked: {c}"
+            assert len(c.split()) >= 7, f"Short claim leaked: {c}"
+
+    print("[PASS] Unit Test: Task C2 fragment filtering rules (a)-(e) verified on Casimir examples.")
 
 
 def run_all():
