@@ -97,6 +97,7 @@ def main():
     # Write B4 decision file
     config_data = {
         "backend": best_candidate["name"],
+        "model_source": best_candidate["raw"].get("model_source", ""),
         "tau": best_candidate["tau"],
         "dev_macro_f1": best_candidate["dev_f1"],
         "heldout_macro_f1": best_candidate["heldout_f1"],

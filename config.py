@@ -7,6 +7,7 @@ QUALITY_THRESHOLD: float = float(os.getenv("QUALITY_THRESHOLD", "7.0"))
 MAX_RETRIES: int = 3
 TOKEN_LIMIT_PER_RUN: int = int(os.getenv("TOKEN_LIMIT_PER_RUN", "60000"))
 CLASSIFIER_FEEDBACK: bool = False
-CLASSIFIER_BACKEND: str = os.getenv("CLASSIFIER_BACKEND", "lr")
+CLASSIFIER_BACKEND: str = os.getenv("CLASSIFIER_BACKEND", "cross_encoder")
+FAITHFULNESS_THRESHOLD: float = float(os.getenv("FAITHFULNESS_THRESHOLD", "0.10"))
 
 

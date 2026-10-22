@@ -430,6 +430,7 @@ def critic_node(state: ResearchState) -> dict:
         "judge_accept": verdict["accept"],
         "judge_score": verdict.get("score"),
         "judge_reason": verdict.get("reason", ""),
+        "judge_details": verdict.get("details"),
         "decision": decision,
     }
 

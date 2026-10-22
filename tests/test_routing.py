@@ -94,15 +94,14 @@ def run_tests():
     assert verdict_none["accept"] is True, "Expected accept=True for score=None"
     print(f"[PASS] Case 7: llm_judge correctly accepts at {QUALITY_THRESHOLD}, rejects below, and accepts on None")
 
-    # Case 8: classifier_judge raises NotImplementedError
-    try:
-        classifier_judge({"score": 5.0})
-        assert False, "classifier_judge should raise NotImplementedError"
-    except NotImplementedError:
-        pass
+    # Case 8: classifier_judge is implemented and registered
     assert JUDGES["classifier"] == classifier_judge
     assert JUDGES["llm"] == llm_judge
-    print("[PASS] Case 8: classifier_judge raises NotImplementedError and JUDGES registry is configured")
+    # Calling classifier_judge with empty report accepts cleanly under no checkable claims
+    empty_verdict = classifier_judge({"report": "", "score": 5.0})
+    assert empty_verdict["accept"] is True
+    assert "no checkable claims" in empty_verdict["reason"].lower()
+    print("[PASS] Case 8: classifier_judge is implemented and JUDGES registry is configured")
 
     # Case 9: combine_evidence keeps newest first, deduplicates, and caps length
     new_ev = "New research finding about topic."

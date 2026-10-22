@@ -1,5 +1,6 @@
 {
   "backend": "cross_encoder",
+  "model_source": "vaibhavarya/distilbert-faithfulness-nli",
   "tau": 0.6599999999999999,
   "dev_macro_f1": 0.8445084327437269,
   "heldout_macro_f1": 0.8253465346534654,
