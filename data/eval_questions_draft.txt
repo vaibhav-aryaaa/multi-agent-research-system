@@ -1,0 +1,25 @@
+Mechanisms of antibiotic persistence in Pseudomonas aeruginosa biofilms
+Hydrogen embrittlement mechanisms in high-strength steels used for gas pipelines
+Sodium-ion battery cathode materials: layered oxides versus Prussian blue analogues
+Role of the gut microbiome in patient response to immune checkpoint inhibitors
+Thermal runaway propagation in lithium-ion battery packs and mitigation designs
+Sorbent degradation and energy requirements in direct air capture of carbon dioxide
+Mechanisms of tau protein spreading in Alzheimer's disease progression
+Communication-efficient federated learning under non-IID client data
+Quantization-aware training of large language models for deployment on edge devices
+Energy efficiency of memristor-based neuromorphic computing hardware
+Wake effects of offshore wind turbines on downstream power output
+Catalyst cost and durability in proton exchange membrane electrolysis for green hydrogen
+Mechanisms of CAR-T cell exhaustion in solid tumors
+Soil carbon sequestration potential of biochar amendment in agriculture
+Graphene oxide membranes for seawater desalination and water filtration
+Retrieval-augmented generation techniques for reducing hallucination in large language models
+Satellite remote sensing for monitoring mangrove forest loss
+Ionic liquid electrolytes for supercapacitors at low temperatures
+Phage therapy efficacy against multidrug-resistant bacterial infections
+Wildfire smoke exposure and cardiovascular health outcomes
+Topological insulators for low-power spintronic devices
+Antimicrobial resistance gene transfer in wastewater treatment plants
+Photocatalytic carbon dioxide reduction on titanium dioxide-based catalysts
+Digital twin applications in predictive maintenance for industrial machinery
+Effectiveness of AI-based adaptive learning systems on student outcomes in higher education
