@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
@@ -6,6 +7,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 from agents import get_groq_model
 from runlog import save_run
+from graph import DEPS, invoke_with_retry, reset_token_usage, get_token_usage
 
 load_dotenv()
 
@@ -27,18 +29,34 @@ Be detailed, factual and professional."""),
 ])
 
 baseline_chain = baseline_prompt | llm | StrOutputParser()
+DEPS.baseline_chain = baseline_chain
 
-def run_baseline(topic: str) -> dict:
+def run_baseline(
+    topic: str,
+    results_dir: Optional[str] = None,
+    qid: Optional[str] = None,
+    filename: Optional[str] = None,
+    save: bool = True,
+) -> dict:
     """Run single-prompt baseline with no agents, tools, or retrieval (System 1)."""
-    report = baseline_chain.invoke({"topic": topic})
+    reset_token_usage()
+    chain = getattr(DEPS, "baseline_chain", None) or baseline_chain
+    report = invoke_with_retry(chain, {"topic": topic})
+    usage = get_token_usage()
     result = {
         "topic": topic,
-        "report": report,
+        "report": str(report),
         "attempts": [],
         "retry_count": 0,
         "score": None,
+        "token_usage": usage,
+        "token_usage_first_pass": usage,
+        "token_usage_retries": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
     }
-    save_run(result, system="baseline")
+    if qid:
+        result["qid"] = qid
+    if save:
+        save_run(result, system="baseline", results_dir=results_dir, filename=filename, qid=qid)
     return result
 
 if __name__ == "__main__":

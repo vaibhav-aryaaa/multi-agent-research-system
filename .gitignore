@@ -6,6 +6,8 @@ __pycache__/
 */.DS_Store
 results/*
 !results/.gitkeep
+!results/eval/
+!results/eval/**
 .cache/
 hf_cache/
 *.npy

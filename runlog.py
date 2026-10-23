@@ -33,7 +33,13 @@ def build_contexts(result: dict, system: str) -> list[str]:
         
     return contexts
 
-def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> str:
+def save_run(
+    result: dict,
+    system: str,
+    results_dir: Optional[str] = None,
+    filename: Optional[str] = None,
+    qid: Optional[str] = None,
+) -> str:
     """Save an execution run log as a JSON file in the results/ directory.
     
     Returns the absolute path to the generated JSON log.
@@ -44,7 +50,7 @@ def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> st
     now = datetime.now()
     timestamp_str = now.strftime("%Y%m%d_%H%M%S")
     short_hash = uuid.uuid4().hex[:6]
-    run_id = f"{timestamp_str}_{short_hash}"
+    run_id = result.get("run_id") or f"{timestamp_str}_{short_hash}"
     result["run_id"] = run_id
     
     contexts = build_contexts(result, system)
@@ -64,11 +70,18 @@ def save_run(result: dict, system: str, results_dir: Optional[str] = None) -> st
         "final_score": result.get("score"),
         "attempts": result.get("attempts", []),
     }
+    assigned_qid = qid or result.get("qid")
+    if assigned_qid:
+        run_data["qid"] = assigned_qid
     if "token_usage" in result:
         run_data["token_usage"] = result["token_usage"]
+    if "token_usage_first_pass" in result:
+        run_data["token_usage_first_pass"] = result["token_usage_first_pass"]
+    if "token_usage_retries" in result:
+        run_data["token_usage_retries"] = result["token_usage_retries"]
     
-    filename = f"{run_id}_{system}.json"
-    filepath = os.path.join(target_dir, filename)
+    fname = filename or f"{run_id}_{system}.json"
+    filepath = os.path.join(target_dir, fname)
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(run_data, f, indent=2, ensure_ascii=False)
         

@@ -34,6 +34,7 @@ class GraphDependencies:
         self.query_writer_chain = query_writer_chain
         self.build_search_agent = build_search_agent
         self.build_reader_agent = build_reader_agent
+        self.baseline_chain = None
 
 DEPS = GraphDependencies()
 
@@ -60,9 +61,45 @@ TOKEN_USAGE = {
     "total_tokens": 0,
 }
 
+# Optional rolling usage log file (for batch eval runner)
+USAGE_LOG_PATH: Optional[str] = None
+
+def set_usage_log_path(path: Optional[str]):
+    global USAGE_LOG_PATH
+    USAGE_LOG_PATH = path
+
+def append_to_usage_log(tokens_dict: dict, source: str = "llm_call"):
+    global USAGE_LOG_PATH
+    if not USAGE_LOG_PATH:
+        return
+    tot = tokens_dict.get("total_tokens", 0)
+    prompt = tokens_dict.get("prompt_tokens", 0)
+    comp = tokens_dict.get("completion_tokens", 0)
+    if tot <= 0 and prompt <= 0 and comp <= 0:
+        return
+    from datetime import datetime
+    import json
+    record = {
+        "timestamp": datetime.now().isoformat(),
+        "source": source,
+        "prompt_tokens": prompt,
+        "completion_tokens": comp,
+        "total_tokens": tot,
+    }
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(USAGE_LOG_PATH)), exist_ok=True)
+        with open(USAGE_LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record) + "\n")
+    except Exception as e:
+        print(f"[Warning] Failed to append to usage log: {e}")
+
 def reset_token_usage():
     global TOKEN_USAGE
-    TOKEN_USAGE = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    TOKEN_USAGE.clear()
+    TOKEN_USAGE.update({"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0})
+
+def get_token_usage() -> dict:
+    return dict(TOKEN_USAGE)
 
 def record_token_usage(source_name: str, usage_dict_or_response: Any):
     """Extract and accumulate token usage."""
@@ -90,6 +127,11 @@ def record_token_usage(source_name: str, usage_dict_or_response: Any):
         TOKEN_USAGE["prompt_tokens"] += prompt
         TOKEN_USAGE["completion_tokens"] += completion
         TOKEN_USAGE["total_tokens"] += total
+        append_to_usage_log({
+            "prompt_tokens": prompt,
+            "completion_tokens": completion,
+            "total_tokens": total,
+        }, source=source_name)
         print(f"[{source_name}] Tokens: prompt={prompt}, completion={completion}, total={total}")
         token_limit = int(os.getenv("TOKEN_LIMIT_PER_RUN", "60000"))
         if TOKEN_USAGE["total_tokens"] > token_limit:
@@ -539,3 +581,194 @@ def run_pipeline(
 
     save_run(final_state, system=mode, results_dir=results_dir)
     return final_state
+
+
+def run_first_pass(topic: str) -> dict:
+    """Execute the shared first pass (attempt 0): researcher -> reader -> writer -> critic LLM.
+
+    The critic LLM chain is invoked exactly once and its critique, score, and
+    needs_more_research flag are recorded in the returned state dictionary.
+    """
+    reset_token_usage()
+
+    state: ResearchState = {
+        "topic": topic,
+        "search_results": "",
+        "latest_search_results": "",
+        "scraped_content": "",
+        "report": "",
+        "feedback": "",
+        "score": None,
+        "attempt": 0,
+        "retry_count": 0,
+        "decision": "",
+        "judge": "llm",
+        "retry_enabled": False,
+        "used_urls": [],
+        "queries_used": [],
+        "attempts": [],
+    }
+
+    # 1. Researcher
+    res_out = researcher_node(state)
+    state.update(res_out)
+
+    # 2. Reader
+    read_out = reader_node(state)
+    state.update(read_out)
+
+    # 3. Writer
+    write_out = writer_node(state)
+    state.update(write_out)
+
+    # 4. Critic LLM evaluation (attempt 0)
+    report = state.get("report", "")
+    search_results = state.get("search_results", "")
+    scraped_content = state.get("scraped_content", "")
+    research_combined = (
+        f"SEARCH RESULTS : \n {search_results} \n\n"
+        f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
+    )
+    critic_output = invoke_with_retry(DEPS.critic_chain, {
+        "report": report,
+        "research": research_combined,
+    })
+
+    if isinstance(critic_output, CriticFeedback):
+        score = float(critic_output.score)
+        critique = critic_output.critique
+        needs_more_research = bool(critic_output.needs_more_research)
+    elif isinstance(critic_output, dict):
+        score = float(critic_output.get("score", 0.0))
+        critique = critic_output.get("critique", "")
+        needs_more_research = bool(critic_output.get("needs_more_research", False))
+    else:
+        text = str(critic_output)
+        match = re.search(r"score:\s*([\d\.]+)", text, re.IGNORECASE)
+        score = float(match.group(1)) if match else None
+        critique = text
+        needs_more_research = False
+
+    state["score"] = score
+    state["feedback"] = critique
+    state["needs_more_research"] = needs_more_research
+    state["first_pass_token_usage"] = dict(TOKEN_USAGE)
+    state["model_name"] = model_name
+    return state
+
+
+def run_pipeline_from_first_pass(
+    first_state: dict,
+    mode: str = "adaptive_llm",
+    results_dir: Optional[str] = None,
+    save: bool = True,
+    qid: Optional[str] = None,
+    filename: Optional[str] = None,
+) -> dict:
+    """Resume and execute pipeline from a shared attempt-0 first-pass state.
+
+    Supports:
+    - 'fixed' (System 2): no retry, final report = attempt-0 report.
+    - 'adaptive_llm' (System 3): evaluates llm_judge on attempt-0; retries if rejected.
+    - 'adaptive_classifier' (System 4): evaluates classifier_judge on attempt-0; retries if rejected.
+    """
+    import copy
+    state = copy.deepcopy(first_state)
+    first_pass_tokens = copy.deepcopy(first_state.get("first_pass_token_usage", {
+        "prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0
+    }))
+
+    if mode == "fixed":
+        is_retry_enabled = False
+        judge_name = "llm"
+    elif mode == "adaptive_llm":
+        is_retry_enabled = True
+        judge_name = "llm"
+    elif mode == "adaptive_classifier":
+        is_retry_enabled = True
+        judge_name = "classifier"
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+
+    state["judge"] = judge_name
+    state["retry_enabled"] = is_retry_enabled
+
+    # Reset token usage tracker for the retry phase
+    reset_token_usage()
+
+    # Evaluate judge on attempt 0
+    judge_fn = JUDGES.get(judge_name, llm_judge)
+    judge_state = {
+        **state,
+        "score": state.get("score"),
+        "feedback": state.get("feedback", ""),
+        "needs_more_research": state.get("needs_more_research", False),
+    }
+    verdict: JudgeVerdict = judge_fn(judge_state)
+
+    needs_more_research = state.get("needs_more_research", False)
+    decision = decide(
+        retry_enabled=is_retry_enabled,
+        accept=verdict["accept"],
+        retry_count=0,
+        needs_more_research=needs_more_research,
+    )
+
+    attempt_0_record = {
+        "attempt": 0,
+        "report": state.get("report", ""),
+        "critic_score": state.get("score"),
+        "critique": state.get("feedback", ""),
+        "needs_more_research": needs_more_research,
+        "judge_accept": verdict["accept"],
+        "judge_score": verdict.get("score"),
+        "judge_reason": verdict.get("reason", ""),
+        "judge_details": verdict.get("details"),
+        "decision": decision,
+    }
+    state["attempts"] = [attempt_0_record]
+    state["decision"] = decision
+
+    if decision != "end":
+        state["retry_count"] = 1
+        state["attempt"] = 1
+        target_node = decision
+
+        while state["decision"] != "end" and state.get("retry_count", 0) <= MAX_RETRIES:
+            if target_node == "researcher":
+                res_out = researcher_node(state)
+                state.update(res_out)
+                read_out = reader_node(state)
+                state.update(read_out)
+                write_out = writer_node(state)
+                state.update(write_out)
+            elif target_node == "writer":
+                write_out = writer_node(state)
+                state.update(write_out)
+
+            critic_out = critic_node(state)
+            if "attempts" in critic_out:
+                state["attempts"].extend(critic_out["attempts"])
+            state.update({k: v for k, v in critic_out.items() if k != "attempts"})
+
+            target_node = route_after_critic(state)
+    else:
+        state["retry_count"] = 0
+        state["attempt"] = 0
+
+    retry_tokens = dict(TOKEN_USAGE)
+
+    state["token_usage_first_pass"] = first_pass_tokens
+    state["token_usage_retries"] = retry_tokens
+    state["token_usage"] = {
+        "prompt_tokens": first_pass_tokens["prompt_tokens"] + retry_tokens["prompt_tokens"],
+        "completion_tokens": first_pass_tokens["completion_tokens"] + retry_tokens["completion_tokens"],
+        "total_tokens": first_pass_tokens["total_tokens"] + retry_tokens["total_tokens"],
+    }
+    if qid:
+        state["qid"] = qid
+
+    if save:
+        save_run(state, system=mode, results_dir=results_dir, filename=filename, qid=qid)
+
+    return state
