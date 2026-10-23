@@ -61,6 +61,77 @@ TOKEN_USAGE = {
     "total_tokens": 0,
 }
 
+# Rolling 60-second token window tracker for Groq TPM governor
+ROLLING_WINDOW_TOKENS: list[tuple[float, int]] = []
+TIME_FN = time.time
+SLEEP_FN = time.sleep
+GOVERNOR_TPM_LIMIT = 7000
+GOVERNOR_WINDOW_SECONDS = 60.0
+
+def set_time_sleep_hooks(time_fn=None, sleep_fn=None):
+    """Set custom clock and sleep hooks for testing."""
+    global TIME_FN, SLEEP_FN
+    TIME_FN = time_fn or time.time
+    SLEEP_FN = sleep_fn or time.sleep
+
+def reset_rolling_window():
+    global ROLLING_WINDOW_TOKENS
+    ROLLING_WINDOW_TOKENS = []
+
+def record_rolling_usage(tokens: int):
+    global ROLLING_WINDOW_TOKENS
+    if tokens > 0:
+        now = TIME_FN()
+        ROLLING_WINDOW_TOKENS.append((now, tokens))
+
+def get_rolling_usage(now: Optional[float] = None) -> int:
+    global ROLLING_WINDOW_TOKENS
+    current_time = now if now is not None else TIME_FN()
+    cutoff = current_time - GOVERNOR_WINDOW_SECONDS
+    ROLLING_WINDOW_TOKENS = [(t, tok) for t, tok in ROLLING_WINDOW_TOKENS if t > cutoff]
+    return sum(tok for _, tok in ROLLING_WINDOW_TOKENS)
+
+def estimate_tokens(inputs: Any, expected_completion: int = 1000) -> int:
+    """Estimate prompt tokens as characters / 3.5 plus expected completion tokens."""
+    if isinstance(inputs, str):
+        chars = len(inputs)
+    elif isinstance(inputs, dict):
+        chars = sum(len(str(v)) for v in inputs.values())
+    elif isinstance(inputs, (list, tuple)):
+        chars = sum(len(str(item)) for item in inputs)
+    else:
+        chars = len(str(inputs))
+
+    prompt_est = int(chars / 3.5)
+    return prompt_est + expected_completion
+
+def govern_rate_limit(est_total: int):
+    """Enforce rolling 60s token governor under 7,000 tokens."""
+    if est_total > GOVERNOR_TPM_LIMIT:
+        raise RuntimeError(
+            f"REQUEST TOO LARGE: Estimated tokens ({est_total}) exceeds the {GOVERNOR_TPM_LIMIT} per-minute limit."
+        )
+
+    while True:
+        now = TIME_FN()
+        used = get_rolling_usage(now)
+        if used + est_total <= GOVERNOR_TPM_LIMIT:
+            break
+
+        # Calculate time needed for oldest entries to drop out of 60s window
+        needed_drop = (used + est_total) - GOVERNOR_TPM_LIMIT
+        accum = 0
+        target_time = now + 1.0
+        for t, tok in sorted(ROLLING_WINDOW_TOKENS, key=lambda x: x[0]):
+            accum += tok
+            if accum >= needed_drop:
+                target_time = t + GOVERNOR_WINDOW_SECONDS + 0.1
+                break
+
+        sleep_secs = max(0.5, target_time - now)
+        print(f"[Governor] Rolling 60s usage ({used:,} + {est_total:,} est > {GOVERNOR_TPM_LIMIT:,}), sleeping {sleep_secs:.1f}s until window clears...")
+        SLEEP_FN(sleep_secs)
+
 # Optional rolling usage log file (for batch eval runner)
 USAGE_LOG_PATH: Optional[str] = None
 
@@ -127,6 +198,7 @@ def record_token_usage(source_name: str, usage_dict_or_response: Any):
         TOKEN_USAGE["prompt_tokens"] += prompt
         TOKEN_USAGE["completion_tokens"] += completion
         TOKEN_USAGE["total_tokens"] += total
+        record_rolling_usage(total)
         append_to_usage_log({
             "prompt_tokens": prompt,
             "completion_tokens": completion,
@@ -165,18 +237,29 @@ class TokenUsageCallback(BaseCallbackHandler):
 
 TOKEN_CALLBACK = TokenUsageCallback()
 
-def invoke_with_retry(runnable, inputs, max_attempts: int = 3, model_label: str = ""):
-    """Safely invoke an agent or chain with bounded, visible backoff on rate limits."""
+def invoke_with_retry(
+    runnable,
+    inputs,
+    max_attempts: int = 6,
+    model_label: str = "",
+    expected_completion: int = 1000,
+):
+    """Safely invoke an agent or chain with rolling governor and bounded backoff."""
     target_model = model_label or model_name
+
+    # 1. Enforce rolling per-minute governor under 7,000 tokens
+    est_total = estimate_tokens(inputs, expected_completion=expected_completion)
+    govern_rate_limit(est_total)
+
     for attempt in range(1, max_attempts + 1):
         try:
             return runnable.invoke(inputs, config={"callbacks": [TOKEN_CALLBACK]})
         except Exception as e:
             status_code = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
             err_msg = str(e)
-            
+
             # Check for 413 (request too large): raise immediately
-            if status_code == 413:
+            if status_code == 413 or "413" in err_msg:
                 print(f"Error 413: Request too large for {target_model}. Raising immediately.")
                 raise RuntimeError(f"REQUEST TOO LARGE (413): {err_msg}") from e
 
@@ -184,35 +267,35 @@ def invoke_with_retry(runnable, inputs, max_attempts: int = 3, model_label: str 
             if status_code == 400:
                 if attempt < 2:
                     print(f"HTTP 400 error ({err_msg[:100]}...), retrying with exponential backoff (attempt {attempt}/2)")
-                    time.sleep(2.0 * attempt)
+                    SLEEP_FN(2.0 * attempt)
                     continue
                 else:
                     raise
-                
+
             # Check for Rate Limit (429)
-            if status_code == 429:
+            if status_code == 429 or "rate limit" in err_msg.lower() or "429" in err_msg:
                 # Daily limit hit (TPD / tokens per day): fail fast
                 if "tokens per day" in err_msg.lower() or "tpd" in err_msg.lower():
                     raise RuntimeError(f"DAILY TOKEN LIMIT HIT for {target_model}. Stop and wait for reset or change tier.") from e
-                
+
                 # Per-minute limits (TPM / RPM)
                 match = re.search(r"try again in (?:(\d+)m)?([\d\.]+)s", err_msg)
                 if match:
                     mins = float(match.group(1)) if match.group(1) else 0.0
                     secs = float(match.group(2))
-                    wait_time = mins * 60.0 + secs
+                    wait_time = (mins * 60.0 + secs) + 2.0
                 else:
-                    wait_time = 5.0 * attempt
-                    
+                    wait_time = 5.0 * attempt + 2.0
+
                 if wait_time > 90.0:
                     raise RuntimeError(f"Requested rate limit wait ({wait_time:.1f}s) exceeds 90s maximum for {target_model}. Raising.") from e
-                    
+
                 print(f"Rate limited, sleeping {wait_time:.1f}s (attempt {attempt}/{max_attempts})")
                 if attempt >= max_attempts:
                     print(f"Exceeded {max_attempts} retry attempts. Raising.")
                     raise
-                    
-                time.sleep(wait_time)
+
+                SLEEP_FN(wait_time)
             else:
                 raise
 
@@ -297,7 +380,8 @@ def researcher_node(state: ResearchState) -> dict:
                     "topic": topic,
                     "critique": critique,
                     "queries_used": ", ".join(queries_used) if queries_used else "None",
-                }
+                },
+                expected_completion=100,
             )
             query = str(raw_query).strip().strip('"\'').strip()
             lines = [l.strip() for l in query.splitlines() if l.strip()]
@@ -401,17 +485,25 @@ def writer_node(state: ResearchState) -> dict:
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
     if state.get("attempt", 0) > 0:
-        report = invoke_with_retry(DEPS.revise_chain, {
-            "topic": topic,
-            "research": research_combined,
-            "previous_report": state.get("report", ""),
-            "critique": state.get("feedback", ""),
-        })
+        report = invoke_with_retry(
+            DEPS.revise_chain,
+            {
+                "topic": topic,
+                "research": research_combined,
+                "previous_report": state.get("report", ""),
+                "critique": state.get("feedback", ""),
+            },
+            expected_completion=1500,
+        )
     else:
-        report = invoke_with_retry(DEPS.writer_chain, {
-            "topic": topic,
-            "research": research_combined,
-        })
+        report = invoke_with_retry(
+            DEPS.writer_chain,
+            {
+                "topic": topic,
+                "research": research_combined,
+            },
+            expected_completion=1500,
+        )
     return {"report": str(report)}
 
 def critic_node(state: ResearchState) -> dict:
@@ -422,10 +514,14 @@ def critic_node(state: ResearchState) -> dict:
         f"SEARCH RESULTS : \n {search_results} \n\n"
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
-    critic_output = invoke_with_retry(DEPS.critic_chain, {
-        "report": report,
-        "research": research_combined,
-    })
+    critic_output = invoke_with_retry(
+        DEPS.critic_chain,
+        {
+            "report": report,
+            "research": research_combined,
+        },
+        expected_completion=1000,
+    )
 
     if isinstance(critic_output, CriticFeedback):
         score = float(critic_output.score)
@@ -629,10 +725,14 @@ def run_first_pass(topic: str) -> dict:
         f"SEARCH RESULTS : \n {search_results} \n\n"
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
-    critic_output = invoke_with_retry(DEPS.critic_chain, {
-        "report": report,
-        "research": research_combined,
-    })
+    critic_output = invoke_with_retry(
+        DEPS.critic_chain,
+        {
+            "report": report,
+            "research": research_combined,
+        },
+        expected_completion=1000,
+    )
 
     if isinstance(critic_output, CriticFeedback):
         score = float(critic_output.score)

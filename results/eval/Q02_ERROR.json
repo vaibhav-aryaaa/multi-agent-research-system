@@ -1,0 +1,7 @@
+{
+  "qid": "Q02",
+  "topic": "Hydrogen embrittlement mechanisms in high-strength steels used for gas pipelines",
+  "error": "REQUEST TOO LARGE: Estimated tokens (8808) exceeds the 7000 per-minute limit.",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/scripts/run_eval.py\", line 406, in main\n    s3_res = run_pipeline_from_first_pass(\n        first_state=first_state,\n    ...<4 lines>...\n        save=True,\n    )\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 843, in run_pipeline_from_first_pass\n    write_out = writer_node(state)\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 488, in writer_node\n    report = invoke_with_retry(\n        DEPS.revise_chain,\n    ...<6 lines>...\n        expected_completion=1500,\n    )\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 252, in invoke_with_retry\n    govern_rate_limit(est_total)\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 111, in govern_rate_limit\n    raise RuntimeError(\n        f\"REQUEST TOO LARGE: Estimated tokens ({est_total}) exceeds the {GOVERNOR_TPM_LIMIT} per-minute limit.\"\n    )\nRuntimeError: REQUEST TOO LARGE: Estimated tokens (8808) exceeds the 7000 per-minute limit.\n",
+  "timestamp": "2026-10-23T22:51:46.945585"
+}

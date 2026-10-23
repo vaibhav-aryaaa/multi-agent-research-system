@@ -248,6 +248,19 @@ def setup_dry_run_fakes():
     DEPS.critic_chain = critic
     DEPS.baseline_chain = baseline
 
+    # In dry-run mode, advance time simulatedly so tests run instantly without real-time sleep
+    class SimulatedDryClock:
+        def __init__(self):
+            self._time = time.time()
+        def time(self):
+            return self._time
+        def sleep(self, secs):
+            self._time += secs
+
+    sim_clock = SimulatedDryClock()
+    from graph import set_time_sleep_hooks
+    set_time_sleep_hooks(time_fn=sim_clock.time, sleep_fn=sim_clock.sleep)
+
     # Mock classifier to accept with p_supported = 0.85
     def dry_run_score_claims(claims, passages, k=3, ce_path=None):
         return [{"claim": c, "p_supported": 0.85, "top_passage": passages[0] if passages else ""} for c in claims]
@@ -314,13 +327,10 @@ def main():
     print("-" * len(table_header))
 
     for idx, (qid, topic) in enumerate(questions):
-        # 1. Resume check: Skip if question already complete
+        # 1. Resume check: Skip if question already complete (all four files exist)
         if is_question_complete(out_dir, qid):
             print(f"{qid:<6} | {'SKIPPED':<10} | {'Already complete':<20} | {'-':<18} | {'-':<22} | {'0.0s':<8}")
             continue
-
-        # Clean any partial/half-written files for this QID
-        clean_partial_question_files(out_dir, qid)
 
         # 2. Daily token budget check
         used_24h, oldest_in_window = compute_24h_token_usage(usage_log_path)
@@ -339,72 +349,100 @@ def main():
             print("=" * 80 + "\n")
             sys.exit(0)
 
-        # 3. Process question with paired design
+        # 3. Process question with checkpoints and granular resumption
         q_start = time.time()
         try:
-            # S1: Baseline
-            s1_res = run_baseline(
-                topic=topic,
-                results_dir=out_dir,
-                qid=qid,
-                filename=f"{qid}_baseline.json",
-                save=False,
-            )
+            # S1: Baseline (System 1)
+            s1_path = os.path.join(out_dir, f"{qid}_baseline.json")
+            if os.path.exists(s1_path):
+                with open(s1_path, "r", encoding="utf-8") as f:
+                    s1_res = json.load(f)
+            else:
+                s1_res = run_baseline(
+                    topic=topic,
+                    results_dir=out_dir,
+                    qid=qid,
+                    filename=f"{qid}_baseline.json",
+                    save=True,
+                )
 
-            # Attempt 0: First pass (researcher -> reader -> writer -> critic LLM)
-            first_state = run_first_pass(topic)
+            # Check if any multi-agent system needs first pass
+            s2_path = os.path.join(out_dir, f"{qid}_fixed.json")
+            s3_path = os.path.join(out_dir, f"{qid}_adaptive_llm.json")
+            s4_path = os.path.join(out_dir, f"{qid}_adaptive_classifier.json")
+            first_pass_path = os.path.join(out_dir, f"{qid}_first_pass.json")
 
-            # S2: Fixed (uses attempt-0 state without retries)
-            s2_res = run_pipeline_from_first_pass(
-                first_state=first_state,
-                mode="fixed",
-                results_dir=out_dir,
-                qid=qid,
-                filename=f"{qid}_fixed.json",
-                save=False,
-            )
+            first_state = None
+            if not (os.path.exists(s2_path) and os.path.exists(s3_path) and os.path.exists(s4_path)):
+                if os.path.exists(first_pass_path):
+                    with open(first_pass_path, "r", encoding="utf-8") as f:
+                        first_state = json.load(f)
+                    print(f"[{qid}] Reusing first-pass checkpoint from {os.path.basename(first_pass_path)}")
+                else:
+                    first_state = run_first_pass(topic)
+                    with open(first_pass_path, "w", encoding="utf-8") as f:
+                        json.dump(first_state, f, indent=2, ensure_ascii=False)
+                    print(f"[{qid}] Saved first-pass checkpoint to {os.path.basename(first_pass_path)}")
 
-            # S3: Adaptive LLM (starts from attempt-0 state)
-            s3_res = run_pipeline_from_first_pass(
-                first_state=first_state,
-                mode="adaptive_llm",
-                results_dir=out_dir,
-                qid=qid,
-                filename=f"{qid}_adaptive_llm.json",
-                save=False,
-            )
+            # S2: Fixed (System 2)
+            if os.path.exists(s2_path):
+                with open(s2_path, "r", encoding="utf-8") as f:
+                    s2_res = json.load(f)
+            else:
+                s2_res = run_pipeline_from_first_pass(
+                    first_state=first_state,
+                    mode="fixed",
+                    results_dir=out_dir,
+                    qid=qid,
+                    filename=f"{qid}_fixed.json",
+                    save=True,
+                )
 
-            # S4: Adaptive Classifier (starts from attempt-0 state)
-            s4_res = run_pipeline_from_first_pass(
-                first_state=first_state,
-                mode="adaptive_classifier",
-                results_dir=out_dir,
-                qid=qid,
-                filename=f"{qid}_adaptive_classifier.json",
-                save=False,
-            )
+            # S3: Adaptive LLM (System 3)
+            if os.path.exists(s3_path):
+                with open(s3_path, "r", encoding="utf-8") as f:
+                    s3_res = json.load(f)
+            else:
+                s3_res = run_pipeline_from_first_pass(
+                    first_state=first_state,
+                    mode="adaptive_llm",
+                    results_dir=out_dir,
+                    qid=qid,
+                    filename=f"{qid}_adaptive_llm.json",
+                    save=True,
+                )
 
-            # Transactional Save: write all 4 files only after full completion
-            save_run(s1_res, system="baseline", results_dir=out_dir, filename=f"{qid}_baseline.json", qid=qid)
-            save_run(s2_res, system="fixed", results_dir=out_dir, filename=f"{qid}_fixed.json", qid=qid)
-            save_run(s3_res, system="adaptive_llm", results_dir=out_dir, filename=f"{qid}_adaptive_llm.json", qid=qid)
-            save_run(s4_res, system="adaptive_classifier", results_dir=out_dir, filename=f"{qid}_adaptive_classifier.json", qid=qid)
+            # S4: Adaptive Classifier (System 4)
+            if os.path.exists(s4_path):
+                with open(s4_path, "r", encoding="utf-8") as f:
+                    s4_res = json.load(f)
+            else:
+                s4_res = run_pipeline_from_first_pass(
+                    first_state=first_state,
+                    mode="adaptive_classifier",
+                    results_dir=out_dir,
+                    qid=qid,
+                    filename=f"{qid}_adaptive_classifier.json",
+                    save=True,
+                )
 
-            # Remove previous ERROR.json if it existed
-            err_path = os.path.join(out_dir, f"{qid}_ERROR.json")
-            if os.path.exists(err_path):
-                try:
-                    os.remove(err_path)
-                except OSError:
-                    pass
+            # Remove previous ERROR.json if all four systems are now complete
+            if is_question_complete(out_dir, qid):
+                err_path = os.path.join(out_dir, f"{qid}_ERROR.json")
+                if os.path.exists(err_path):
+                    try:
+                        os.remove(err_path)
+                    except OSError:
+                        pass
 
             q_elapsed = time.time() - q_start
             completed_in_session += 1
 
             # Accumulate token metrics
+            fp_tokens = (first_state or s2_res).get("first_pass_token_usage", {}).get("total_tokens", 0)
             q_tokens = (
                 s1_res.get("token_usage", {}).get("total_tokens", 0) +
-                first_state.get("first_pass_token_usage", {}).get("total_tokens", 0) +
+                fp_tokens +
                 s3_res.get("token_usage_retries", {}).get("total_tokens", 0) +
                 s4_res.get("token_usage_retries", {}).get("total_tokens", 0)
             )
@@ -426,9 +464,6 @@ def main():
             print(row)
 
         except Exception as e:
-            # Clean partial outputs on failure
-            clean_partial_question_files(out_dir, qid)
-
             err_msg = str(e)
             is_daily_limit = ("tokens per day" in err_msg.lower() or "tpd" in err_msg.lower() or "daily token limit hit" in err_msg.lower())
 
@@ -437,6 +472,21 @@ def main():
                 print("daily limit reached; re-run the same command tomorrow to resume")
                 print("=" * 80 + "\n")
                 sys.exit(0)
+
+            # Record error JSON
+            error_record = {
+                "qid": qid,
+                "topic": topic,
+                "error": err_msg,
+                "traceback": traceback.format_exc(),
+                "timestamp": datetime.now().isoformat(),
+            }
+            err_file = os.path.join(out_dir, f"{qid}_ERROR.json")
+            with open(err_file, "w", encoding="utf-8") as ef:
+                json.dump(error_record, ef, indent=2, ensure_ascii=False)
+
+            q_elapsed = time.time() - q_start
+            print(f"{qid:<6} | {'ERROR':<10} | {'-':<20} | {'-':<18} | {err_msg[:20]:<22} | {q_elapsed:.1f}s")
 
             # Record error JSON
             error_record = {

@@ -41,7 +41,7 @@ def run_baseline(
     """Run single-prompt baseline with no agents, tools, or retrieval (System 1)."""
     reset_token_usage()
     chain = getattr(DEPS, "baseline_chain", None) or baseline_chain
-    report = invoke_with_retry(chain, {"topic": topic})
+    report = invoke_with_retry(chain, {"topic": topic}, expected_completion=1500)
     usage = get_token_usage()
     result = {
         "topic": topic,
