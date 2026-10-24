@@ -1,8 +1,27 @@
-import streamlit as st
+import os
+import sys
 import time
 import random
-from graph import graph, run_pipeline
-from runlog import save_run
+import traceback
+import streamlit as st
+
+# 1. Ensure application directory is in sys.path for Streamlit Cloud
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))
+if _APP_DIR not in sys.path:
+    sys.path.insert(0, _APP_DIR)
+
+# 2. Bridge Streamlit Cloud secrets to os.environ so backend modules receive them
+try:
+    if hasattr(st, "secrets"):
+        for _k, _v in st.secrets.items():
+            if isinstance(_v, str) and _k not in os.environ:
+                os.environ[_k] = _v
+except Exception:
+    pass
+
+# Ensure GROQ_MODEL has a sensible default
+if not os.getenv("GROQ_MODEL"):
+    os.environ["GROQ_MODEL"] = "openai/gpt-oss-120b"
 
 st.set_page_config(
     page_title="AgentFlow · Multi-Agent Research",
@@ -10,6 +29,19 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+# 3. Defensive imports with clean user-facing diagnostics
+try:
+    from graph import graph, run_pipeline
+    from runlog import save_run
+except Exception as exc:
+    st.error(f"### Application Initialization Error: `{type(exc).__name__}`")
+    st.error(f"**Error Details:** {exc}")
+    st.markdown("---")
+    st.markdown("**Full Traceback:**")
+    st.code(traceback.format_exc(), language="python")
+    st.info("💡 **Tip for Streamlit Cloud**: Ensure `GROQ_API_KEY` and `TAVILY_API_KEY` are configured in your Streamlit Cloud app settings under **Secrets**.")
+    st.stop()
 
 st.markdown("""
 <style>
@@ -328,6 +360,14 @@ with col_input:
             st.rerun()
         else:
             st.warning("Please define a research objective.")
+
+    missing_keys = []
+    if not os.getenv("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") == "fake_key_for_offline":
+        missing_keys.append("GROQ_API_KEY")
+    if not os.getenv("TAVILY_API_KEY"):
+        missing_keys.append("TAVILY_API_KEY")
+    if missing_keys:
+        st.warning(f"⚠️ Missing API key(s): {', '.join(missing_keys)}. Configure them in Streamlit Cloud Secrets (or `.env`) to run live queries.")
     
     # Interactive Suggestion Chips
     st.markdown('<div class="suggestion-chip-container" style="margin-top:2rem; display:flex; align-items:center; flex-wrap:wrap; gap: 0.8rem;">', unsafe_allow_html=True)

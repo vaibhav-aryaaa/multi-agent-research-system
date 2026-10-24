@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from langgraph.prebuilt import create_react_agent
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -13,7 +12,7 @@ load_dotenv()
 def get_groq_model() -> str:
     env_model = os.getenv("GROQ_MODEL")
     if not env_model:
-        raise RuntimeError("Set GROQ_MODEL in .env")
+        return "openai/gpt-oss-120b"
     return env_model
 
 provider = os.getenv("LLM_PROVIDER", "groq")
@@ -25,6 +24,7 @@ llm = ChatGroq(model=model_name, api_key=api_key, temperature=0, max_retries=0)
 
 # LEGACY: Unused in deterministic retrieval (kept for backward compatibility)
 def build_search_agent():
+    from langgraph.prebuilt import create_react_agent
     system_message = """You are a High-Fidelity Academic Researcher. 
     Your goal is to find peer-reviewed papers, formal preprints (ArXiv), and technical whitepapers for the user's research objective.
     

@@ -1,0 +1,7 @@
+[client]
+showErrorDetails = "full"
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
