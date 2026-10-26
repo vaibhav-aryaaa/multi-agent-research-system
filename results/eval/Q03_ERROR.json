@@ -1,7 +1,0 @@
-{
-  "qid": "Q03",
-  "topic": "Sodium-ion battery cathode materials: layered oxides versus Prussian blue analogues",
-  "error": "REQUEST TOO LARGE: Estimated tokens (7454) exceeds the 7000 per-minute limit.",
-  "traceback": "Traceback (most recent call last):\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/scripts/run_eval.py\", line 420, in main\n    s4_res = run_pipeline_from_first_pass(\n        first_state=first_state,\n    ...<4 lines>...\n        save=True,\n    )\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 846, in run_pipeline_from_first_pass\n    write_out = writer_node(state)\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 491, in writer_node\n    report = invoke_with_retry(\n        DEPS.revise_chain,\n    ...<6 lines>...\n        expected_completion=revise_completion,\n    )\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 252, in invoke_with_retry\n    govern_rate_limit(est_total)\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^\n  File \"/Users/vaibhavarya/Developer/multi-agent-researcher/graph.py\", line 111, in govern_rate_limit\n    raise RuntimeError(\n        f\"REQUEST TOO LARGE: Estimated tokens ({est_total}) exceeds the {GOVERNOR_TPM_LIMIT} per-minute limit.\"\n    )\nRuntimeError: REQUEST TOO LARGE: Estimated tokens (7454) exceeds the 7000 per-minute limit.\n",
-  "timestamp": "2026-10-26T20:20:24.482604"
-}

@@ -1,8 +1,9 @@
 import os
+import json
 import operator
 import re
 import time
-from typing import TypedDict, Optional, Annotated, Any
+from typing import TypedDict, Optional, Annotated, Any, Tuple
 
 from langgraph.graph import StateGraph, START, END
 from langchain_core.callbacks import BaseCallbackHandler
@@ -237,6 +238,242 @@ class TokenUsageCallback(BaseCallbackHandler):
 
 TOKEN_CALLBACK = TokenUsageCallback()
 
+# Track evidence trimmed characters from the most recent LLM call
+LAST_EVIDENCE_TRIMMED_CHARS: int = 0
+
+def get_last_evidence_trimmed_chars() -> int:
+    global LAST_EVIDENCE_TRIMMED_CHARS
+    return LAST_EVIDENCE_TRIMMED_CHARS
+
+def reset_last_evidence_trimmed_chars() -> None:
+    global LAST_EVIDENCE_TRIMMED_CHARS
+    LAST_EVIDENCE_TRIMMED_CHARS = 0
+
+def trim_research_evidence_to_fit(
+    inputs: dict,
+    expected_completion: int,
+    limit: int = 6800,
+) -> Tuple[dict, int]:
+    """Trim research evidence from inputs (oldest passages first, at the end)
+    until estimated tokens <= limit. Never trims report, previous_report, or critique.
+    """
+    if not isinstance(inputs, dict) or "research" not in inputs:
+        return inputs, 0
+
+    research = str(inputs.get("research", ""))
+    if not research:
+        return inputs, 0
+
+    est_total = estimate_tokens(inputs, expected_completion=expected_completion)
+    if est_total <= limit:
+        return inputs, 0
+
+    max_prompt_tokens = limit - expected_completion
+    if max_prompt_tokens <= 0:
+        return inputs, 0
+
+    max_chars = int(max_prompt_tokens * 3.5)
+    non_research_chars = sum(len(str(v)) for k, v in inputs.items() if k != "research")
+    allowed_research_chars = max(0, max_chars - non_research_chars)
+
+    trimmed_research = research[:allowed_research_chars]
+    trimmed_chars = len(research) - len(trimmed_research)
+
+    new_inputs = dict(inputs)
+    new_inputs["research"] = trimmed_research
+    new_est = estimate_tokens(new_inputs, expected_completion=expected_completion)
+
+    while new_est > limit and len(trimmed_research) > 0:
+        excess_tokens = new_est - limit
+        drop_chars = max(1, int(excess_tokens * 3.5) + 1)
+        trimmed_research = trimmed_research[:-drop_chars]
+        new_inputs["research"] = trimmed_research
+        trimmed_chars = len(research) - len(trimmed_research)
+        new_est = estimate_tokens(new_inputs, expected_completion=expected_completion)
+
+    print(f"[Guard] Trimmed research evidence by {trimmed_chars:,} chars ({len(research):,} -> {len(trimmed_research):,}) to fit under {limit} tokens (new est: {new_est:,})")
+    return new_inputs, trimmed_chars
+
+
+def extract_raw_text_from_exc(exc: Exception) -> str:
+    """Extract raw model completion text from an output-parsing or validation exception."""
+    for attr in ("llm_output", "observation", "completion", "text", "output"):
+        val = getattr(exc, attr, None)
+        if val and isinstance(val, str):
+            return val
+
+    for arg in getattr(exc, "args", ()):
+        if isinstance(arg, str):
+            m = re.search(r"from completion\s*(.*?)(?:\.\s*Got:|\s*$)", arg, re.DOTALL)
+            if m:
+                return m.group(1).strip()
+            if "{" in arg and "}" in arg:
+                return arg
+
+    return str(exc)
+
+
+def parse_critic_json_lenient(text: str) -> Optional[Tuple[float, str, bool]]:
+    """Parse JSON from text and recursively look for a score key at any depth,
+    taking the critique text from the same object.
+    """
+    if not text:
+        return None
+
+    def _find_in_obj(obj: Any) -> Optional[Tuple[float, str, bool]]:
+        if isinstance(obj, dict):
+            score_val = None
+            for k, v in obj.items():
+                if str(k).strip().lower() == "score":
+                    try:
+                        score_val = float(v)
+                        break
+                    except (ValueError, TypeError):
+                        m = re.search(r"([\d\.]+)", str(v))
+                        if m:
+                            score_val = float(m.group(1))
+                            break
+
+            if score_val is not None:
+                critique_val = ""
+                for k, v in obj.items():
+                    if str(k).strip().lower() in ("critique", "feedback", "review", "comments"):
+                        critique_val = str(v)
+                        break
+
+                needs_more = False
+                for k, v in obj.items():
+                    if str(k).strip().lower() == "needs_more_research":
+                        needs_more = bool(v) if not isinstance(v, str) else v.lower() == "true"
+                        break
+
+                return score_val, critique_val, needs_more
+
+            # Recurse into dict values when score was not at this level
+            for v in obj.values():
+                res = _find_in_obj(v)
+                if res is not None:
+                    s_found, c_found, n_found = res
+                    if not c_found and "critique" in obj:
+                        c_found = str(obj["critique"])
+                    return s_found, c_found, n_found
+
+        elif isinstance(obj, list):
+            for item in obj:
+                res = _find_in_obj(item)
+                if res is not None:
+                    return res
+
+        return None
+
+    try:
+        data = json.loads(text.strip())
+        res = _find_in_obj(data)
+        if res is not None:
+            return res
+    except Exception:
+        pass
+
+    starts = [i for i, c in enumerate(text) if c == '{']
+    ends = [i for i, c in enumerate(text) if c == '}']
+    for start in starts:
+        for end in reversed(ends):
+            if end > start:
+                candidate = text[start:end+1]
+                try:
+                    data = json.loads(candidate)
+                    res = _find_in_obj(data)
+                    if res is not None:
+                        return res
+                except Exception:
+                    continue
+
+    for start in starts:
+        for end in reversed(ends):
+            if end > start:
+                candidate = text[start:end+1]
+                try:
+                    data = json.loads(candidate)
+                    if isinstance(data, dict):
+                        crit_text = data.get("critique") or data.get("feedback") or ""
+                        m = re.search(r"(?:\*\*Score:\*\*|score:\s*)\s*([\d\.]+)", str(crit_text), re.IGNORECASE)
+                        if m:
+                            score_val = float(m.group(1))
+                            needs_more = bool(re.search(r"needs_more_research:\s*true", str(crit_text), re.IGNORECASE))
+                            return score_val, str(crit_text), needs_more
+                except Exception:
+                    continue
+
+    return None
+
+
+def invoke_critic_with_recovery(inputs: dict) -> Tuple[Optional[float], str, bool, bool]:
+    """Invoke critic chain with lenient fallback recovery on parse failures and 1-shot retry.
+    Returns: (score, critique, needs_more_research, critic_parse_fallback)
+    """
+    def _parse_output(critic_output) -> Tuple[Optional[float], str, bool]:
+        if isinstance(critic_output, CriticFeedback):
+            return float(critic_output.score), critic_output.critique, bool(critic_output.needs_more_research)
+        elif isinstance(critic_output, dict):
+            score = float(critic_output.get("score", 0.0))
+            critique = str(critic_output.get("critique", ""))
+            needs_more = bool(critic_output.get("needs_more_research", False))
+            return score, critique, needs_more
+        else:
+            text = str(critic_output)
+            m = re.search(r"score:\s*([\d\.]+)", text, re.IGNORECASE)
+            score = float(m.group(1)) if m else None
+            return score, text, False
+
+    try:
+        critic_output = invoke_with_retry(
+            DEPS.critic_chain,
+            inputs,
+            expected_completion=1000,
+        )
+        score, critique, needs_more_research = _parse_output(critic_output)
+        return score, critique, needs_more_research, False
+    except Exception as exc:
+        err_msg = str(exc)
+        is_parse_err = (
+            "OutputParserException" in type(exc).__name__
+            or "ValidationError" in type(exc).__name__
+            or "validation error" in err_msg.lower()
+            or "failed to parse" in err_msg.lower()
+        )
+        if not is_parse_err:
+            raise
+
+        print(f"[critic] Output parsing failed ({exc}). Attempting lenient recovery from raw model text...")
+        raw_text = extract_raw_text_from_exc(exc)
+        recovery = parse_critic_json_lenient(raw_text)
+        if recovery is not None:
+            score, critique, needs_more_research = recovery
+            print(f"[critic] Lenient recovery succeeded: score={score}, needs_more={needs_more_research}")
+            return score, critique, needs_more_research, True
+
+        # Lenient recovery failed on first attempt: retry the call ONCE
+        print(f"[critic] Lenient recovery failed on raw text. Retrying critic call once...")
+        try:
+            retry_output = invoke_with_retry(
+                DEPS.critic_chain,
+                inputs,
+                expected_completion=1000,
+            )
+            score, critique, needs_more_research = _parse_output(retry_output)
+            return score, critique, needs_more_research, False
+        except Exception as retry_exc:
+            raw_text_retry = extract_raw_text_from_exc(retry_exc)
+            recovery_retry = parse_critic_json_lenient(raw_text_retry)
+            if recovery_retry is not None:
+                score, critique, needs_more_research = recovery_retry
+                print(f"[critic] Lenient recovery succeeded on retry: score={score}")
+                return score, critique, needs_more_research, True
+
+            print(f"[critic] Retry also failed. Failing question cleanly.")
+            raise RuntimeError(f"Critic structured-output parse failure: {retry_exc}") from retry_exc
+
+
 def invoke_with_retry(
     runnable,
     inputs,
@@ -245,7 +482,15 @@ def invoke_with_retry(
     expected_completion: int = 1000,
 ):
     """Safely invoke an agent or chain with rolling governor and bounded backoff."""
+    global LAST_EVIDENCE_TRIMMED_CHARS
     target_model = model_label or model_name
+
+    # Request-size guard: trim research evidence if estimated tokens > 6,800
+    if isinstance(inputs, dict) and "research" in inputs:
+        inputs, trimmed = trim_research_evidence_to_fit(inputs, expected_completion=expected_completion, limit=6800)
+        LAST_EVIDENCE_TRIMMED_CHARS = trimmed
+    else:
+        LAST_EVIDENCE_TRIMMED_CHARS = 0
 
     # 1. Enforce rolling per-minute governor under 7,000 tokens
     est_total = estimate_tokens(inputs, expected_completion=expected_completion)
@@ -253,7 +498,12 @@ def invoke_with_retry(
 
     for attempt in range(1, max_attempts + 1):
         try:
-            return runnable.invoke(inputs, config={"callbacks": [TOKEN_CALLBACK]})
+            if hasattr(runnable, "invoke"):
+                return runnable.invoke(inputs, config={"callbacks": [TOKEN_CALLBACK]})
+            elif callable(runnable):
+                return runnable(inputs)
+            else:
+                raise TypeError(f"Target runnable {runnable} is neither an object with .invoke nor a callable")
         except Exception as e:
             status_code = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
             err_msg = str(e)
@@ -316,6 +566,8 @@ class ResearchState(TypedDict, total=False):
     queries_used: list[str]
     attempts: Annotated[list, operator.add]
     token_usage: dict
+    evidence_trimmed_chars: int
+    critic_parse_fallback: bool
 
 def combine_evidence(new_content: str, old_content: str, max_chars: int = 8000) -> str:
     """Accumulate evidence: newest first, deduplicated, capped at max_chars."""
@@ -507,7 +759,10 @@ def writer_node(state: ResearchState) -> dict:
             },
             expected_completion=1500,
         )
-    return {"report": str(report)}
+    return {
+        "report": str(report),
+        "evidence_trimmed_chars": get_last_evidence_trimmed_chars(),
+    }
 
 def critic_node(state: ResearchState) -> dict:
     report = state.get("report", "")
@@ -517,29 +772,13 @@ def critic_node(state: ResearchState) -> dict:
         f"SEARCH RESULTS : \n {search_results} \n\n"
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
-    critic_output = invoke_with_retry(
-        DEPS.critic_chain,
-        {
-            "report": report,
-            "research": research_combined,
-        },
-        expected_completion=1000,
-    )
-
-    if isinstance(critic_output, CriticFeedback):
-        score = float(critic_output.score)
-        critique = critic_output.critique
-        needs_more_research = bool(critic_output.needs_more_research)
-    elif isinstance(critic_output, dict):
-        score = float(critic_output.get("score", 0.0))
-        critique = critic_output.get("critique", "")
-        needs_more_research = bool(critic_output.get("needs_more_research", False))
-    else:
-        text = str(critic_output)
-        match = re.search(r"score:\s*([\d\.]+)", text, re.IGNORECASE)
-        score = float(match.group(1)) if match else None
-        critique = text
-        needs_more_research = False
+    score, critique, needs_more_research, used_fallback = invoke_critic_with_recovery({
+        "report": report,
+        "research": research_combined,
+    })
+    critic_trimmed = get_last_evidence_trimmed_chars()
+    writer_trimmed = state.get("evidence_trimmed_chars", 0)
+    total_trimmed = max(writer_trimmed, critic_trimmed)
 
     judge_key = state.get("judge", "llm")
     judge_fn = JUDGES.get(judge_key, llm_judge)
@@ -573,7 +812,10 @@ def critic_node(state: ResearchState) -> dict:
         "judge_reason": verdict.get("reason", ""),
         "judge_details": verdict.get("details"),
         "decision": decision,
+        "evidence_trimmed_chars": total_trimmed,
     }
+    if used_fallback:
+        attempt_record["critic_parse_fallback"] = True
 
     if decision != "end":
         next_retry_count = retry_count + 1
@@ -589,6 +831,7 @@ def critic_node(state: ResearchState) -> dict:
         "retry_count": next_retry_count,
         "attempt": next_attempt,
         "attempts": [attempt_record],
+        "evidence_trimmed_chars": 0,
     }
 
 def route_after_critic(state: ResearchState) -> str:
@@ -728,33 +971,21 @@ def run_first_pass(topic: str) -> dict:
         f"SEARCH RESULTS : \n {search_results} \n\n"
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
-    critic_output = invoke_with_retry(
-        DEPS.critic_chain,
-        {
-            "report": report,
-            "research": research_combined,
-        },
-        expected_completion=1000,
-    )
+    score, critique, needs_more_research, used_fallback = invoke_critic_with_recovery({
+        "report": report,
+        "research": research_combined,
+    })
 
-    if isinstance(critic_output, CriticFeedback):
-        score = float(critic_output.score)
-        critique = critic_output.critique
-        needs_more_research = bool(critic_output.needs_more_research)
-    elif isinstance(critic_output, dict):
-        score = float(critic_output.get("score", 0.0))
-        critique = critic_output.get("critique", "")
-        needs_more_research = bool(critic_output.get("needs_more_research", False))
-    else:
-        text = str(critic_output)
-        match = re.search(r"score:\s*([\d\.]+)", text, re.IGNORECASE)
-        score = float(match.group(1)) if match else None
-        critique = text
-        needs_more_research = False
+    critic_trimmed = get_last_evidence_trimmed_chars()
+    writer_trimmed = state.get("evidence_trimmed_chars", 0)
+    fp_trimmed = max(writer_trimmed, critic_trimmed)
 
     state["score"] = score
     state["feedback"] = critique
     state["needs_more_research"] = needs_more_research
+    state["evidence_trimmed_chars"] = fp_trimmed
+    if used_fallback:
+        state["critic_parse_fallback"] = True
     state["first_pass_token_usage"] = dict(TOKEN_USAGE)
     state["model_name"] = model_name
     return state
@@ -828,7 +1059,10 @@ def run_pipeline_from_first_pass(
         "judge_reason": verdict.get("reason", ""),
         "judge_details": verdict.get("details"),
         "decision": decision,
+        "evidence_trimmed_chars": state.get("evidence_trimmed_chars", 0),
     }
+    if state.get("critic_parse_fallback"):
+        attempt_0_record["critic_parse_fallback"] = True
     state["attempts"] = [attempt_0_record]
     state["decision"] = decision
 

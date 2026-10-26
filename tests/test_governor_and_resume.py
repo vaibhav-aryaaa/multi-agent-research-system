@@ -21,6 +21,10 @@ from graph import (
     run_first_pass,
     run_pipeline_from_first_pass,
     GOVERNOR_TPM_LIMIT,
+    parse_critic_json_lenient,
+    invoke_critic_with_recovery,
+    trim_research_evidence_to_fit,
+    get_last_evidence_trimmed_chars,
 )
 
 
@@ -128,6 +132,142 @@ def test_700_word_report_and_evidence_fits_under_7000_tokens():
     revise_completion = max(100, int(len(report) / 3.5))
     revise_tokens = estimate_tokens(revise_inputs, expected_completion=revise_completion)
     assert revise_tokens < GOVERNOR_TPM_LIMIT, f"Revise call estimated {revise_tokens} >= {GOVERNOR_TPM_LIMIT}"
+
+
+def test_nested_score_critic_output_recovered():
+    """Verify that structured-output parse failure with nested score is leniently recovered."""
+    class NestedScoreCriticRunnable:
+        def invoke(self, inputs, config=None):
+            from langchain_core.exceptions import OutputParserException
+            nested_json = json.dumps({
+                "analysis": {
+                    "overview": "Detailed study analysis.",
+                    "evaluation": {
+                        "score": 8.5,
+                        "critique": "Solid technical synthesis addressing pipeline embrittlement.",
+                        "needs_more_research": False,
+                    }
+                }
+            })
+            raise OutputParserException(
+                f"Failed to parse CriticFeedback from completion {nested_json}. Got: 1 validation error for CriticFeedback\nscore\n  Field required"
+            )
+
+    old_chain = DEPS.critic_chain
+    DEPS.critic_chain = NestedScoreCriticRunnable()
+    try:
+        score, critique, needs_more, used_fallback = invoke_critic_with_recovery({
+            "report": "Sample report text",
+            "research": "Sample research text",
+        })
+        assert score == 8.5
+        assert "Solid technical synthesis" in critique
+        assert needs_more is False
+        assert used_fallback is True
+    finally:
+        DEPS.critic_chain = old_chain
+
+
+def test_request_7454_tokens_trimmed_under_6800_and_runs():
+    """Verify that a request of 7,454 estimated tokens is trimmed under 6,800 and executes cleanly."""
+    clock = MockClock(start_time=3000.0)
+    set_time_sleep_hooks(time_fn=clock.time, sleep_fn=clock.sleep)
+    reset_rolling_window()
+
+    try:
+        # Create inputs where estimated tokens is exactly 7,454
+        # prompt_tokens + completion_tokens = 7,454
+        # with expected_completion = 2000, prompt_tokens = 5454 -> chars = int(5454 * 3.5) = 19089
+        non_research = "topic and report text "
+        expected_comp = 2000
+        target_tokens = 7454
+        needed_prompt_tokens = target_tokens - expected_comp
+        needed_chars = int(needed_prompt_tokens * 3.5)
+        research = "Evidence line for research. " * 1000
+        research = research[:needed_chars - len(non_research)]
+
+        inputs = {
+            "topic": non_research,
+            "research": research,
+        }
+        est_before = estimate_tokens(inputs, expected_completion=expected_comp)
+        assert est_before == 7454, f"Setup error: expected 7454 tokens, got {est_before}"
+
+        executed = False
+        def fake_runnable(inp, config=None):
+            nonlocal executed
+            executed = True
+            return "SUCCESS"
+
+        out = invoke_with_retry(fake_runnable, inputs, expected_completion=expected_comp)
+        assert out == "SUCCESS"
+        assert executed is True
+
+        trimmed = get_last_evidence_trimmed_chars()
+        assert trimmed > 0, "Expected evidence to be trimmed"
+
+        # The new trimmed inputs must fit under 6,800
+        trimmed_inputs, _ = trim_research_evidence_to_fit(inputs, expected_completion=expected_comp, limit=6800)
+        est_after = estimate_tokens(trimmed_inputs, expected_completion=expected_comp)
+        assert est_after <= 6800, f"Expected <= 6800 tokens, got {est_after}"
+    finally:
+        set_time_sleep_hooks(None, None)
+        reset_rolling_window()
+
+
+def test_trimmed_evidence_record_logged():
+    """Verify that evidence_trimmed_chars is logged in the attempt record when trimming occurs."""
+    clock = MockClock(start_time=4000.0)
+    set_time_sleep_hooks(time_fn=clock.time, sleep_fn=clock.sleep)
+    reset_rolling_window()
+
+    old_critic = DEPS.critic_chain
+    old_writer = DEPS.revise_chain
+
+    class MockCriticChain:
+        def invoke(self, inputs, config=None):
+            from agents import CriticFeedback
+            return CriticFeedback(score=8.0, critique="Good", needs_more_research=False)
+
+    class MockReviseChain:
+        def invoke(self, inputs, config=None):
+            return "Revised report content."
+
+    DEPS.critic_chain = MockCriticChain()
+    DEPS.revise_chain = MockReviseChain()
+
+    try:
+        # Construct state with large research content that triggers trimming (> 6,800 tokens)
+        large_research = "Evidence block from scraped papers. " * 700
+        state = {
+            "topic": "Sodium-ion batteries",
+            "report": "Initial report text.",
+            "search_results": large_research,
+            "scraped_content": "",
+            "attempt": 1,
+            "retry_count": 1,
+            "judge": "llm",
+            "retry_enabled": True,
+            "feedback": "Needs revision",
+        }
+
+        # Writer node (revise) runs and trims evidence
+        writer_out = graph.writer_node(state)
+        state.update(writer_out)
+        assert state.get("evidence_trimmed_chars", 0) > 0, "Writer should have trimmed evidence"
+
+        # Critic node runs and records evidence_trimmed_chars in attempt record
+        critic_out = graph.critic_node(state)
+        attempts = critic_out.get("attempts", [])
+        assert len(attempts) == 1
+        att_rec = attempts[0]
+        assert "evidence_trimmed_chars" in att_rec
+        assert att_rec["evidence_trimmed_chars"] > 0, f"Expected evidence_trimmed_chars > 0, got {att_rec.get('evidence_trimmed_chars')}"
+    finally:
+        DEPS.critic_chain = old_critic
+        DEPS.revise_chain = old_writer
+        set_time_sleep_hooks(None, None)
+        reset_rolling_window()
 
 
 def test_parse_429_hint_and_sleep_plus_two_seconds():
