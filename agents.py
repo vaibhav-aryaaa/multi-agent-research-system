@@ -62,7 +62,7 @@ def build_reader_agent():
 # Writer Chain (LCEL)
 writer_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are an expert research writer. Write clear, structured and insightful reports."),
-    ("human", """Write a detailed research report on the topic below.
+    ("human", """Write a detailed research report (at most 700 words) on the topic below.
 
 Topic: {topic}
 
@@ -83,7 +83,7 @@ writer_chain = writer_prompt | llm | StrOutputParser()
 # Revision Chain for Writer (LCEL)
 revise_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are an expert research writer. Revise the previous report to address the critique, use only facts present in the research, remove or soften any claim not supported by the research, and keep the same structure (Introduction, Key Findings, Conclusion, Sources)."),
-    ("human", """Revise the previous research report on the topic below to address the critique, using the provided research evidence.
+    ("human", """Revise the previous research report (at most 700 words) on the topic below to address the critique, using the provided research evidence.
 
 Topic: {topic}
 

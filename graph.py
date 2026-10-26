@@ -485,15 +485,18 @@ def writer_node(state: ResearchState) -> dict:
         f"DETAILED SCRAPED CONTENT : \n {scraped_content}"
     )
     if state.get("attempt", 0) > 0:
+        prev_report = state.get("report", "")
+        critique = (state.get("feedback") or "")[:1500]
+        revise_completion = max(100, int(len(prev_report) / 3.5)) if prev_report else 1000
         report = invoke_with_retry(
             DEPS.revise_chain,
             {
                 "topic": topic,
                 "research": research_combined,
-                "previous_report": state.get("report", ""),
-                "critique": state.get("feedback", ""),
+                "previous_report": prev_report,
+                "critique": critique,
             },
-            expected_completion=1500,
+            expected_completion=revise_completion,
         )
     else:
         report = invoke_with_retry(

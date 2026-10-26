@@ -16,7 +16,7 @@ llm = ChatGroq(model=model_name, temperature=0, max_retries=3)
 
 baseline_prompt = ChatPromptTemplate.from_messages([
     ("system", "You are an expert research writer. Write clear, structured and insightful reports based purely on your own knowledge."),
-    ("human", """Write a detailed research report on the topic below using only your internal knowledge. Do not use external tools or web search.
+    ("human", """Write a detailed research report (at most 700 words) on the topic below using only your internal knowledge. Do not use external tools or web search.
 
 Topic: {topic}
 

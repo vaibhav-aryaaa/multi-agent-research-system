@@ -93,6 +93,43 @@ def test_governor_rejects_single_request_over_7000():
         reset_rolling_window()
 
 
+def test_700_word_report_and_evidence_fits_under_7000_tokens():
+    """Verify that a 700-word report plus 10,000 characters of evidence fits under 7,000 estimated tokens
+    for both the critic call and the revise call (Task D7).
+    """
+    # 700-word report: realistic academic text (~7 chars per word)
+    sample_sentence = "The research study examines novel materials and mechanisms for energy storage applications in engineering systems ."
+    words = (sample_sentence.split() * 50)[:700]
+    report = " ".join(words)
+    assert len(report.split()) == 700
+
+    evidence = ("evidence text " * 1000)[:10000]
+    assert len(evidence) == 10000
+
+    # 1. Critic Call
+    critic_inputs = {
+        "report": report,
+        "research": evidence,
+    }
+    critic_tokens = estimate_tokens(critic_inputs, expected_completion=1000)
+    assert critic_tokens < GOVERNOR_TPM_LIMIT, f"Critic call estimated {critic_tokens} >= {GOVERNOR_TPM_LIMIT}"
+
+    # 2. Revise Call (critique capped at 1,500 chars, completion estimated from previous report length)
+    critique = "Critique feedback text. " * 100
+    critique_capped = critique[:1500]
+    assert len(critique_capped) == 1500
+
+    revise_inputs = {
+        "topic": "Hydrogen embrittlement mechanisms in high-strength steels used for gas pipelines",
+        "research": evidence,
+        "previous_report": report,
+        "critique": critique_capped,
+    }
+    revise_completion = max(100, int(len(report) / 3.5))
+    revise_tokens = estimate_tokens(revise_inputs, expected_completion=revise_completion)
+    assert revise_tokens < GOVERNOR_TPM_LIMIT, f"Revise call estimated {revise_tokens} >= {GOVERNOR_TPM_LIMIT}"
+
+
 def test_parse_429_hint_and_sleep_plus_two_seconds():
     """Verify 429 rate limit parses 'try again in Xs' hint, adds 2.0s, and allows up to 6 attempts."""
     clock = MockClock(start_time=2000.0)
