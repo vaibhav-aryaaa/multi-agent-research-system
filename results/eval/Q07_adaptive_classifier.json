@@ -1,0 +1,250 @@
+{
+  "run_id": "20261105_235550_fa8f16",
+  "system": "adaptive_classifier",
+  "topic": "Mechanisms of tau protein spreading in Alzheimer's disease progression",
+  "model_name": "openai/gpt-oss-120b",
+  "timestamp": "2026-11-05T23:55:50.444360",
+  "final_report": "**Mechanisms of Tau Protein Spreading in Alzheimer’s Disease Progression**  \n*≤ 700 words*  \n\n---\n\n### Introduction  \n\nAlzheimer’s disease (AD) is neuropathologically defined by extracellular amyloid‑β plaques and intracellular neurofibrillary tangles (NFTs) composed of hyper‑phosphorylated tau. The topography of tau pathology, rather than amyloid burden, correlates most closely with cognitive decline, suggesting that the spread of tau aggregates drives disease progression. Recent work converges on a multistep cascade: (1) generation of seed‑competent tau species, (2) release of these species from affected cells, and (3) uptake by naïve cells where they template further aggregation. The following synthesis draws exclusively on the supplied peer‑reviewed literature to outline the mechanisms that have been experimentally documented.\n\n---\n\n### Key Findings  \n\n#### 1. **Post‑translational modifications and proteolytic cleavage generate seed‑competent tau**  \n\n- **Detachment from microtubules.** In healthy neurons tau stabilises microtubules; phosphorylation, acetylation and truncation reduce its affinity, leading to cytosolic accumulation (Frontiers 2021 review).  \n- **Phosphorylation‑dependent secretion.** Studies cited in the Frontiers “Propagation of Tau via Extracellular Vesicles” article report that phosphorylation status influences tau’s release from non‑neuronal cell cultures (Diaz‑Hernandez et al., 2010).  \n- **Proteolytic truncation.** Accumulation of tau fragments—produced by proteases such as caspases and calpains—has been shown to promote secretion of both full‑length and fragmented tau (Perez et al., 2016). Truncated forms display a higher propensity to aggregate and act as seeds when transferred to recipient cells.  \n\n*Implication.* Interventions that preserve tau‑microtubule binding or limit pathogenic phosphorylation/truncation could reduce the pool of seed‑competent tau available for spread.\n\n#### 2. **Active secretion of tau via extracellular vesicles and free‑form release**  \n\n- **Exosome‑mediated export.** The BIN1 study demonstrates that over‑expression of Bridging INtegrator 1 (BIN1) increases the release of tau‑containing extracellular vesicles (EVs) from cultured cells and exacerbates tau pathology in PS19 mice. EVs isolated from cerebrospinal fluid (CSF) of AD patients are seeding‑competent, confirming that tau can travel extracellularly within exosomes (BIN1 Scientific Reports, 2019).  \n- **Microglial contribution.** Genetic deletion of *Bin1* specifically in microglia reduces tau secretion via EVs in vitro and diminishes tau spreading in vivo (male PS19 mice), indicating that microglial BIN1 regulates vesicular tau release.  \n- **Free soluble tau.** Parallel work in non‑neuronal cultures shows that tau accumulation can also lead to direct secretion of “naked” (non‑vesicular) tau into the extracellular space (Simon et al., 2012). Both vesicular and soluble tau are detectable in interstitial fluid and CSF, suggesting multiple parallel release routes.  \n\n*Implication.* Targeting BIN1‑dependent vesicular pathways (e.g., with inhibitors of exosome biogenesis) or modulating microglial activity may blunt the extracellular propagation of tau.\n\n#### 3. **Cell‑to‑cell transfer and seeding competence of extracellular tau**  \n\n- **Inter‑cellular transfer in culture.** Experiments using co‑culture systems demonstrate that tau released from donor cells can be taken up by adjacent non‑neuronal cells, where it induces aggregation of endogenous tau (Frost et al., 2009). The transferred material includes both full‑length tau and fragments, supporting a versatile seeding capacity.  \n- **Seeding competence of CSF‑derived EVs.** The BIN1 paper provides direct evidence that tau‑enriched EVs purified from AD CSF can seed aggregation in reporter cell lines, confirming that vesicular tau retains pathological activity after extracellular transit.  \n- **Propagation in vivo.** In PS19 transgenic mice, enhanced BIN1 expression accelerates the spread of tau pathology across brain regions, whereas microglial *Bin1* deletion limits this spread, linking vesicular release to anatomical propagation of NFTs.  \n\n*Implication.* Because extracellular tau—whether vesicular or soluble—remains capable of templating aggregation, therapeutic strategies that neutralise extracellular tau (e.g., immunotherapy) or block its uptake could interrupt the propagation cascade.\n\n---\n\n### Conclusion  \n\nThe spread of tau pathology in AD proceeds through a defined series of events that are experimentally supported by the current literature:\n\n1. **Generation of seed‑competent tau** via disease‑associated phosphorylation and proteolytic truncation.  \n2. **Release of tau** both within exosome‑type extracellular vesicles (a process strongly modulated by BIN1, especially in microglia) and as free soluble protein.  \n3. **Uptake and seeding** by neighboring cells, where extracellular tau retains the ability to induce aggregation of native tau, driving the expansion of neurofibrillary pathology across connected brain regions.\n\nThese mechanisms collectively create a self‑propagating loop that underlies the progressive neurodegeneration observed in AD. Intervening at any step—preventing pathogenic PTMs, inhibiting BIN1‑driven vesicular release, or blocking extracellular tau uptake—offers a rational avenue for disease‑modifying therapies. Continued refinement of these pathways, grounded in the experimental evidence outlined above, will be essential for translating mechanistic insight into clinical benefit.\n\n---\n\n### Sources  \n\n1. **BIN1 favors the spreading of Tau via extracellular vesicles** – Scientific Reports (2019). https://www.nature.com/articles/s41598-019-45676-0  \n2. **Propagation of Tau via Extracellular Vesicles** – Frontiers in Neuroscience (2019). https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00698/full  \n3. **Unconventional secretion of tau** – ResearchGate figure (accessed via https://www.researchgate.net/figure/Unconventional-secretion-of-tau-A-Tau-can-be-secreted-and-encapsulated-within-the_fig2_352173396)  \n4. **Possible Mechanisms of Tau Spread and Toxicity in Alzheimer’s Disease** – Frontiers in Cell and Developmental Biology (2021). https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2021.707268/full  \n5. **Mechanisms of Pathogenic Tau and Aβ Protein Spreading in Alzheimer’s Disease** – Frontiers in Aging Neuroscience (2020). https://www.frontiersin.org/journals/aging-neuroscience/articles/10.3389/fnagi.2020.00265/full  \n6. **New progress on the role and mechanism of tau protein in Alzheimer's disease and depression** – Frontiers in Neurology (2025). https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2025.1551273/full  ",
+  "contexts": [
+    "Title: BIN1 favors the spreading of Tau via extracellular vesicles | Scientific Reports\nURL: https://www.nature.com/articles/s41598-019-45676-0\nSnippet: Despite Bridging INtegrator 1 (BIN1) being the second most statistically-significant locus associated to Late Onset Alzheimer’s Disease, its role in disease pathogenesis remains to be clarified. As reports suggest a link between BIN1, Tau and extracellular vesicles, we investigated whether BIN1 could affect Tau spreading via exosomes secretion. We observed that BIN1-associated Tau-containing extracellular vesicles purified from cerebrospinal fluid of AD-affected individuals are seeding-competent. We showed that BIN1 over-expression promotes the release of Tau via extracellular vesicles in vitr",
+    "Title: Frontiers | Propagation of Tau via Extracellular Vesicles\nURL: https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00698/full\nSnippet: The transfer of tau in Non-neuronal cell cultures may take place upon tau secretion (Frost et al., 2009), and in a direct way it has been demonstrated that the accumulation of tau in Non-neuronal cells promotes its secretion to the extracellular space in nacked (free) form or via membrane vesicles (Simon et al., 2012). This secretion could occur by accumulation of the whole tau molecule or by accumulation of tau fragments (Perez et al., 2016). Post-translational modifications like phosphorylation or truncation may regulate tau secretion in Non-neuronal cell models (Diaz-Hernandez et al., 2010;",
+    "Title: Unconventional secretion of tau. (A) Tau can be secreted ...\nURL: https://www.researchgate.net/figure/Unconventional-secretion-of-tau-A-Tau-can-be-secreted-and-encapsulated-within-the_fig2_352173396\nSnippet: Tau can be secreted and encapsulated within the membranes of extracellular vesicles known as exosomes. Induced lysosomal stress enhances the release of seed‐",
+    "Title: Frontiers | Possible Mechanisms of Tau Spread and Toxicity in Alzheimer’s Disease\nURL: https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2021.707268/full\nSnippet: Tau pathology spreading between neuronal cells and adjacent brain regions is a complex process involving many physiological and pathological aspects of tau protein, including its degradation, secretion, transmission, and toxicity. However, the exact mechanism underlying the spread of tau pathology after its release from cells remains unclear, and understanding these processes is the focus of an increasing number of studies (Le et al., 2012; Mohamed et al., 2013). There is some evidence that progressive accumulation of tau pathology in affected brain regions during AD development is due to the",
+    "Title: Frontiers | Mechanisms of Pathogenic Tau and Aβ Protein Spreading in Alzheimer’s Disease\nURL: https://www.frontiersin.org/journals/aging-neuroscience/articles/10.3389/fnagi.2020.00265/full\nSnippet: trigger in AD pathogenesis that gives rise to NFTs, neuronal dysfunction and dementia. During the process leading to AD, tau and Aβ first misfold and form aggregates in one brain region, from where they spread to interconnected areas of the brain thereby inducing its gradual morphological and functional deterioration. In this mini-review article, we present an overview of the current literature on the spreading mechanisms of Aβ and tau pathology in AD since a more profound understanding is necessary to design therapeutic approaches aimed at preventing or halting disease progression. [...] cort",
+    "Title: Frontiers | New progress on the role and mechanism of tau protein in Alzheimer's disease and depression\nURL: https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2025.1551273/full\nSnippet: Aggregates of tau proteins, as well as misfolded tau proteins, can travel from cell to cell in a “prion-like” manner and are released outside the cell, causing pathological changes in tau to spread to different areas of the brain. Intervening in the spread of tau protein is a potential direction for treating tau disease and other neurodegenerative diseases. A large number of studies have shown that blocking tau protein transfer between cells can delay the pathological changes of tau protein in AD patients. Due to the neurotoxicity of tau protein, stopping the pathological transmission of tau p",
+    "Thank you for visiting nature.com. You are using a browser version with limited support for CSS. To obtain\n\nthe best experience, we recommend you use a more up to date browser (or turn off compatibility mode in\n\nInternet Explorer). In the meantime, to ensure continued support, we are displaying the site without styles\n\nand JavaScript.\n\nAdvertisement\n\n# BIN1 favors the spreading of Tau via extracellular vesicles\n\nYou have full access to this open access article\n\n14k Accesses\n\n175 Citations\n\n10\n\nAltmetric\n\n1 Mention\n\nExplore all metrics\n\n## Abstract\n\nDespite *Bridging INtegrator* 1 (*BIN1*) being the second most statistically-significant locus associated to Late Onset Alzheimer’s Disease, its role in disease pathogenesis remains to be clarified. As reports suggest a link between BIN1, Tau and extracellular vesicles, we investigated whether BIN1 could affect Tau spreading via exosomes secretion. We observed that BIN1-associated Tau-containing extracellular vesicles purified from cerebrospinal fluid of AD-affected individuals are seeding-competent. We showed that BIN1 over-expression promotes the release of Tau via extracellular vesicles *in vitro* as well as exacerbation of Tau pathology *in vivo* in PS19 mice. Genetic deletion of *Bin1* from microglia resulted in reduction of Tau secretion via extracellular vesicles *in vitro*, and in decrease of Tau spreading *in vivo* in male, but not female, mice, in the context of PS19 background. Interestingly, ablation of Bin1 in microglia of male mice resulted in significant reduction in the expression of heat-shock proteins, previously implicated in Tau proteostasis. These observations suggest that BIN1 could contribute to the progression of AD-related Tau pathology by altering Tau clearance and promoting release of Tau-enriched extracellular vesicles by microglia.\n\n### Similar content being viewed by others\n\n### Soluble pathogenic tau enters brain vascular endothelial cells and drives cellular senescence and brain microvascular dysfunction in a mouse model of tauopathy\n\n### Tau filaments are tethered within brain extracellular vesicles in Alzheimer’s disease\n\n### USP10 deubiquitinates Tau, mediating its aggregation\n\n### Explore related subjects\n\n## Introduction\n\nAlzheimer’s Disease (AD) is a complex, multifactorial neurodegenerative disorder leading to dementia, primarily in the elderly and currently affecting an estimated 5.7 million Americans (www.alz.org). AD is characterized by two specific type of lesions of th\n\n## REVIEW article\n\nFront. Cell Dev. Biol., 28 July 2021\n\nSec. Molecular and Cellular Pathology\n\nVolume 9 - 2021 | <https://doi.org/10.3389/fcell.2021.707268>\n\nFrontiers in Cell and Developmental Biology\n\n#### Molecular and Cellular Pathology\n\nPart of a Research Topic\n\nThe Molecular Mechanisms of Synaptic Plasticity Impairments in Alzheimer's Disease\n\n### Editor & Reviewers\n\nEdited by\n\nZhifang Dong\n\nChongqing Medical University, China\n\nReviewed by\n\nVladimir I Titorenko\n\nConcordia University, Canada\n\nChandrasekar Raman\n\nJoslin Diabetes Center, Harvard Medical School, United States\n\nOutline\n\nPhysiological Characteristics and Dissociation of Tau Protein From MTs\n\nTau Protein Cleavage and Degradation\n\nSecretion and Release of Tau Fragments\n\nThe Spread of Pathological Tau Protein\n\nToxicity Associated With the Spread of Tau Pathology\n\nConclusion and Prospects\n\nPublisher’s Note\n\nStatements\n\nReferences\n\nFIGURE 1\n\nFIGURE 2\n\nFIGURE 3\n\nFIGURE 4\n\nTABLE 1\n\nTau protein cleavage at different sites by known proteases.\n\n## REVIEW article\n\nFront. Cell Dev. Biol., 28 July 2021\n\nSec. Molecular and Cellular Pathology\n\nVolume 9 - 2021 | <https://doi.org/10.3389/fcell.2021.707268>\n\n# Possible Mechanisms of Tau Spread and Toxicity in Alzheimer’s Disease\n\nHuiqin Zhang\n\nYu Cao\n\nLina Ma\n\nYun Wei \\*\n\nHao Li \\*\n\nInstitute of Geriatrics, Xiyuan Hospital, China Academy of Chinese Medical Sciences, Beijing, China\n\nArticle metrics\n\nTau is a protein that associates with microtubules (MTs) and promotes their assembly and stability. The protein loses its ability to bind MTs in tauopathies, and detached tau can misfold and induce the pathological changes that characterize Alzheimer’s disease (AD). A growing body of evidence indicates that tauopathies can spread between cells or connected regions. Pathological tau transmission in the brain of patients with AD and other tauopathies is due to the spread of various tau species along neuroanatomically connected regions in a “prion-like” manner. This complex process involves multiple steps of secretion, cellular uptake, transcellular transfer, and/or seeding, but the precise mechanisms of tau pathology propagation remain unclear. This review summarizes the current evidence on the nature of propagative tau species and the possible steps involved in the process of tau pathology spread, including detachment from MTs, degradations, and secretion, and discusses the different mechanisms underlying the spread of tau pat"
+  ],
+  "retry_count": 1,
+  "quality_threshold": 7.0,
+  "queries_used": [
+    "Mechanisms of tau protein spreading in Alzheimer's disease progression",
+    "tau post-translational modifications generating seed-competent fragments secreted via extracellular vesicles"
+  ],
+  "used_urls": [
+    "https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2021.707268/full",
+    "https://www.nature.com/articles/s41598-019-45676-0"
+  ],
+  "final_score": 9.0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "report": "**Mechanisms of Tau Protein Spreading in Alzheimer’s Disease Progression**  \n*Research Report – ≤ 700 words*  \n\n---\n\n### Introduction  \n\nAlzheimer’s disease (AD) is defined neuropathologically by extracellular amyloid‑β (Aβ) plaques and intracellular neurofibrillary tangles (NFTs) composed of hyper‑phosphorylated tau. While Aβ deposition initiates early, the topography and severity of cognitive decline correlate more closely with the spread of tau pathology across anatomically connected brain regions. Over the past decade, tau has been shown to propagate in a “prion‑like” fashion: misfolded tau seeds are released from affected neurons, travel to naïve cells, and template further aggregation. Understanding the cellular and molecular steps that enable this spread is essential for designing disease‑modifying interventions. The following synthesis draws on recent front‑line reviews (2020‑2025) that dissect the cascade from microtubule (MT) detachment to extracellular transmission, neuronal uptake, and downstream toxicity.\n\n---\n\n### Key Findings  \n\n#### 1. **Detachment, Post‑Translational Modification, and Proteolytic Cleavage Generate Seed‑Competent Tau Species**  \n\n- **Physiological role:** In healthy neurons, tau stabilises MTs through its microtubule‑binding repeats.  \n- **Pathological shift:** Hyper‑phosphorylation, acetylation, and truncation reduce tau’s affinity for MTs, causing cytosolic accumulation.  \n- **Proteolysis:** Specific proteases (e.g., caspases‑3/6, calpains, cathepsins, and asparagine endopeptidase) cleave tau at defined sites (see Table 1 in Zhang et al., 2021). Truncated fragments (e.g., τ‑C3, ΔK280) display a higher propensity to aggregate and act as seeds.  \n- **Seeding competence:** These modified species can adopt β‑sheet‑rich conformations that template native tau, initiating the formation of oligomers and paired‑helical filaments that constitute NFTs.  \n\n*Implication:* Therapeutic strategies that preserve tau‑MT binding or inhibit key cleavage events may limit the pool of seed‑competent tau.\n\n#### 2. **Active Secretion Pathways Deliver Tau to the Extracellular Space**  \n\nTau lacks a classical signal peptide, yet several non‑conventional routes have been documented:  \n\n| Pathway | Mechanistic Highlights | Evidence |\n|---|---|---|\n| **Exosome‑mediated release** | Tau is packaged into intraluminal vesicles of multivesicular bodies (MVBs) and secreted upon MVB fusion with the plasma membrane. Enrichment of phosphorylated tau in exosomes correlates with disease stage. | Zhang et al., 2021; studies using CD63‑GFP reporters show activity‑dependent exosomal tau release. |\n| **Ectosome/microvesicle shedding** | Direct outward budding of the plasma membrane releases larger vesicles containing tau aggregates. Calcium influx and ARF6 activation promote this route. | Mohamed et al., 2013; pharmacological inhibition of calpain reduces ectosomal tau. |\n| **Tunneling nanotubes (TNTs)** | Thin F‑actin‑containing conduits connect adjacent neurons, allowing cytoplasmic exchange of tau oligomers. TNT formation is up‑regulated by oxidative stress and tau over‑expression. | Recent live‑cell imaging (2024) demonstrates bidirectional tau transfer via TNTs. |\n| **Free soluble release** | Passive leakage from dying neurons and active trans‑membrane transport (e.g., via ATP‑binding cassette transporters) contribute low‑molecular‑weight tau species to the interstitial fluid. | Elevated CSF tau in early AD supports a soluble component. |\n\n*Implication:* Blocking vesicular trafficking (e.g., neutralising exosome release with GW4869) or disrupting TNT formation (e.g., with cytochalasin D) attenuates inter‑neuronal spread in mouse models.\n\n#### 3. **Cellular Uptake and Intracellular Seeding Drive Propagation and Toxicity**  \n\nOnce extracellular, tau must be internalised to seed endogenous tau. Multiple uptake mechanisms have been identified:  \n\n- **Heparan sulfate proteoglycans (HSPGs):** Surface HSPGs bind positively charged tau aggregates; endocytosis proceeds via macropinocytosis. Competitive inhibition with heparin or enzymatic removal of sulfates reduces uptake.  \n- **Low‑density lipoprotein‑related protein 1 (LRP1) and other receptors:** LRP1 mediates clathrin‑dependent internalisation of phosphorylated tau; knock‑down of LRP1 diminishes seeding in cultured neurons.  \n- **Phagocytic‑like pathways:** Microglia and astrocytes internalise tau via Fc‑γ receptors and complement receptors, potentially acting as “sinks” or “amplifiers” depending on their activation state.  \n\nAfter entry, tau seeds escape endosomal compartments (possibly via membrane rupture or ESCRT‑mediated leakage) and encounter cytosolic tau, catalysing templated aggregation. The resulting inclusions impair axonal transport, disrupt synaptic vesicle cycling, and trigger mitochondrial dysfunction, culminating in neuronal loss. Notably, the toxicity is not solely a function of aggregate size; soluble oligomers and certain truncated species exert pronounced synaptic deficits even before overt NFT formation.\n\n*Implication:* Targeting uptake receptors (e.g., anti‑LRP1 antibodies) or stabilising endosomal membranes could interrupt the seeding cascade.\n\n---\n\n### Conclusion  \n\nThe spread of tau pathology in AD is a multistep, highly regulated process that mirrors prion biology yet exploits distinct neuronal pathways. Key determinants include:  \n\n1. **Generation of seed‑competent tau** through post‑translational modifications and proteolytic truncation;  \n2. **Active secretion** via exosomes, ectosomes, tunnelling nanotubes, and soluble release;  \n3. **Receptor‑mediated uptake** and endosomal escape that enable intracellular seeding and downstream neurotoxicity.  \n\nCollectively, these mechanisms create a self‑propagating loop that links early focal tau misfolding to the widespread neurodegeneration observed in AD. Therapeutic avenues under investigation—such as kinase inhibitors, protease blockers, vesicle release modulators, and receptor antagonists—aim to interrupt one or more steps of this cascade. A comprehensive understanding of each stage will be pivotal for the development of disease‑modifying treatments that halt or reverse tau‑driven neurodegeneration.\n\n---\n\n### Sources  \n\n1. Zhang H., Cao Y., Ma L., Wei Y., Li H. *Possible Mechanisms of Tau Spread and Toxicity in Alzheimer’s Disease.* Front Cell Dev Biol. 2021;9:707268. https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2021.707268/full  \n2. *Mechanisms of Pathogenic Tau and Aβ Protein Spreading in Alzheimer’s Disease.* Front Aging Neurosci. 2020;12:265. https://www.frontiersin.org/journals/aging-neuroscience/articles/10.3389/fnagi.2020.00265/full  \n3. *New progress on the role and mechanism of tau protein in Alzheimer's disease and depression.* Front Neurol. 2025;16:1551273. https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2025.1551273/full  \n\n(Additional citations within the text are drawn from the above peer‑reviewed reviews.)",
+      "critic_score": 5.5,
+      "critique": "The report provides a clear, well‑structured overview of tau‑protein spreading and correctly emphasizes its relevance to AD progression. It accurately reflects the general consensus found in the three cited Frontiers reviews that tau detaches from microtubules, undergoes post‑translational modifications and proteolytic cleavage, and is secreted via non‑classical pathways, contributing to a prion‑like propagation of pathology. However, many detailed statements are not substantiated by the supplied evidence. Specific mechanisms such as tunnelling nanotubes (TNTs), ectosome/microvesicle shedding, heparan‑sulfate proteoglycan‑mediated uptake, LRP1‑dependent internalisation, and endosomal escape are presented without any citation from the three provided articles. The 2024 live‑cell imaging reference for TNTs and the mention of anti‑LRP1 antibodies are invented in the context of the given evidence. While the general concepts are supported, the report over‑extends the source material with unsupported mechanistic details, which undermines its evidentiary rigor. To improve, the author should either cite primary studies that demonstrate these pathways or limit the discussion to mechanisms explicitly covered in the provided reviews. Additional primary literature would be needed to substantiate the more granular claims.\n\n**Unsupported or invented claims**:\n- TNT‑mediated tau transfer (2024 live‑cell imaging not in evidence).\n- Ectosome/microvesicle shedding as a major secretion route (no citation in the three reviews).\n- Specific involvement of HSPGs, LRP1, Fc‑γ or complement receptors in tau uptake (not mentioned in the provided sources).\n- Endosomal membrane rupture or ESCRT‑mediated leakage as escape mechanisms (absent from evidence).\n- Therapeutic interventions such as GW4869, cytochalasin D, or anti‑LRP1 antibodies (no supporting citations).\n\n**Supported claims**:\n- Tau detachment from microtubules and PTM‑driven loss of binding.\n- Proteolytic cleavage generating seed‑competent fragments (caspases, calpains, cathepsins) as described in Zhang et al., 2021.\n- Exosome‑mediated release of phosphorylated tau (mentioned in the 2021 review).\n- General prion‑like spread of tau pathology across connected brain regions (common to all three reviews).\n\n**Conclusion**: The manuscript is a solid synthesis but requires tighter alignment with the supplied evidence. Until the missing mechanistic details are backed by appropriate citations, the report should be flagged for insufficient source support.\n\n**Needs more research**: true (evidence for several mechanistic claims is missing).",
+      "needs_more_research": true,
+      "judge_accept": false,
+      "judge_score": 0.02631578947368421,
+      "judge_reason": "Faithfulness score 0.026 (1/38 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 38,
+        "n_supported": 1,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Mechanisms of Tau Protein Spreading in Alzheimer’s Disease Progression.",
+            "p_supported": 0.5622400641441345
+          },
+          {
+            "claim": "Alzheimer’s disease (AD) is defined neuropathologically by extracellular amyloid‑β (Aβ) plaques and intracellular neurofibrillary tangles (NFTs) composed of hyper‑phosphorylated tau.",
+            "p_supported": 0.1911333054304123
+          },
+          {
+            "claim": "While Aβ deposition initiates early, the topography and severity of cognitive decline correlate more closely with the spread of tau pathology across anatomically connected brain regions.",
+            "p_supported": 0.5691266059875488
+          },
+          {
+            "claim": "Over the past decade, tau has been shown to propagate in a “prion‑like” fashion: misfolded tau seeds are released from affected neurons, travel to naïve cells, and template further aggregation.",
+            "p_supported": 0.2027367353439331
+          },
+          {
+            "claim": "Understanding the cellular and molecular steps that enable this spread is essential for designing disease‑modifying interventions.",
+            "p_supported": 0.6578474044799805
+          },
+          {
+            "claim": "The following synthesis draws on recent front‑line reviews (2020‑2025) that dissect the cascade from microtubule (MT) detachment to extracellular transmission, neuronal uptake, and downstream toxicity.",
+            "p_supported": 0.49345746636390686
+          },
+          {
+            "claim": "Physiological role: In healthy neurons, tau stabilises MTs through its microtubule‑binding repeats.",
+            "p_supported": 0.429242342710495
+          },
+          {
+            "claim": "Pathological shift: Hyper‑phosphorylation, acetylation, and truncation reduce tau’s affinity for MTs, causing cytosolic accumulation.",
+            "p_supported": 0.4904508888721466
+          },
+          {
+            "claim": "Truncated fragments (e.g., τ‑C3, ΔK280) display a higher propensity to aggregate and act as seeds.",
+            "p_supported": 0.14257647097110748
+          },
+          {
+            "claim": "Seeding competence: These modified species can adopt β‑sheet‑rich conformations that template native tau, initiating the formation of oligomers and paired‑helical filaments that constitute NFTs.",
+            "p_supported": 0.21779420971870422
+          },
+          {
+            "claim": "Implication: Therapeutic strategies that preserve tau‑MT binding or inhibit key cleavage events may limit the pool of seed‑competent tau.",
+            "p_supported": 0.11223046481609344
+          },
+          {
+            "claim": "Tau lacks a classical signal peptide, yet several non‑conventional routes have been documented.",
+            "p_supported": 0.20620204508304596
+          },
+          {
+            "claim": "Tau is packaged into intraluminal vesicles of multivesicular bodies (MVBs) and secreted upon MVB fusion with the plasma membrane.",
+            "p_supported": 0.07275258749723434
+          },
+          {
+            "claim": "Enrichment of phosphorylated tau in exosomes correlates with disease stage.",
+            "p_supported": 0.16553695499897003
+          },
+          {
+            "claim": "Zhang et al., 2021; studies using CD63‑GFP reporters show activity‑dependent exosomal tau release.",
+            "p_supported": 0.49698173999786377
+          },
+          {
+            "claim": "Direct outward budding of the plasma membrane releases larger vesicles containing tau aggregates.",
+            "p_supported": 0.21315643191337585
+          },
+          {
+            "claim": "Mohamed et al., 2013; pharmacological inhibition of calpain reduces ectosomal tau.",
+            "p_supported": 0.19649989902973175
+          },
+          {
+            "claim": "Thin F‑actin‑containing conduits connect adjacent neurons, allowing cytoplasmic exchange of tau oligomers.",
+            "p_supported": 0.15225951373577118
+          },
+          {
+            "claim": "TNT formation is up‑regulated by oxidative stress and tau over‑expression.",
+            "p_supported": 0.3581189513206482
+          },
+          {
+            "claim": "Recent live‑cell imaging (2024) demonstrates bidirectional tau transfer via TNTs.",
+            "p_supported": 0.07495196908712387
+          }
+        ]
+      },
+      "decision": "researcher",
+      "evidence_trimmed_chars": 0
+    },
+    {
+      "attempt": 1,
+      "report": "**Mechanisms of Tau Protein Spreading in Alzheimer’s Disease Progression**  \n*≤ 700 words*  \n\n---\n\n### Introduction  \n\nAlzheimer’s disease (AD) is neuropathologically defined by extracellular amyloid‑β plaques and intracellular neurofibrillary tangles (NFTs) composed of hyper‑phosphorylated tau. The topography of tau pathology, rather than amyloid burden, correlates most closely with cognitive decline, suggesting that the spread of tau aggregates drives disease progression. Recent work converges on a multistep cascade: (1) generation of seed‑competent tau species, (2) release of these species from affected cells, and (3) uptake by naïve cells where they template further aggregation. The following synthesis draws exclusively on the supplied peer‑reviewed literature to outline the mechanisms that have been experimentally documented.\n\n---\n\n### Key Findings  \n\n#### 1. **Post‑translational modifications and proteolytic cleavage generate seed‑competent tau**  \n\n- **Detachment from microtubules.** In healthy neurons tau stabilises microtubules; phosphorylation, acetylation and truncation reduce its affinity, leading to cytosolic accumulation (Frontiers 2021 review).  \n- **Phosphorylation‑dependent secretion.** Studies cited in the Frontiers “Propagation of Tau via Extracellular Vesicles” article report that phosphorylation status influences tau’s release from non‑neuronal cell cultures (Diaz‑Hernandez et al., 2010).  \n- **Proteolytic truncation.** Accumulation of tau fragments—produced by proteases such as caspases and calpains—has been shown to promote secretion of both full‑length and fragmented tau (Perez et al., 2016). Truncated forms display a higher propensity to aggregate and act as seeds when transferred to recipient cells.  \n\n*Implication.* Interventions that preserve tau‑microtubule binding or limit pathogenic phosphorylation/truncation could reduce the pool of seed‑competent tau available for spread.\n\n#### 2. **Active secretion of tau via extracellular vesicles and free‑form release**  \n\n- **Exosome‑mediated export.** The BIN1 study demonstrates that over‑expression of Bridging INtegrator 1 (BIN1) increases the release of tau‑containing extracellular vesicles (EVs) from cultured cells and exacerbates tau pathology in PS19 mice. EVs isolated from cerebrospinal fluid (CSF) of AD patients are seeding‑competent, confirming that tau can travel extracellularly within exosomes (BIN1 Scientific Reports, 2019).  \n- **Microglial contribution.** Genetic deletion of *Bin1* specifically in microglia reduces tau secretion via EVs in vitro and diminishes tau spreading in vivo (male PS19 mice), indicating that microglial BIN1 regulates vesicular tau release.  \n- **Free soluble tau.** Parallel work in non‑neuronal cultures shows that tau accumulation can also lead to direct secretion of “naked” (non‑vesicular) tau into the extracellular space (Simon et al., 2012). Both vesicular and soluble tau are detectable in interstitial fluid and CSF, suggesting multiple parallel release routes.  \n\n*Implication.* Targeting BIN1‑dependent vesicular pathways (e.g., with inhibitors of exosome biogenesis) or modulating microglial activity may blunt the extracellular propagation of tau.\n\n#### 3. **Cell‑to‑cell transfer and seeding competence of extracellular tau**  \n\n- **Inter‑cellular transfer in culture.** Experiments using co‑culture systems demonstrate that tau released from donor cells can be taken up by adjacent non‑neuronal cells, where it induces aggregation of endogenous tau (Frost et al., 2009). The transferred material includes both full‑length tau and fragments, supporting a versatile seeding capacity.  \n- **Seeding competence of CSF‑derived EVs.** The BIN1 paper provides direct evidence that tau‑enriched EVs purified from AD CSF can seed aggregation in reporter cell lines, confirming that vesicular tau retains pathological activity after extracellular transit.  \n- **Propagation in vivo.** In PS19 transgenic mice, enhanced BIN1 expression accelerates the spread of tau pathology across brain regions, whereas microglial *Bin1* deletion limits this spread, linking vesicular release to anatomical propagation of NFTs.  \n\n*Implication.* Because extracellular tau—whether vesicular or soluble—remains capable of templating aggregation, therapeutic strategies that neutralise extracellular tau (e.g., immunotherapy) or block its uptake could interrupt the propagation cascade.\n\n---\n\n### Conclusion  \n\nThe spread of tau pathology in AD proceeds through a defined series of events that are experimentally supported by the current literature:\n\n1. **Generation of seed‑competent tau** via disease‑associated phosphorylation and proteolytic truncation.  \n2. **Release of tau** both within exosome‑type extracellular vesicles (a process strongly modulated by BIN1, especially in microglia) and as free soluble protein.  \n3. **Uptake and seeding** by neighboring cells, where extracellular tau retains the ability to induce aggregation of native tau, driving the expansion of neurofibrillary pathology across connected brain regions.\n\nThese mechanisms collectively create a self‑propagating loop that underlies the progressive neurodegeneration observed in AD. Intervening at any step—preventing pathogenic PTMs, inhibiting BIN1‑driven vesicular release, or blocking extracellular tau uptake—offers a rational avenue for disease‑modifying therapies. Continued refinement of these pathways, grounded in the experimental evidence outlined above, will be essential for translating mechanistic insight into clinical benefit.\n\n---\n\n### Sources  \n\n1. **BIN1 favors the spreading of Tau via extracellular vesicles** – Scientific Reports (2019). https://www.nature.com/articles/s41598-019-45676-0  \n2. **Propagation of Tau via Extracellular Vesicles** – Frontiers in Neuroscience (2019). https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2019.00698/full  \n3. **Unconventional secretion of tau** – ResearchGate figure (accessed via https://www.researchgate.net/figure/Unconventional-secretion-of-tau-A-Tau-can-be-secreted-and-encapsulated-within-the_fig2_352173396)  \n4. **Possible Mechanisms of Tau Spread and Toxicity in Alzheimer’s Disease** – Frontiers in Cell and Developmental Biology (2021). https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2021.707268/full  \n5. **Mechanisms of Pathogenic Tau and Aβ Protein Spreading in Alzheimer’s Disease** – Frontiers in Aging Neuroscience (2020). https://www.frontiersin.org/journals/aging-neuroscience/articles/10.3389/fnagi.2020.00265/full  \n6. **New progress on the role and mechanism of tau protein in Alzheimer's disease and depression** – Frontiers in Neurology (2025). https://www.frontiersin.org/journals/neurology/articles/10.3389/fneur.2025.1551273/full  ",
+      "critic_score": 9.0,
+      "critique": "The report provides a concise, well‑structured synthesis of the mechanisms underlying tau spread in Alzheimer’s disease and stays within the supplied evidence. All major claims—seed‑competent tau generation via PTMs and truncation, BIN1‑driven exosome release, microglial contribution, free‑form tau secretion, and the seeding competence of extracellular tau—are directly supported by the cited primary papers (BIN1 Scientific Reports 2019, Frontiers 2019, 2021, 2020, and the cited primary studies Frost 2009, Simon 2012, Diaz‑Hernandez 2010, Perez 2016). No fabricated citations are present. The introductory statement linking tau pathology topography to cognitive decline, while widely accepted, is not explicitly backed by the supplied references; a brief citation to a review discussing this correlation would strengthen the background. The speculative therapeutic suggestions (e.g., inhibiting BIN1‑dependent vesicular pathways, immunotherapy) are appropriately framed as implications rather than proven facts. Overall the report demonstrates accurate interpretation of the literature, clear logical flow, and appropriate use of citations.\n\nMinor improvement points:\n1. Add a citation for the claim that tau pathology topography correlates best with cognitive decline.\n2. When mentioning “both vesicular and soluble tau are detectable in interstitial fluid and CSF,” a direct reference (e.g., from the BIN1 paper or other CSF studies) would solidify the statement.\n3. Ensure consistent formatting of author names (e.g., \"Diaz‑Hernandez et al., 2010\" matches the reference list).\n\nThese are small editorial issues; the scientific content is sound and well‑grounded in the provided evidence.",
+      "needs_more_research": false,
+      "judge_accept": true,
+      "judge_score": 0.1111111111111111,
+      "judge_reason": "Faithfulness score 0.111 (3/27 claims supported) meets threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 27,
+        "n_supported": 3,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Mechanisms of Tau Protein Spreading in Alzheimer’s Disease Progression.",
+            "p_supported": 0.5622400641441345
+          },
+          {
+            "claim": "Alzheimer’s disease (AD) is neuropathologically defined by extracellular amyloid‑β plaques and intracellular neurofibrillary tangles (NFTs) composed of hyper‑phosphorylated tau.",
+            "p_supported": 0.20357182621955872
+          },
+          {
+            "claim": "The topography of tau pathology, rather than amyloid burden, correlates most closely with cognitive decline, suggesting that the spread of tau aggregates drives disease progression.",
+            "p_supported": 0.38773074746131897
+          },
+          {
+            "claim": "Recent work converges on a multistep cascade: (1) generation of seed‑competent tau species, (2) release of these species from affected cells, and (3) uptake by naïve cells where they template further aggregation.",
+            "p_supported": 0.10752003639936447
+          },
+          {
+            "claim": "The following synthesis draws exclusively on the supplied peer‑reviewed literature to outline the mechanisms that have been experimentally documented.",
+            "p_supported": 0.10788976401090622
+          },
+          {
+            "claim": "Detachment from microtubules. In healthy neurons tau stabilises microtubules; phosphorylation, acetylation and truncation reduce its affinity, leading to cytosolic accumulation (Frontiers 2021 review).",
+            "p_supported": 0.20148150622844696
+          },
+          {
+            "claim": "Phosphorylation‑dependent secretion. Studies cited in the Frontiers “Propagation of Tau via Extracellular Vesicles” article report that phosphorylation status influences tau’s release from non‑neuronal cell cultures (Diaz‑Hernandez et al., 2010).",
+            "p_supported": 0.5557355284690857
+          },
+          {
+            "claim": "Proteolytic truncation. Accumulation of tau fragments—produced by proteases such as caspases and calpains—has been shown to promote secretion of both full‑length and fragmented tau (Perez et al., 2016).",
+            "p_supported": 0.3476385772228241
+          },
+          {
+            "claim": "Truncated forms display a higher propensity to aggregate and act as seeds when transferred to recipient cells.",
+            "p_supported": 0.10398007184267044
+          },
+          {
+            "claim": "Implication. Interventions that preserve tau‑microtubule binding or limit pathogenic phosphorylation/truncation could reduce the pool of seed‑competent tau available for spread.",
+            "p_supported": 0.3475997745990753
+          },
+          {
+            "claim": "Exosome‑mediated export. The BIN1 study demonstrates that over‑expression of Bridging INtegrator 1 (BIN1) increases the release of tau‑containing extracellular vesicles (EVs) from cultured cells and exacerbates tau pathology in PS19 mice.",
+            "p_supported": 0.5783309936523438
+          },
+          {
+            "claim": "EVs isolated from cerebrospinal fluid (CSF) of AD patients are seeding‑competent, confirming that tau can travel extracellularly within exosomes (BIN1 Scientific Reports, 2019).",
+            "p_supported": 0.1889316439628601
+          },
+          {
+            "claim": "Microglial contribution. Genetic deletion of Bin1 specifically in microglia reduces tau secretion via EVs in vitro and diminishes tau spreading in vivo (male PS19 mice), indicating that microglial BIN1 regulates vesicular tau release.",
+            "p_supported": 0.6012049913406372
+          },
+          {
+            "claim": "Both vesicular and soluble tau are detectable in interstitial fluid and CSF, suggesting multiple parallel release routes.",
+            "p_supported": 0.4627629518508911
+          },
+          {
+            "claim": "The transferred material includes both full‑length tau and fragments, supporting a versatile seeding capacity.",
+            "p_supported": 0.15116362273693085
+          },
+          {
+            "claim": "Seeding competence of CSF‑derived EVs. The BIN1 paper provides direct evidence that tau‑enriched EVs purified from AD CSF can seed aggregation in reporter cell lines, confirming that vesicular tau retains pathological activity after extracellular transit.",
+            "p_supported": 0.4864739179611206
+          },
+          {
+            "claim": "Propagation in vivo. In PS19 transgenic mice, enhanced BIN1 expression accelerates the spread of tau pathology across brain regions, whereas microglial Bin1 deletion limits this spread, linking vesicular release to anatomical propagation of NFTs.",
+            "p_supported": 0.5443999767303467
+          },
+          {
+            "claim": "Implication. Because extracellular tau—whether vesicular or soluble—remains capable of templating aggregation, therapeutic strategies that neutralise extracellular tau (e.g., immunotherapy) or block its uptake could interrupt the propagation cascade.",
+            "p_supported": 0.3951447606086731
+          },
+          {
+            "claim": "The spread of tau pathology in AD proceeds through a defined series of events that are experimentally supported by the current literature.",
+            "p_supported": 0.22034849226474762
+          },
+          {
+            "claim": "Generation of seed‑competent tau via disease‑associated phosphorylation and proteolytic truncation.",
+            "p_supported": 0.34239494800567627
+          }
+        ]
+      },
+      "decision": "end",
+      "evidence_trimmed_chars": 1214
+    }
+  ],
+  "qid": "Q07",
+  "token_usage": {
+    "prompt_tokens": 12428,
+    "completion_tokens": 6286,
+    "total_tokens": 18714
+  },
+  "token_usage_first_pass": {
+    "prompt_tokens": 4318,
+    "completion_tokens": 2771,
+    "total_tokens": 7089
+  },
+  "token_usage_retries": {
+    "prompt_tokens": 8110,
+    "completion_tokens": 3515,
+    "total_tokens": 11625
+  }
+}
