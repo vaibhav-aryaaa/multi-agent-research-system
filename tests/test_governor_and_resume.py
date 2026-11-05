@@ -421,3 +421,78 @@ def test_resume_with_crashed_s3_reuses_first_pass():
         assert os.path.exists(os.path.join(tmpdir, "Q99_fixed.json"))
         assert os.path.exists(os.path.join(tmpdir, "Q99_adaptive_llm.json"))
         assert os.path.exists(os.path.join(tmpdir, "Q99_adaptive_classifier.json"))
+
+
+def test_pause_friendly_stop_file():
+    """Verify runner stops cleanly when results/eval/STOP sentinel file is present."""
+    import subprocess
+    with tempfile.TemporaryDirectory() as tmpdir:
+        q_file = os.path.join(tmpdir, "eval_q.txt")
+        with open(q_file, "w") as f:
+            f.write("Q01\tTopic One\nQ02\tTopic Two\n")
+
+        stop_file = os.path.join(tmpdir, "STOP")
+        with open(stop_file, "w") as f:
+            f.write("STOP")
+
+        cmd = [
+            sys.executable,
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "run_eval.py"),
+            "--dry-run",
+            "--questions", q_file,
+            "--out", tmpdir,
+        ]
+        proc = subprocess.run(cmd, capture_output=True, text=True)
+        assert proc.returncode == 0
+        assert "Stop file detected" in proc.stdout
+        # STOP file must NOT be deleted automatically
+        assert os.path.exists(stop_file)
+
+
+def test_pause_friendly_max_minutes():
+    """Verify runner stops cleanly and prints resume instructions when max-minutes is reached."""
+    import subprocess
+    with tempfile.TemporaryDirectory() as tmpdir:
+        q_file = os.path.join(tmpdir, "eval_q.txt")
+        with open(q_file, "w") as f:
+            f.write("Q01\tTopic One\nQ02\tTopic Two\n")
+
+        cmd = [
+            sys.executable,
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "run_eval.py"),
+            "--dry-run",
+            "--questions", q_file,
+            "--out", tmpdir,
+            "--max-minutes", "0.0",  # Triggers immediately after first finished question
+        ]
+        proc = subprocess.run(cmd, capture_output=True, text=True)
+        assert proc.returncode == 0
+        assert "Session time limit reached" in proc.stdout
+        assert "To resume evaluation, run:" in proc.stdout
+        # Q01 should be complete, Q02 should not have started
+        assert os.path.exists(os.path.join(tmpdir, "Q01_baseline.json"))
+        assert not os.path.exists(os.path.join(tmpdir, "Q02_baseline.json"))
+
+
+def test_atomic_file_saving_no_corrupt_files():
+    """Verify runlog save_run uses atomic rename so partial writes leave no corrupted final file."""
+    from runlog import save_run
+    with tempfile.TemporaryDirectory() as tmpdir:
+        fake_result = {
+            "run_id": "atomic_test",
+            "topic": "Atomic test topic",
+            "report": "Complete report content",
+            "search_results": "Evidence ----- More evidence",
+            "scraped_content": "Deep content",
+            "score": 9.0,
+            "attempts": [],
+        }
+        saved_path = save_run(fake_result, "fixed", results_dir=tmpdir, filename="test_atomic.json")
+        assert os.path.exists(saved_path)
+        with open(saved_path) as f:
+            loaded = json.load(f)
+        assert loaded["final_report"] == "Complete report content"
+        # No orphan .tmp files left in tmpdir
+        tmp_files = [f for f in os.listdir(tmpdir) if ".tmp." in f]
+        assert len(tmp_files) == 0
+

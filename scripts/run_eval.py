@@ -25,6 +25,8 @@ import shutil
 import argparse
 import tempfile
 import traceback
+import signal
+import uuid
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional, Tuple
 
@@ -51,8 +53,22 @@ from runlog import save_run
 
 DEFAULT_QUESTIONS_FILE = os.path.join(PROJECT_ROOT, "data", "eval_questions.txt")
 DEFAULT_OUT_DIR = os.path.join(PROJECT_ROOT, "results", "eval")
-DEFAULT_DAILY_BUDGET = 170000
+DEFAULT_DAILY_BUDGET = 195000
 ESTIMATED_PER_QUESTION_TOKENS = 55000
+
+SHUTDOWN_REQUESTED = False
+
+def sig_handler(signum, frame):
+    global SHUTDOWN_REQUESTED
+    print("\n[SIGINT/SIGTERM] Stop signal caught. Current system will finish or halt without file corruption...", flush=True)
+    SHUTDOWN_REQUESTED = True
+
+try:
+    signal.signal(signal.SIGINT, sig_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
+except (ValueError, AttributeError):
+    pass
+
 
 
 def load_questions(filepath: str, only: Optional[List[str]] = None, limit: Optional[int] = None) -> List[Tuple[str, str]]:
@@ -273,7 +289,7 @@ def setup_dry_run_fakes():
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Batch Paired Evaluation Runner (Phase 4 Task D)")
+    parser = argparse.ArgumentParser(description="Batch Paired Evaluation Runner (Phase 4 Task D / Task F)")
     parser.add_argument("--questions", default=DEFAULT_QUESTIONS_FILE, help="Path to eval_questions.txt")
     parser.add_argument("--out", default=DEFAULT_OUT_DIR, help="Output directory (results/eval)")
     parser.add_argument("--limit", type=int, default=None, help="Limit to first N questions")
@@ -281,6 +297,9 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Run with deterministic fakes and zero API calls")
     parser.add_argument("--sleep", type=float, default=20.0, help="Sleep seconds between questions (default: 20)")
     parser.add_argument("--daily-token-budget", type=int, default=DEFAULT_DAILY_BUDGET, help="Rolling 24h token budget")
+    parser.add_argument("--max-minutes", type=float, default=None, help="Stop cleanly after finished question if session exceeded N minutes")
+    parser.add_argument("--stop-file", type=str, default=None, help="Stop sentinel file path (default: results/eval/STOP)")
+    parser.add_argument("--only-incomplete", action="store_true", default=None, help="Skip complete questions and process lowest-numbered incomplete question next")
     args = parser.parse_args()
 
     # Configure output directory
@@ -293,6 +312,7 @@ def main():
 
     usage_log_path = os.path.join(out_dir, "usage_log.jsonl")
     set_usage_log_path(usage_log_path)
+    stop_file_path = args.stop_file or os.path.join(out_dir, "STOP")
 
     # Setup dry-run fakes if requested
     if args.dry_run:
@@ -301,22 +321,43 @@ def main():
     else:
         sleep_interval = args.sleep
 
+    # Determine only-incomplete setting (default True when --only is not passed)
+    only_incomplete = args.only_incomplete if args.only_incomplete is not None else (args.only is None)
+
     # Load questions
     only_list = [q.strip() for q in args.only.split(",")] if args.only else None
     questions = load_questions(args.questions, only=only_list, limit=args.limit)
 
+    if only_incomplete:
+        # Keep only incomplete questions in QID order
+        questions = [(qid, topic) for qid, topic in questions if not is_question_complete(out_dir, qid)]
+
     print("\n" + "=" * 80)
-    print("PAIRED EVALUATION RUNNER (Phase 4)")
+    print("PAIRED EVALUATION RUNNER (Phase 4 / Task F)")
     print(f"Questions to process: {len(questions)}")
     print(f"Output directory:     {out_dir}")
     print(f"Usage log path:       {usage_log_path}")
     print(f"Daily token budget:   {args.daily_token_budget:,} tokens")
+    if args.max_minutes:
+        print(f"Max session minutes:  {args.max_minutes} min")
+    print(f"Stop sentinel file:   {stop_file_path}")
     print(f"Mode:                 {'DRY-RUN (fakes, no APIs)' if args.dry_run else 'LIVE'}")
     print("=" * 80 + "\n")
 
     completed_in_session = 0
     total_tokens_session = 0
     session_start_time = time.time()
+
+    def check_stop_sentinel() -> bool:
+        if SHUTDOWN_REQUESTED:
+            print("\n[SIGINT/SIGTERM] Stop signal caught. Exiting cleanly without corrupting files.")
+            return True
+        if os.path.exists(stop_file_path):
+            print(f"\n[STOP] Stop file detected at {stop_file_path}. Cleanly stopping session.")
+            print("To resume evaluation, remove the STOP file:")
+            print(f"  rm {stop_file_path}")
+            return True
+        return False
 
     # Print Table Header
     table_header = (
@@ -327,6 +368,10 @@ def main():
     print("-" * len(table_header))
 
     for idx, (qid, topic) in enumerate(questions):
+        # Check stop sentinel before starting a question
+        if check_stop_sentinel():
+            sys.exit(0)
+
         # 1. Resume check: Skip if question already complete (all four files exist)
         if is_question_complete(out_dir, qid):
             print(f"{qid:<6} | {'SKIPPED':<10} | {'Already complete':<20} | {'-':<18} | {'-':<22} | {'0.0s':<8}")
@@ -352,6 +397,10 @@ def main():
         # 3. Process question with checkpoints and granular resumption
         q_start = time.time()
         try:
+            # Check stop sentinel before S1
+            if check_stop_sentinel():
+                sys.exit(0)
+
             # S1: Baseline (System 1)
             s1_path = os.path.join(out_dir, f"{qid}_baseline.json")
             if os.path.exists(s1_path):
@@ -365,6 +414,10 @@ def main():
                     filename=f"{qid}_baseline.json",
                     save=True,
                 )
+
+            # Check stop sentinel before first pass / S2
+            if check_stop_sentinel():
+                sys.exit(0)
 
             # Check if any multi-agent system needs first pass
             s2_path = os.path.join(out_dir, f"{qid}_fixed.json")
@@ -380,9 +433,15 @@ def main():
                     print(f"[{qid}] Reusing first-pass checkpoint from {os.path.basename(first_pass_path)}")
                 else:
                     first_state = run_first_pass(topic)
-                    with open(first_pass_path, "w", encoding="utf-8") as f:
+                    temp_fp = f"{first_pass_path}.tmp.{uuid.uuid4().hex[:6]}"
+                    with open(temp_fp, "w", encoding="utf-8") as f:
                         json.dump(first_state, f, indent=2, ensure_ascii=False)
+                    os.replace(temp_fp, first_pass_path)
                     print(f"[{qid}] Saved first-pass checkpoint to {os.path.basename(first_pass_path)}")
+
+            # Check stop sentinel before S2
+            if check_stop_sentinel():
+                sys.exit(0)
 
             # S2: Fixed (System 2)
             if os.path.exists(s2_path):
@@ -398,6 +457,10 @@ def main():
                     save=True,
                 )
 
+            # Check stop sentinel before S3
+            if check_stop_sentinel():
+                sys.exit(0)
+
             # S3: Adaptive LLM (System 3)
             if os.path.exists(s3_path):
                 with open(s3_path, "r", encoding="utf-8") as f:
@@ -411,6 +474,10 @@ def main():
                     filename=f"{qid}_adaptive_llm.json",
                     save=True,
                 )
+
+            # Check stop sentinel before S4
+            if check_stop_sentinel():
+                sys.exit(0)
 
             # S4: Adaptive Classifier (System 4)
             if os.path.exists(s4_path):
@@ -463,6 +530,20 @@ def main():
             )
             print(row)
 
+            # Check max-minutes after finished question
+            if args.max_minutes is not None:
+                elapsed_min = (time.time() - session_start_time) / 60.0
+                if elapsed_min >= args.max_minutes:
+                    all_questions = load_questions(args.questions)
+                    total_complete = sum(1 for q_id, _ in all_questions if is_question_complete(out_dir, q_id))
+                    print("\n" + "=" * 80)
+                    print(f"Session time limit reached ({args.max_minutes:.1f} min limit; elapsed {elapsed_min:.1f} min).")
+                    print(f"{total_complete}/{len(all_questions)} questions are complete.")
+                    print("To resume evaluation, run:")
+                    print(f"  python scripts/run_eval.py --sleep {args.sleep} --daily-token-budget {args.daily_token_budget} --max-minutes {args.max_minutes}")
+                    print("=" * 80 + "\n")
+                    sys.exit(0)
+
         except Exception as e:
             err_msg = str(e)
             is_daily_limit = ("tokens per day" in err_msg.lower() or "tpd" in err_msg.lower() or "daily token limit hit" in err_msg.lower())
@@ -473,7 +554,7 @@ def main():
                 print("=" * 80 + "\n")
                 sys.exit(0)
 
-            # Record error JSON
+            # Record error JSON atomically
             error_record = {
                 "qid": qid,
                 "topic": topic,
@@ -482,23 +563,10 @@ def main():
                 "timestamp": datetime.now().isoformat(),
             }
             err_file = os.path.join(out_dir, f"{qid}_ERROR.json")
-            with open(err_file, "w", encoding="utf-8") as ef:
+            temp_err = f"{err_file}.tmp.{uuid.uuid4().hex[:6]}"
+            with open(temp_err, "w", encoding="utf-8") as ef:
                 json.dump(error_record, ef, indent=2, ensure_ascii=False)
-
-            q_elapsed = time.time() - q_start
-            print(f"{qid:<6} | {'ERROR':<10} | {'-':<20} | {'-':<18} | {err_msg[:20]:<22} | {q_elapsed:.1f}s")
-
-            # Record error JSON
-            error_record = {
-                "qid": qid,
-                "topic": topic,
-                "error": err_msg,
-                "traceback": traceback.format_exc(),
-                "timestamp": datetime.now().isoformat(),
-            }
-            err_file = os.path.join(out_dir, f"{qid}_ERROR.json")
-            with open(err_file, "w", encoding="utf-8") as ef:
-                json.dump(error_record, ef, indent=2, ensure_ascii=False)
+            os.replace(temp_err, err_file)
 
             q_elapsed = time.time() - q_start
             print(f"{qid:<6} | {'ERROR':<10} | {'-':<20} | {'-':<18} | {err_msg[:20]:<22} | {q_elapsed:.1f}s")

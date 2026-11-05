@@ -1,0 +1,20 @@
+{
+  "qid": "Q01",
+  "system": "adaptive_llm",
+  "topic": "Mechanisms of antibiotic persistence in Pseudomonas aeruginosa biofilms",
+  "phase": "A",
+  "scores": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 1.0000000000000004
+  },
+  "contexts_source": "system_contexts",
+  "judge_provider": "gemini",
+  "judge_model": "dry-run-fake-judge",
+  "ragas_version": "0.4.3",
+  "requests_used": 5,
+  "seconds": 0.01,
+  "errors": {},
+  "contexts_trimmed_chars": 0,
+  "think_stripped_count": 5,
+  "timestamp": "2026-11-05T22:45:25.565784"
+}

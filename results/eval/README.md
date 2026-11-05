@@ -33,3 +33,20 @@ Each evaluation result JSON adheres to the `save_run` schema with added experime
 - `token_usage`: Total token consumption for the system.
 - `token_usage_first_pass`: Token consumption during the shared attempt-0 pass.
 - `token_usage_retries`: Token consumption incurred during retry loops.
+
+## How to run a session
+
+The batch pipeline runner is pause-friendly and designed for short laptop sessions. Result files and first-pass checkpoints are written atomically (via temporary files and `os.replace`), preventing corrupted files if the terminal closes, the process is killed (`Ctrl-C`), or the laptop goes to sleep.
+
+To run a timed session:
+```bash
+python scripts/run_eval.py --sleep 20 --daily-token-budget 195000 --max-minutes 60
+```
+*(About 4–5 questions per day is the free-tier limit, so ~45–60 minutes of laptop time per day is enough).*
+
+### Controls and Sentinels
+- **`--max-minutes N`**: Automatically stops the runner cleanly after finishing a question once N minutes have elapsed.
+- **`results/eval/STOP`**: Creating this file (`touch results/eval/STOP`) requests a clean stop between systems or after the current question finishes. The runner will stop cleanly without deleting the STOP file; remove it (`rm results/eval/STOP`) to resume.
+- **`--only-incomplete`** (default when `--only` is omitted): Automatically skips completed questions and executes the lowest-numbered incomplete question next.
+- **SIGINT / SIGTERM (`Ctrl-C`)**: Stops cleanly between steps and discards only the in-flight system without corrupting any completed files.
+

@@ -1,0 +1,5 @@
+qid,system,phase,contexts_source,faithfulness,answer_relevancy,context_precision,context_recall,requests_used,seconds,contexts_trimmed_chars,think_stripped_count
+Q01,baseline,A,borrowed_from_S2,1.0,1.0000000000000004,,,5,0.04,0,5
+Q01,fixed,A,system_contexts,1.0,1.0000000000000004,,,5,0.01,0,5
+Q01,adaptive_llm,A,system_contexts,1.0,1.0000000000000004,,,5,0.01,0,5
+Q01,adaptive_classifier,A,system_contexts,1.0,1.0000000000000004,,,5,0.01,0,5

@@ -8,6 +8,8 @@ results/*
 !results/.gitkeep
 !results/eval/
 !results/eval/**
+!results/ragas/
+!results/ragas/**
 .cache/
 hf_cache/
 *.npy

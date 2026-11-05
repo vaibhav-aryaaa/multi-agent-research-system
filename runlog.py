@@ -82,7 +82,9 @@ def save_run(
     
     fname = filename or f"{run_id}_{system}.json"
     filepath = os.path.join(target_dir, fname)
-    with open(filepath, "w", encoding="utf-8") as f:
+    temp_filepath = f"{filepath}.tmp.{uuid.uuid4().hex[:6]}"
+    with open(temp_filepath, "w", encoding="utf-8") as f:
         json.dump(run_data, f, indent=2, ensure_ascii=False)
+    os.replace(temp_filepath, filepath)
         
     return filepath
