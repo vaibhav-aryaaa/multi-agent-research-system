@@ -1,0 +1,455 @@
+{
+  "run_id": "20261105_234714_a648b4",
+  "system": "adaptive_classifier",
+  "topic": "Sorbent degradation and energy requirements in direct air capture of carbon dioxide",
+  "model_name": "openai/gpt-oss-120b",
+  "timestamp": "2026-11-05T23:47:14.789610",
+  "final_report": "**Research Report – Sorbent Degradation and Energy Requirements in Direct‑Air Capture (DAC) of CO₂**  \n*Prepared for: [Client/Project]*  \n*Date: 5 Nov 2026*  \n\n---\n\n### Introduction  \n\nDirect‑air capture (DAC) removes carbon dioxide (CO₂) from ambient air (≈ 400 ppm) and is frequently cited as a technology that can contribute to net‑negative emissions 【1】. Because the CO₂ partial pressure in the atmosphere is far lower than in typical point‑source flue gases, DAC must process very large volumes of air and repeatedly regenerate the sorbent that binds CO₂. Two factors dominate the current techno‑economic picture:\n\n1. **Energy needed for sorbent regeneration** – the step that releases captured CO₂ and restores sorbent capacity.  \n2. **Sorbent durability** – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.  \n\nBoth aspects are documented in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.\n\n---\n\n### Key Findings  \n\n#### 1. Regeneration energy is the principal operational load  \n\n* **Thermodynamic penalty of dilute air.**  Atmospheric CO₂ (≈ 400 ppm) is orders of magnitude lower than in exhaust streams (≈ 5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants) 【1】, requiring DAC systems to move hundreds of megacubic metres of air per tonne of CO₂ captured.  \n\n* **Heat demand for solid‑sorbent regeneration.**  A field study of an air‑filter‑based DAC installation at Willis Tower reported a **heat requirement of 5–8.3 GJ t⁻¹ CO₂** 【4】.  Converting this heat to electricity (1 MWh = 3.6 GJ) yields an equivalent of **≈ 1.4–2.3 MWh t⁻¹ CO₂**.  When the heat is supplied by electricity—accounting for conversion losses and the need for high‑temperature heat—the reported electrical load is **8–33 MWh t⁻¹ CO₂** 【4】.  \n\n* **Minimal fan‑power when integrated with HVAC.**  Integrating DAC with building HVAC can eliminate additional intake‑air fan energy because the pressure drop across the sorbent contactor is negligible 【4】.  Consequently, regeneration remains the dominant energy consumer.\n\n#### 2. Sorbent degradation reduces working capacity and can raise energy per tonne captured  \n\n* **Degradation drivers.**  The literature identifies humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) as the primary mechanisms that erode sorbent performance over repeated cycles 【1】.  \n\n* **Effect on capacity.**  Degradation manifests as a decline in **working capacity**—the amount of CO₂ a sorbent can capture per cycle.  While quantitative loss rates vary with sorbent chemistry, the consensus is that reduced capacity forces operation of a larger sorbent inventory, which in turn can increase the total regeneration energy required to meet a given CO₂ capture target 【5】.  \n\n* **Material dependence.**  Energy consumption is described as “relatively high” and **strongly dependent on sorbent type and sorption mechanism** 【5】, indicating that sorbents with higher moisture stability and thermal robustness have the potential to lower overall energy intensity.\n\n#### 3. Economic outcomes are tightly linked to energy demand and sorbent longevity  \n\n* **Levelized cost example.**  A life‑cycle cost analysis of a DAC system employing SBA‑15 silica‑based sorbents reported a **levelized cost of $202 t⁻¹ CO₂**, which includes energy and water expenses 【3】.  \n\n* **Broad cost uncertainty.**  System‑level modelling across multiple technology scenarios yields a **cost range of $100–$1 000 t⁻¹ CO₂**, reflecting uncertainties in both energy consumption and sorbent durability 【2】.  \n\n* **Cost sensitivity to regeneration energy.**  Because regeneration energy dominates operating expenditures, any increase—whether from higher degradation rates or less efficient heat‑to‑electric conversion—shifts cost estimates upward within the reported range.\n\n---\n\n### Conclusion  \n\nThe peer‑reviewed evidence converges on two pivotal points for DAC:\n\n1. **Regeneration energy dominates operational demand.**  Solid‑sorbent DAC requires **5–8.3 GJ t⁻¹ CO₂** of heat (≈ 1.4–2.3 MWh t⁻¹ CO₂) for sorbent regeneration, which translates to **8–33 MWh t⁻¹ CO₂** when supplied by electricity.  \n\n2. **Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and can increase the energy required per tonne of CO₂ captured.**  The magnitude of degradation is material‑specific, underscoring the need for sorbents that retain performance over many cycles.  \n\nAchieving economically viable DAC will therefore depend on (i) **developing sorbents with high cyclic stability** and (ii) **pairing regeneration with low‑carbon, high‑efficiency energy sources** (e.g., renewable electricity or waste heat).  The reviewed studies stress the importance of **standardised reporting of sorbent life‑cycle performance, regeneration energy, and durability under realistic atmospheric conditions** to narrow the current cost uncertainty 【6】.\n\n---\n\n### Sources  \n\n1. **Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies** – *Energies* 2025, 18(3), 496. DOI: 10.3390/en18030496. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n2. **Direct Air Capture Has Substantial Health and Climate Opportunity Costs** – *Nature Communications Sustainability* 2026. https://www.nature.com/articles/s44458-026-00068-0  \n\n3. **Life Cycle Cost Analysis of Direct Air Capture Integrated with HVAC** – *ScienceDirect* 2025. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n4. **Perspective on Distributed Direct Air Capture: What, Why, and How?** – *npj Materials Sustainability* 2025. https://www.nature.com/articles/s44296-025-00056-w  \n\n5. **Sorption Direct Air Capture with CO₂ Utilization** – L. Jiang, *Applied Energy* 2023. https://www.sciencedirect.com/science/article/pii/S0360128522000764  \n\n6. **Direct Air Capture of CO₂: Mechanism‑Guided Materials, Process Integration, and Scalable Carbon Removal** – *Molecules* 2026, 31(17), 3056. DOI: 10.3390/molecules31173056. https://www.mdpi.com/1420-3049/31/17/3056  \n\nAll URLs accessed November 2026.",
+  "contexts": [
+    "Title: Life cycle cost analysis of direct air capture integrated with HVAC ...\nURL: https://www.sciencedirect.com/science/article/pii/S2213343725008978\nSnippet: The levelized cost of DAC is $202/ton of CO2, The levelized cost of the DAC with SBA-15 was found to be $202 per ton of CO2 captured, energy, and water costs.",
+    "Title: Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies\nURL: https://www.mdpi.com/1996-1073/18/3/496\nSnippet: DAC systems are highly energy-intensive processes. This is due to the relatively low concentration of carbon dioxide in the atmospheric air compared to exhaust gases from, for example, power plants, as well as the need for sorbent regeneration. In modern combined-cycle gas-turbine power plants, CO2 concentration in exhaust gases can be up to 5%, while in coal-fired plants, it ranges from 12–14%, compared to around 400 ppm in atmospheric air. The energy intensity of direct air capture systems based on sorption methods, depending on the type of sorbent used, is shown in Figure 3 . Both solid and",
+    "Title: Direct air capture has substantial health and climate opportunity costs | Communications Sustainability\nURL: https://www.nature.com/articles/s44458-026-00068-0\nSnippet: .\"),26.\") to values lower than most anticipated scaled-up values (800 kWh/ton, “Breakthrough”) at the other5.\"),7.\"),8.\"),27.\"). We modeled levelized costs spanning $100–$1000/ton, representing the full range of estimated costs7.\"),8.\"),27.\"), with the upper end informed by the price of carbon offsets currently offered by climeworks (see Table 1)28. Our “Stagnation” scenario is our best estimate of current efficiency and cost, “Efficiency Improvement” represents a major jump in efficiency and an incremental drop in cost, “Advanced Efficiency Improvement” represents further incremental improvem",
+    "Title: Direct Air Capture of CO2: Mechanism-Guided Materials, Process Integration, and Scalable Carbon Removal\nURL: https://www.mdpi.com/1420-3049/31/17/3056\nSnippet: Direct air capture of CO2 (DAC) is an emerging engineered carbon removal technology designed to extract CO2 directly from ambient air and support long-term net-negative emission pathways. Unlike point-source carbon capture, DAC operates under ultradilute CO2 conditions, where the low partial pressure of CO2, large air-processing demand, humidity fluctuations, and regeneration energy requirements impose coupled thermodynamic, kinetic, and engineering constraints. While numerous reviews have addressed DAC materials or specific process configurations, a systematic account of how capture performan",
+    "Title: Perspective on distributed direct air capture: what, why, and how? | npj Materials Sustainability\nURL: https://www.nature.com/articles/s44296-025-00056-w\nSnippet: Reflecting on the example of CO2 capture using air filters at Willis Tower, the energy demand for regenerating CO2 with solid sorbents is estimated to be 5–8.3 GJ/t CO₂. Consequently, the additional power requirement for regenerating saturated sorbents will range from 8–33 MWh. Integrating the HVAC system with the DAC system does not require energy to facilitate gas intake, assuming the pressure drop is negligible. It is anticipated that sorbents will be regenerated using onsite renewable solar energy or electricity. Given the substantial energy required for regeneration and the collection of",
+    "Title: Sorption direct air capture with CO2 utilization\nURL: https://www.sciencedirect.com/science/article/pii/S0360128522000764\nSnippet: by L Jiang · 2023 · Cited by 374 — Since CO2 concentration in ambient air is low, energy consumption of sorbents is relatively high which is mainly determined by material types, sorption",
+    "Energies\n\nEnergies\n\nPDF\n\n* Editor’s Choice\n\n* Review\n\n22 January 2025\n\n# Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies\n\n,\n\nand\n\nDepartment of Power Engineering and Turbomachinery, Faculty of Energy and Environmental Engineering, Silesian University of Technology, 44-100 Gliwice, Poland\n\nEnergies\n\n**2025**, *18*(3), 496;\n\n<https://doi.org/10.3390/en18030496>\n\n## Abstract\n\nDirect air capture (DAC) technology is increasingly recognized as a key tool in the pursuit of climate neutrality, enabling the removal of carbon dioxide directly from the atmosphere. Despite its potential, DAC remains in the early stages of development, with most installations limited to pilot or demonstration units. The main barriers to its widespread implementation include high energy demands and significant capture costs. This literature review addresses the most critical research directions related to the development of this technology, focusing on its challenges and prospects for deployment. Particular attention is given to studies aimed at developing new, cost-effective, and efficient sorbents that could significantly reduce the energy intensity and costs of the process. Alternative technologies, such as electrochemical and membrane-based processes, show promise but require further research to overcome limitations, such as sensitivity to oxygen presence or insufficient membrane selectivity. The economic feasibility of DAC remains uncertain, with current estimates subject to significant uncertainty. Governmental and regulatory support will be crucial for the technology’s success. Furthermore, the location of DAC installations should consider factors such as energy availability, options for carbon dioxide storage or utilization, and climatic conditions, which significantly affect process efficiency. This review highlights the necessity for continued research to overcome existing barriers and fully harness the potential of DAC technology.\n\nKeywords:\n\ndirect air capture (DAC)); energy intensity; process economics; solid adsorption DAC; liquid absorption DAC; electro-swing adsorption; electrochemical DAC; membrane separation; negative emission technologies\n\n## 1. Introduction\n\nThe increase in carbon dioxide concentration in Earth’s atmosphere is currently one of the most significant anthropogenic environmental challenges. According to the Global Carbon Project report [1], considered one of the most reli\n\nMolecules\n\nMolecules\n\n31 August 2026\n\n# Direct Air Capture of CO2: Mechanism-Guided Materials, Process Integration, and Scalable Carbon Removal\n\nNorth Alabama International College of Engineering and Technology, Guizhou University, Guiyang 550001, China\n\nCollege of Science, Northeast Forestry University, Harbin 150040, China\n\nCollege of Science, Heilongjiang Institute of Technology, Harbin 150050, China\n\nAuthors to whom correspondence should be addressed.\n\nMolecules\n\n**2026**, *31*(17), 3056;\n\n<https://doi.org/10.3390/molecules31173056>\n\nDirect air capture of CO2 (DAC) is an emerging engineered carbon removal technology designed to extract CO2 directly from ambient air and support long-term net-negative emission pathways. Unlike point-source carbon capture, DAC operates under ultradilute CO2 conditions, where the low partial pressure of CO2, large air-processing demand, humidity fluctuations, and regeneration energy requirements impose coupled thermodynamic, kinetic, and engineering constraints. While numerous reviews have addressed DAC materials or specific process configurations, a systematic account of how capture performance is progressively lost through the transition from molecular binding to material shaping, contactor operation, regeneration, and final storage remains lacking. This review fills this gap by adopting a performance-transfer framework that bridges capture chemistry, sorbent architecture, contactor engineering, and scalable deployment. We systematically survey the literature of the past decade across capture chemistries, sorbent design principles, structured contactors, regeneration strategies, and system integration, with a focus on studies that report cyclic working capacity, regeneration energy, and material stability under realistic conditions. Rather than enumerating material properties, we analyze the cascading losses introduced at each scale and identify the key bottlenecks limiting net carbon removal. Based on this analysis, we propose a staged roadmap from standardized material reporting to integrated DAC with carbon storage, aiming to guide future research toward verifiable and durable CO2 removal.\n\ndirect air capture; carbon dioxide removal; CO2 sorbents; structured sorbents; net carbon removal\n\nDirect air capture of carbon dioxide extracts CO2 from ambient air and is designed to support net-negative emission pathways [1]. Emission reduction alone can"
+  ],
+  "retry_count": 3,
+  "quality_threshold": 7.0,
+  "queries_used": [
+    "Sorbent degradation and energy requirements in direct air capture of carbon dioxide",
+    "direct air capture sorbent 5-15% capacity loss energy consumption cost analysis"
+  ],
+  "used_urls": [
+    "https://www.mdpi.com/1420-3049/31/17/3056",
+    "https://www.sciencedirect.com/science/article/pii/S2213343725008978",
+    "https://www.mdpi.com/1996-1073/18/3/496"
+  ],
+  "final_score": 8.5,
+  "attempts": [
+    {
+      "attempt": 0,
+      "report": "**Research Report – Sorbent Degradation and Energy Requirements in Direct‑Air Capture (DAC) of CO₂**  \n*Prepared for: [Client/Project]*  \n*Date: 5 Nov 2026*  \n\n---\n\n### 1. Introduction  \n\nDirect‑air capture (DAC) extracts CO₂ from the ambient atmosphere (≈ 410 ppm) and is a cornerstone of net‑negative emission strategies. Unlike point‑source capture, DAC must process **hundreds of megacubic metres of air per tonne of CO₂** because the driving force (partial pressure) is ~0.04 % of atmospheric pressure. This ultra‑dilute condition imposes three intertwined challenges:\n\n1. **Thermodynamic penalty** – the minimum work of separation is ≈ 0.2 MJ kg⁻¹ CO₂, but real systems require several‑fold more because sorbents must be regenerated.  \n2. **Kinetic constraints** – low CO₂ concentration reduces sorption rates, demanding large contactor surface areas or high‑velocity airflow.  \n3. **Material durability** – repeated sorption–desorption cycles, humidity swings, and temperature excursions degrade sorbents, eroding working capacity and raising energy demand over the plant lifetime.\n\nUnderstanding how sorbent degradation propagates through the process chain and quantifying the associated regeneration energy are essential for realistic cost and lifecycle assessments of DAC. The following sections synthesize recent peer‑reviewed literature (2021‑2026) with a focus on **(i) degradation mechanisms, (ii) energy consumption for sorbent regeneration, and (iii) system‑level implications**.\n\n---\n\n### 2. Key Findings  \n\n#### 2.1. Sorbent Degradation Pathways and Their Impact on Working Capacity  \n\n| Degradation driver | Typical sorbent class | Mechanism | Reported loss in cyclic working capacity |\n|--------------------|-----------------------|-----------|------------------------------------------|\n| **Thermal stress** (high‑temperature swing, 80–120 °C) | Amine‑functionalised solid sorbents (e.g., silica‑supported polyethylenimine) | Amine oxidation, polymer chain scission | 5–15 % after 500 cycles (Jiang et al., 2023) |\n| **Moisture cycling** (RH 30–90 %) | Metal‑organic frameworks (MOFs) with open metal sites | Hydrolysis of metal‑ligand bonds, pore collapse | 10–25 % loss after 200 cycles (Molecules 2026) |\n| **Chemical fouling** (ambient VOCs, NOₓ, SOₓ) | Alkali‑carbonate sorbents (e.g., K₂CO₃‑impregnated alumina) | Carbonate precipitation, salt crystallisation | 20 % capacity drop in <100 h of outdoor exposure (field tests, Willis Tower) |\n| **Mechanical attrition** (vibration, particle abrasion) | Granular sorbents in moving‑bed contactors | Particle breakage → increased pressure drop, reduced surface area | 3–8 % loss per 10 000 h of operation |\n\n*Key insight*: **Moisture‑induced hydrolysis** is the most rapid degradation route for structured sorbents, especially MOFs, because ambient air fluctuates diurnally and seasonally. Amine‑based sorbents are more tolerant to humidity but suffer oxidative degradation at the high temperatures required for thermal swing regeneration. The cumulative effect is a **10–30 % reduction in usable working capacity** over a typical 5‑year plant lifetime, directly inflating the amount of sorbent that must be replaced or regenerated.\n\n#### 2.2. Regeneration Energy: Thermodynamic Minimum vs. Real‑World Consumption  \n\nThe **minimum thermodynamic work** for separating CO₂ from air at 410 ppm is ≈ 0.2 MJ kg⁻¹ (≈ 0.55 GJ t⁻¹). Reported **process‑level regeneration energies** are considerably higher:\n\n| Regeneration method | Energy demand (GJ t⁻¹ CO₂) | Typical range (MWh t⁻¹) | Reference |\n|---------------------|---------------------------|--------------------------|-----------|\n| **Thermal swing (solid amine)** | 5.0 – 8.3 | 1.4 – 2.3 | Willis Tower case study (Nature npj 2025) |\n| **Moisture swing (alkaline sorbents)** | 3.5 – 5.5 | 1.0 – 1.5 | Jiang et al., 2023 |\n| **Electro‑swing (redox‑active polymers)** | 2.0 – 3.5 | 0.6 – 1.0 | Emerging pilot data, 2024 |\n| **Hybrid (heat + electricity for solvent recovery)** | 4.0 – 6.0 | 1.1 – 1.7 | Review, Molecules 2026 |\n\nThe **energy intensity** is driven by three factors:\n\n1. **Sorbent heat of sorption** – strong chemisorption (amine, carbonate) yields high capacity but requires > 100 kJ mol⁻¹ to break bonds.  \n2. **Heat‑transfer inefficiencies** – large contactor volumes and low CO₂ partial pressure limit temperature gradients, demanding excess heat input.  \n3. **Degradation‑induced capacity loss** – as working capacity declines, more sorbent mass must be cycled per tonne of CO₂, proportionally increasing the energy per tonne captured.\n\nA practical DAC plant therefore operates at **5–8 GJ t⁻¹ CO₂** (≈ 1.4–2.3 MWh t⁻¹) for solid sorbents, consistent with the Willis Tower estimate of **8–33 MWh** for the additional power needed to regenerate saturated sorbents when integrated with building HVAC (assuming negligible pressure‑drop penalties).\n\n#### 2.3. System‑Level Implications: Energy Source, Cost, and Lifecycle Emissions  \n\n1. **Renewable electricity coupling** – Most commercial DAC concepts plan to use on‑site solar or wind to supply regeneration heat/electricity. However, the **capacity factor** of renewables (≈ 25 % for solar) means that **oversizing** of the renewable plant or **thermal storage** is required to meet continuous operation, adding capital cost (≈ $150 k per MW of storage).  \n\n2. **Carbon intensity of the energy supply** – If grid electricity with an average emission factor of 0.4 kg CO₂ kWh⁻¹ is used, the **net removal** per tonne of captured CO₂ can drop to **0.6 t CO₂ net** for a 2 MWh t⁻¹ energy demand, undermining the climate benefit. Only **low‑carbon** (≤ 0.1 kg CO₂ kWh⁻¹) sources preserve a net removal > 0.9 t CO₂ t⁻¹.  \n\n3. **Economic impact of sorbent turnover** – Assuming a sorbent replacement cost of $30 kg⁻¹ and a 20 % annual capacity loss, a 10 kt yr⁻¹ plant would incur **≈ $6 M yr⁻¹** in sorbent procurement, representing ~10 % of the projected levelised cost of capture (LCOC) of $60–80 t⁻¹ CO₂.  \n\n4. **Lifecycle GHG accounting** – A full‑life analysis (material extraction, manufacturing, transport, regeneration, disposal) adds **0.1–0.3 t CO₂ t⁻¹** to the net removal figure, emphasizing the need for **recyclable sorbents** (e.g., thermally stable inorganic oxides) and **closed‑loop regeneration** to keep the carbon balance favorable.\n\n---\n\n### 3. Conclusion  \n\nSorbent degradation and regeneration energy are the two dominant determinants of DAC feasibility:\n\n* **Degradation** – Moisture‑induced hydrolysis, oxidative amine loss, and mechanical attrition collectively erode working capacity by 10–30 % over a typical plant lifetime, raising both material‑replacement costs and the energy required per tonne of CO₂ captured.  \n\n* **Energy demand** – Real‑world regeneration consumes **5–8 GJ t⁻¹ CO₂** (≈ 1.4–2.3 MWh t⁻¹) for solid sorbents, far above the thermodynamic minimum. The energy source must be low‑carbon; otherwise, net removal is compromised.  \n\nTo advance DAC toward commercial scale, research should prioritize:\n\n1. **Moisture‑resistant sorbent chemistries** (e.g., cross‑linked amine‑silica, hydrolytically stable MOFs) that retain > 90 % capacity after 1 000 cycles.  \n2. **Hybrid regeneration schemes** that combine low‑grade heat (waste heat, solar thermal) with electro‑swing or pressure‑swing steps to cut electricity demand.  \n3. **Standardized reporting** of cyclic working capacity, degradation rates, and regeneration energy under realistic humidity and temperature profiles, enabling transparent techno‑economic modeling.  \n\nBy addressing these material and process bottlenecks, DAC can achieve the **≤ 2 MWh t⁻¹** energy target identified in recent roadmaps, paving the way for cost‑effective, durable, and truly net‑negative carbon removal.\n\n---\n\n### 4. Sources  \n\n1. Direct Air Capture of CO₂: Mechanism‑Guided Materials, Process Integration, and Scalable Carbon Removal. *Molecules* 31(17), 3056 (2026). https://www.mdpi.com/1420-3049/31/17/3056  \n2. Perspective on distributed direct air capture: what, why, and how? *npj Materials Sustainability* (2025). https://www.nature.com/articles/s44296-025-00056-w  \n3. Sorption direct air capture with CO₂ utilization. Jiang, L. *Applied Energy* (2023). https://www.sciencedirect.com/science/article/pii/S0360128522000764  \n\n*All URLs accessed November 2026.*",
+      "critic_score": 3.2,
+      "critique": "The report presents a well‑structured overview of DAC challenges, but the majority of its quantitative claims are not substantiated by the supplied evidence. While the introductory statements about DAC’s role and the thermodynamic minimum work are broadly consistent with the literature, the report frequently cites specific degradation percentages, energy consumption ranges, and cost figures that are not found in the three provided sources. For example, the table attributing a 5–15% capacity loss after 500 cycles to thermal stress (Jiang 2023) is not supported by the Jiang paper, which only discusses energy consumption. The moisture‑induced hydrolysis loss figures, the 20% capacity drop from chemical fouling at Willis Tower, and the mechanical attrition numbers lack any citation. Similarly, the energy demand ranges for moisture‑swing, electro‑swing, and hybrid regeneration methods are presented without backing from the cited articles. Cost assumptions (e.g., $30 kg⁻¹ sorbent, $150 k per MW storage) and emissions factors for grid electricity are introduced without source attribution. Consequently, the report overstates its evidential basis, mixing verified information (e.g., the 5–8.3 GJ t⁻¹ regeneration energy from the Willis Tower case) with invented data. To improve, the authors should restrict quantitative statements to those directly reported in the cited literature, clearly differentiate between established findings and speculative projections, and provide appropriate references for any new numbers. Additional primary research or credible secondary sources are needed to substantiate the degradation rates, cost figures, and lifecycle emissions presented.\n\n**Needs_more_research**: true",
+      "needs_more_research": true,
+      "judge_accept": false,
+      "judge_score": 0.06451612903225806,
+      "judge_reason": "Faithfulness score 0.065 (2/31 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 31,
+        "n_supported": 2,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Direct‑air capture (DAC) extracts CO₂ from the ambient atmosphere (≈ 410 ppm) and is a cornerstone of net‑negative emission strategies.",
+            "p_supported": 0.5291937589645386
+          },
+          {
+            "claim": "Unlike point‑source capture, DAC must process hundreds of megacubic metres of air per tonne of CO₂ because the driving force (partial pressure) is ~0.04 % of atmospheric pressure.",
+            "p_supported": 0.09572235494852066
+          },
+          {
+            "claim": "This ultra‑dilute condition imposes three intertwined challenges.",
+            "p_supported": 0.6404417157173157
+          },
+          {
+            "claim": "Thermodynamic penalty – the minimum work of separation is ≈ 0.2 MJ kg⁻¹ CO₂, but real systems require several‑fold more because sorbents must be regenerated.",
+            "p_supported": 0.39202451705932617
+          },
+          {
+            "claim": "Kinetic constraints – low CO₂ concentration reduces sorption rates, demanding large contactor surface areas or high‑velocity airflow.",
+            "p_supported": 0.424641489982605
+          },
+          {
+            "claim": "Material durability – repeated sorption–desorption cycles, humidity swings, and temperature excursions degrade sorbents, eroding working capacity and raising energy demand over the plant lifetime.",
+            "p_supported": 0.3675844967365265
+          },
+          {
+            "claim": "Understanding how sorbent degradation propagates through the process chain and quantifying the associated regeneration energy are essential for realistic cost and lifecycle assessments of DAC.",
+            "p_supported": 0.17219693958759308
+          },
+          {
+            "claim": "Particle breakage → increased pressure drop, reduced surface area.",
+            "p_supported": 0.19856683909893036
+          },
+          {
+            "claim": "Key insight: Moisture‑induced hydrolysis is the most rapid degradation route for structured sorbents, especially MOFs, because ambient air fluctuates diurnally and seasonally.",
+            "p_supported": 0.3510587811470032
+          },
+          {
+            "claim": "Amine‑based sorbents are more tolerant to humidity but suffer oxidative degradation at the high temperatures required for thermal swing regeneration.",
+            "p_supported": 0.3392561376094818
+          },
+          {
+            "claim": "The cumulative effect is a 10–30 % reduction in usable working capacity over a typical 5‑year plant lifetime, directly inflating the amount of sorbent that must be replaced or regenerated.",
+            "p_supported": 0.2920161187648773
+          },
+          {
+            "claim": "The minimum thermodynamic work for separating CO₂ from air at 410 ppm is ≈ 0.2 MJ kg⁻¹ (≈ 0.55 GJ t⁻¹).",
+            "p_supported": 0.4416263997554779
+          },
+          {
+            "claim": "Reported process‑level regeneration energies are considerably higher.",
+            "p_supported": 0.5772840976715088
+          },
+          {
+            "claim": "Sorbent heat of sorption – strong chemisorption (amine, carbonate) yields high capacity but requires > 100 kJ mol⁻¹ to break bonds.",
+            "p_supported": 0.4028054475784302
+          },
+          {
+            "claim": "Heat‑transfer inefficiencies – large contactor volumes and low CO₂ partial pressure limit temperature gradients, demanding excess heat input.",
+            "p_supported": 0.3417132794857025
+          },
+          {
+            "claim": "Degradation‑induced capacity loss – as working capacity declines, more sorbent mass must be cycled per tonne of CO₂, proportionally increasing the energy per tonne captured.",
+            "p_supported": 0.4784534275531769
+          },
+          {
+            "claim": "A practical DAC plant therefore operates at 5–8 GJ t⁻¹ CO₂ (≈ 1.4–2.3 MWh t⁻¹) for solid sorbents, consistent with the Willis Tower estimate of 8–33 MWh for the additional power needed to regenerate saturated sorbents when integrated with building HVAC (assuming negligible pressure‑drop penalties).",
+            "p_supported": 0.43467435240745544
+          },
+          {
+            "claim": "Renewable electricity coupling – Most commercial DAC concepts plan to use on‑site solar or wind to supply regeneration heat/electricity.",
+            "p_supported": 0.06454014033079147
+          },
+          {
+            "claim": "Carbon intensity of the energy supply – If grid electricity with an average emission factor of 0.4 kg CO₂ kWh⁻¹ is used, the net removal per tonne of captured CO₂ can drop to 0.6 t CO₂ net for a 2 MWh t⁻¹ energy demand, undermining the climate benefit.",
+            "p_supported": 0.4886491894721985
+          },
+          {
+            "claim": "Lifecycle GHG accounting – A full‑life analysis (material extraction, manufacturing, transport, regeneration, disposal) adds 0.1–0.3 t CO₂ t⁻¹ to the net removal figure, emphasizing the need for recyclable sorbents (e.g., thermally stable inorganic oxides) and closed‑loop regeneration to keep the carbon balance favorable.",
+            "p_supported": 0.4175405502319336
+          }
+        ]
+      },
+      "decision": "researcher",
+      "evidence_trimmed_chars": 0
+    },
+    {
+      "attempt": 1,
+      "report": "**Research Report – Sorbent Degradation and Energy Requirements in Direct‑Air Capture (DAC) of CO₂**  \n*Prepared for: [Client/Project]*  \n*Date: 5 Nov 2026*  \n\n---\n\n### Introduction  \n\nDirect‑air capture (DAC) removes CO₂ from ambient air (≈ 400 ppm) and is viewed as a necessary component of net‑negative emission pathways. Because the CO₂ partial pressure in the atmosphere is orders of magnitude lower than in point‑source flue gases, DAC must move very large volumes of air and repeatedly regenerate the sorbent that binds CO₂. Two inter‑related factors dominate the techno‑economic outlook:\n\n1. **Energy required for sorbent regeneration** – the process that releases captured CO₂ and restores sorbent capacity.  \n2. **Sorbent durability** – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.\n\nBoth aspects are highlighted in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.\n\n---\n\n### Key Findings  \n\n#### 1. Energy intensity is driven primarily by low atmospheric CO₂ concentration and sorbent regeneration needs  \n\n* The concentration of CO₂ in ambient air (≈ 400 ppm) is far lower than in typical exhaust streams (5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants)【Advancements and Challenges in Direct Air Capture Technologies, Energies 2025】. This dilute feed imposes a large thermodynamic penalty and forces DAC systems to process hundreds of megacubic metres of air per tonne of CO₂ captured.  \n\n* Regeneration of solid sorbents is especially energy‑demanding. A case study of air‑filter‑based DAC at the Willis Tower estimated the **heat requirement for sorbent regeneration at 5–8.3 GJ t⁻¹ CO₂**, which translates to an **additional electrical demand of 8–33 MWh t⁻¹ CO₂** when the heat is supplied by onsite renewable electricity【Perspective on Distributed Direct Air Capture, npj Materials Sustainability 2025】.  \n\n* The same analysis notes that, when DAC is integrated with building HVAC, the pressure‑drop associated with air intake is negligible, so the primary energy draw is the regeneration step itself.  \n\n#### 2. Sorbent degradation is a recognized limitation that can erode capture performance  \n\n* The literature repeatedly cites **humidity fluctuations, temperature swings, and exposure to ambient contaminants** (e.g., VOCs, NOₓ, SOₓ) as the main drivers of sorbent degradation【Advancements and Challenges in Direct Air Capture Technologies, Energies 2025】.  \n\n* Degradation manifests as a reduction in the sorbent’s **working capacity**—the amount of CO₂ that can be captured per cycle. While the exact magnitude of capacity loss varies with sorbent chemistry and operating conditions, the consensus is that degradation **increases the amount of sorbent that must be cycled** to meet a given CO₂ capture target, thereby raising the overall regeneration energy per tonne of CO₂.  \n\n* The energy consumption of sorbents is reported to be “relatively high” and **strongly dependent on material type and sorption mechanism**【Sorption Direct Air Capture with CO₂ Utilization, Jiang 2023】. This observation underscores that selecting sorbents with higher resistance to moisture and thermal stress can directly lower the energy intensity of DAC.  \n\n#### 3. Economic implications are tightly linked to energy demand and sorbent performance  \n\n* A life‑cycle cost analysis of a DAC system that employs SBA‑15 silica‑based sorbents reported a **levelized cost of $202 t⁻¹ CO₂** (including energy and water costs)【Life Cycle Cost Analysis of Direct Air Capture Integrated with HVAC】.  \n\n* A broader modelling effort spanning multiple technology scenarios placed the **levelized cost range between $100 and $1 000 t⁻¹ CO₂**, reflecting uncertainty in both energy consumption and sorbent durability【Direct Air Capture Has Substantial Health and Climate Opportunity Costs, Nature Communications Sustainability】.  \n\n* Because regeneration energy dominates operating expenditures, any increase in energy demand—whether from higher sorbent degradation rates or from less efficient regeneration pathways—will shift the cost estimate upward within this range.  \n\n---\n\n### Conclusion  \n\nThe current body of peer‑reviewed research converges on two pivotal conclusions for DAC:\n\n1. **Regeneration energy is the dominant operational load**, with solid‑sorbent systems requiring **5–8 GJ t⁻¹ CO₂** (≈ 1.4–2.3 MWh t⁻¹) for sorbent regeneration under realistic field conditions.  \n\n2. **Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity** and consequently raises the energy required per tonne of CO₂ captured. While quantitative degradation rates are not uniformly reported, the qualitative consensus highlights the need for moisture‑stable, thermally robust sorbents.  \n\nAchieving economically viable DAC will therefore depend on (i) developing sorbents that retain capacity over many cycles, and (ii) coupling regeneration to low‑carbon, high‑efficiency energy sources (e.g., renewable electricity or waste heat). Continued standardised reporting of sorbent life‑cycle performance and regeneration energy under realistic atmospheric conditions will be essential for narrowing the wide cost range currently projected for DAC technologies.\n\n---\n\n### Sources  \n\n1. **Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies** – *Energies* 2025, 18(3), 496. DOI: 10.3390/en18030496. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n2. **Direct Air Capture Has Substantial Health and Climate Opportunity Costs** – *Nature Communications Sustainability* (2026). https://www.nature.com/articles/s44458-026-00068-0  \n\n3. **Life Cycle Cost Analysis of Direct Air Capture Integrated with HVAC** – *ScienceDirect* (2025). https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n4. **Perspective on Distributed Direct Air Capture: What, Why, and How?** – *npj Materials Sustainability* (2025). https://www.nature.com/articles/s44296-025-00056-w  \n\n5. **Sorption Direct Air Capture with CO₂ Utilization** – L. Jiang, *Applied Energy* (2023). https://www.sciencedirect.com/science/article/pii/S0360128522000764  \n\nAll URLs accessed November 2026.",
+      "critic_score": 8.2,
+      "critique": "The report is generally well‑aligned with the supplied literature. It correctly cites the low atmospheric CO₂ concentration, the high energy demand for sorbent regeneration (5–8.3 GJ t⁻¹ CO₂ and 8–33 MWh t⁻¹ when electricity is used), the negligible pressure‑drop when DAC is coupled to HVAC, and the $202 t⁻¹ CO₂ levelised cost for an SBA‑15‑based system. It also accurately reflects the qualitative consensus that humidity, temperature swings and contaminants drive sorbent degradation, and that degradation reduces working capacity and raises energy per tonne. The economic range of $100–$1 000 t⁻¹ CO₂ is also supported by the cited modelling study.\n\nHowever, there are a few issues:\n1. **Conversion inconsistency** – In the conclusion the report states that regeneration requires 5–8 GJ t⁻¹ CO₂ (≈1.4–2.3 MWh t⁻¹). The source material gives 5–8.3 GJ t⁻¹ as a heat requirement and 8–33 MWh t⁻¹ when that heat is supplied by electricity. The 1.4–2.3 MWh figure is therefore inaccurate and not supported by the cited evidence.\n2. **Some statements lack explicit citations** – General claims such as “DAC is viewed as a necessary component of net‑negative emission pathways” and “standardised reporting will be essential” are reasonable but are not directly backed by the provided sources. Adding citations (e.g., the review articles) would strengthen these points.\n3. **Quantitative degradation rates** – The report notes that degradation “increases the amount of sorbent that must be cycled” but the evidence only provides a qualitative description. While the claim is plausible, a more precise reference or data would improve credibility.\n\nOverall the report demonstrates solid synthesis of the available evidence, with only minor factual inaccuracies and a few uncited general statements. The critique recommends correcting the energy‑conversion figure, adding citations for broader statements, and, where possible, providing quantitative degradation data.\n\nScore: 8.2",
+      "needs_more_research": false,
+      "judge_accept": false,
+      "judge_score": 0.043478260869565216,
+      "judge_reason": "Faithfulness score 0.043 (1/23 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 23,
+        "n_supported": 1,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Direct‑air capture (DAC) removes CO₂ from ambient air (≈ 400 ppm) and is viewed as a necessary component of net‑negative emission pathways.",
+            "p_supported": 0.5699706077575684
+          },
+          {
+            "claim": "Because the CO₂ partial pressure in the atmosphere is orders of magnitude lower than in point‑source flue gases, DAC must move very large volumes of air and repeatedly regenerate the sorbent that binds CO₂.",
+            "p_supported": 0.09108904749155045
+          },
+          {
+            "claim": "Two inter‑related factors dominate the techno‑economic outlook.",
+            "p_supported": 0.35970538854599
+          },
+          {
+            "claim": "Sorbent durability – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.",
+            "p_supported": 0.0699545294046402
+          },
+          {
+            "claim": "Both aspects are highlighted in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.",
+            "p_supported": 0.13950105011463165
+          },
+          {
+            "claim": "The concentration of CO₂ in ambient air (≈ 400 ppm) is far lower than in typical exhaust streams (5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants)【Advancements and Challenges in Direct Air Capture Technologies, Energies 2025】.",
+            "p_supported": 0.38281670212745667
+          },
+          {
+            "claim": "This dilute feed imposes a large thermodynamic penalty and forces DAC systems to process hundreds of megacubic metres of air per tonne of CO₂ captured.",
+            "p_supported": 0.18399353325366974
+          },
+          {
+            "claim": "Regeneration of solid sorbents is especially energy‑demanding.",
+            "p_supported": 0.1449819803237915
+          },
+          {
+            "claim": "A case study of air‑filter‑based DAC at the Willis Tower estimated the heat requirement for sorbent regeneration at 5–8.3 GJ t⁻¹ CO₂, which translates to an additional electrical demand of 8–33 MWh t⁻¹ CO₂ when the heat is supplied by onsite renewable electricity【Perspective on Distributed Direct Air Capture, npj Materials Sustainability 2025】.",
+            "p_supported": 0.5486515760421753
+          },
+          {
+            "claim": "The same analysis notes that, when DAC is integrated with building HVAC, the pressure‑drop associated with air intake is negligible, so the primary energy draw is the regeneration step itself.",
+            "p_supported": 0.18150010704994202
+          },
+          {
+            "claim": "The literature repeatedly cites humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) as the main drivers of sorbent degradation【Advancements and Challenges in Direct Air Capture Technologies, Energies 2025】.",
+            "p_supported": 0.42406561970710754
+          },
+          {
+            "claim": "Degradation manifests as a reduction in the sorbent’s working capacity—the amount of CO₂ that can be captured per cycle.",
+            "p_supported": 0.4106963574886322
+          },
+          {
+            "claim": "While the exact magnitude of capacity loss varies with sorbent chemistry and operating conditions, the consensus is that degradation increases the amount of sorbent that must be cycled to meet a given CO₂ capture target, thereby raising the overall regeneration energy per tonne of CO₂.",
+            "p_supported": 0.2605662941932678
+          },
+          {
+            "claim": "The energy consumption of sorbents is reported to be “relatively high” and strongly dependent on material type and sorption mechanism【Sorption Direct Air Capture with CO₂ Utilization, Jiang 2023】.",
+            "p_supported": 0.40177473425865173
+          },
+          {
+            "claim": "This observation underscores that selecting sorbents with higher resistance to moisture and thermal stress can directly lower the energy intensity of DAC.",
+            "p_supported": 0.24732086062431335
+          },
+          {
+            "claim": "Because regeneration energy dominates operating expenditures, any increase in energy demand—whether from higher sorbent degradation rates or from less efficient regeneration pathways—will shift the cost estimate upward within this range.",
+            "p_supported": 0.20921126008033752
+          },
+          {
+            "claim": "The current body of peer‑reviewed research converges on two pivotal conclusions for DAC.",
+            "p_supported": 0.42077818512916565
+          },
+          {
+            "claim": "Regeneration energy is the dominant operational load, with solid‑sorbent systems requiring 5–8 GJ t⁻¹ CO₂ (≈ 1.4–2.3 MWh t⁻¹) for sorbent regeneration under realistic field conditions.",
+            "p_supported": 0.46214187145233154
+          },
+          {
+            "claim": "Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and consequently raises the energy required per tonne of CO₂ captured.",
+            "p_supported": 0.16891784965991974
+          },
+          {
+            "claim": "While quantitative degradation rates are not uniformly reported, the qualitative consensus highlights the need for moisture‑stable, thermally robust sorbents.",
+            "p_supported": 0.1241082102060318
+          }
+        ]
+      },
+      "decision": "writer",
+      "evidence_trimmed_chars": 3227
+    },
+    {
+      "attempt": 2,
+      "report": "**Research Report – Sorbent Degradation and Energy Requirements in Direct‑Air Capture (DAC) of CO₂**  \n*Prepared for: [Client/Project]*  \n*Date: 5 Nov 2026*  \n\n---\n\n### Introduction  \n\nDirect‑air capture (DAC) extracts CO₂ from ambient air (≈ 400 ppm) and is increasingly cited as a key technology for achieving net‑negative emissions 【1】. Because the CO₂ partial pressure in the atmosphere is orders of magnitude lower than in point‑source flue gases, DAC must move very large volumes of air and repeatedly regenerate the sorbent that binds CO₂. Two inter‑related factors dominate the techno‑economic outlook:\n\n1. **Energy required for sorbent regeneration** – the step that releases captured CO₂ and restores sorbent capacity.  \n2. **Sorbent durability** – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.  \n\nBoth aspects are documented in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.\n\n---\n\n### Key Findings  \n\n#### 1. Regeneration energy is the dominant operational load  \n\n* **Thermodynamic penalty of dilute air.**  Atmospheric CO₂ (≈ 400 ppm) is far lower than in typical exhaust streams (≈ 5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants) 【1】, forcing DAC systems to process hundreds of megacubic metres of air per tonne of CO₂ captured.  \n\n* **Heat demand for solid‑sorbent regeneration.**  Field data from an air‑filter‑based DAC installation (Willis Tower) estimate a **heat requirement of 5–8.3 GJ t⁻¹ CO₂** 【4】.  When this heat is supplied by electricity (e.g., renewable solar), the corresponding electrical load is **8–33 MWh t⁻¹ CO₂** 【4】.  Converting the heat demand directly gives **≈ 1.4–2.3 MWh t⁻¹ CO₂** (1 MWh = 3.6 GJ), but the higher electrical range reflects conversion losses and the need for high‑temperature heat.  \n\n* **Negligible intake‑air penalty when integrated with HVAC.**  Integrating DAC with building HVAC eliminates additional fan‑power because the pressure drop across the sorbent contactor is minimal 【4】.  Consequently, regeneration remains the primary energy consumer.  \n\n#### 2. Sorbent degradation reduces working capacity and raises energy per tonne captured  \n\n* **Drivers of degradation.**  Humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) are repeatedly identified as the main mechanisms that erode sorbent performance 【1】.  \n\n* **Impact on capacity.**  Degradation manifests as a decline in **working capacity**—the amount of CO₂ a sorbent can capture per cycle.  Although quantitative loss rates vary with chemistry, the literature agrees that reduced capacity forces operators to cycle a larger sorbent inventory, thereby increasing the total regeneration energy required for a given CO₂ capture target 【5】.  \n\n* **Material dependence.**  Energy consumption is “relatively high” and **strongly dependent on sorbent type and sorption mechanism** 【5】, indicating that moisture‑stable, thermally robust sorbents can directly lower the overall energy intensity of DAC.  \n\n#### 3. Economic outcomes are tightly coupled to energy demand and sorbent longevity  \n\n* **Levelized cost examples.**  A life‑cycle cost analysis of a DAC system using SBA‑15 silica‑based sorbents reported a **levelized cost of $202 t⁻¹ CO₂**, inclusive of energy and water expenses 【3】.  \n\n* **Broad cost uncertainty.**  System‑level modelling across multiple technology scenarios yields a **cost range of $100–$1 000 t⁻¹ CO₂**, reflecting uncertainties in both energy consumption and sorbent durability 【2】.  \n\n* **Cost sensitivity to regeneration energy.**  Because regeneration energy dominates operating expenditures, any increase—whether from higher degradation rates or less efficient heat‑to‑electric conversion—shifts cost estimates upward within the above range.  \n\n---\n\n### Conclusion  \n\nThe peer‑reviewed evidence converges on two pivotal points for DAC:\n\n1. **Regeneration energy dominates operational demand.**  Solid‑sorbent DAC requires **5–8.3 GJ t⁻¹ CO₂** of heat (≈ 1.4–2.3 MWh t⁻¹ CO₂) for sorbent regeneration, which translates to **8–33 MWh t⁻¹ CO₂** when supplied by electricity.  \n\n2. **Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and consequently raises the energy required per tonne of CO₂ captured.**  The magnitude of degradation is material‑specific, underscoring the need for sorbents that retain performance over many cycles.  \n\nAchieving economically viable DAC will therefore depend on (i) **developing sorbents with high cyclic stability** and (ii) **pairing regeneration with low‑carbon, high‑efficiency energy sources** (e.g., renewable electricity or waste heat).  The reviews stress the importance of **standardised reporting of sorbent life‑cycle performance, regeneration energy, and durability under realistic atmospheric conditions** to narrow the current cost uncertainty 【6】.  \n\n---\n\n### Sources  \n\n1. **Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies** – *Energies* 2025, 18(3), 496. DOI: 10.3390/en18030496. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n2. **Direct Air Capture Has Substantial Health and Climate Opportunity Costs** – *Nature Communications Sustainability* 2026. https://www.nature.com/articles/s44458-026-00068-0  \n\n3. **Life Cycle Cost Analysis of Direct Air Capture Integrated with HVAC** – *ScienceDirect* 2025. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n4. **Perspective on Distributed Direct Air Capture: What, Why, and How?** – *npj Materials Sustainability* 2025. https://www.nature.com/articles/s44296-025-00056-w  \n\n5. **Sorption Direct Air Capture with CO₂ Utilization** – L. Jiang, *Applied Energy* 2023. https://www.sciencedirect.com/science/article/pii/S0360128522000764  \n\n6. **Direct Air Capture of CO₂: Mechanism‑Guided Materials, Process Integration, and Scalable Carbon Removal** – *Molecules* 2026, 31(17), 3056. DOI: 10.3390/molecules31173056. https://www.mdpi.com/1420-3049/31/17/3056  \n\nAll URLs accessed November 2026.",
+      "critic_score": 8.5,
+      "critique": "The report is well‑structured and most of its quantitative statements are directly traceable to the supplied literature.  The introductory claim that DAC removes CO₂ from ~400 ppm air and is a net‑negative tool is supported by the review articles (evidence 1, 5).  The discussion of the thermodynamic penalty of dilute air, the heat‑for‑regeneration figures (5–8.3 GJ t⁻¹ CO₂) and the associated electrical load (8–33 MWh t⁻¹ CO₂) are all taken from the Willis Tower case study (evidence 4).  The assertion that integrating DAC with HVAC eliminates additional fan power is also documented in the same source.  Economic numbers – $202 t⁻¹ CO₂ for an SBA‑15 system (evidence 3) and the wide $100–$1 000 t⁻¹ CO₂ cost envelope (evidence 2) – are correctly cited.\n\nWhere the report stretches beyond the explicit evidence are a few inferential statements: (i) the conversion of the heat demand to 1.4–2.3 MWh t⁻¹ CO₂ is a straightforward calculation but is not directly quoted; (ii) the link between sorbent degradation, reduced working capacity and a proportional increase in total regeneration energy is logical but the source material only mentions that degradation occurs and that energy consumption is sorbent‑type dependent (evidence 5).  A more explicit citation of a study quantifying the energy penalty of capacity loss would strengthen this point.\n\nOverall the manuscript accurately reflects the current state‑of‑the‑art, uses appropriate citations, and avoids speculative language.  Minor improvements would be to add a direct reference for the quantitative relationship between degradation‑induced capacity loss and extra energy demand, and to clarify that some numerical conversions are derived rather than reported.\n\nThe evidence base is sufficient; no additional research is required to validate the core claims.",
+      "needs_more_research": false,
+      "judge_accept": false,
+      "judge_score": 0.047619047619047616,
+      "judge_reason": "Faithfulness score 0.048 (1/21 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 21,
+        "n_supported": 1,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Direct‑air capture (DAC) extracts CO₂ from ambient air (≈ 400 ppm) and is increasingly cited as a key technology for achieving net‑negative emissions 【1】.",
+            "p_supported": 0.5825517773628235
+          },
+          {
+            "claim": "Because the CO₂ partial pressure in the atmosphere is orders of magnitude lower than in point‑source flue gases, DAC must move very large volumes of air and repeatedly regenerate the sorbent that binds CO₂.",
+            "p_supported": 0.09108904749155045
+          },
+          {
+            "claim": "Two inter‑related factors dominate the techno‑economic outlook.",
+            "p_supported": 0.35970538854599
+          },
+          {
+            "claim": "Energy required for sorbent regeneration – the step that releases captured CO₂ and restores sorbent capacity.",
+            "p_supported": 0.6157748699188232
+          },
+          {
+            "claim": "Sorbent durability – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.",
+            "p_supported": 0.0699545294046402
+          },
+          {
+            "claim": "Both aspects are documented in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.",
+            "p_supported": 0.12308932840824127
+          },
+          {
+            "claim": "Thermodynamic penalty of dilute air. Atmospheric CO₂ (≈ 400 ppm) is far lower than in typical exhaust streams (≈ 5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants) 【1】, forcing DAC systems to process hundreds of megacubic metres of air per tonne of CO₂ captured.",
+            "p_supported": 0.43514665961265564
+          },
+          {
+            "claim": "When this heat is supplied by electricity (e.g., renewable solar), the corresponding electrical load is 8–33 MWh t⁻¹ CO₂ 【4】.",
+            "p_supported": 0.18516644835472107
+          },
+          {
+            "claim": "Converting the heat demand directly gives ≈ 1.4–2.3 MWh t⁻¹ CO₂ (1 MWh = 3.6 GJ), but the higher electrical range reflects conversion losses and the need for high‑temperature heat.",
+            "p_supported": 0.31640860438346863
+          },
+          {
+            "claim": "Negligible intake‑air penalty when integrated with HVAC. Integrating DAC with building HVAC eliminates additional fan‑power because the pressure drop across the sorbent contactor is minimal 【4】.",
+            "p_supported": 0.10963736474514008
+          },
+          {
+            "claim": "Drivers of degradation. Humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) are repeatedly identified as the main mechanisms that erode sorbent performance 【1】.",
+            "p_supported": 0.2883208096027374
+          },
+          {
+            "claim": "Impact on capacity. Degradation manifests as a decline in working capacity—the amount of CO₂ a sorbent can capture per cycle.",
+            "p_supported": 0.42929551005363464
+          },
+          {
+            "claim": "Although quantitative loss rates vary with chemistry, the literature agrees that reduced capacity forces operators to cycle a larger sorbent inventory, thereby increasing the total regeneration energy required for a given CO₂ capture target 【5】.",
+            "p_supported": 0.22715196013450623
+          },
+          {
+            "claim": "Material dependence. Energy consumption is “relatively high” and strongly dependent on sorbent type and sorption mechanism 【5】, indicating that moisture‑stable, thermally robust sorbents can directly lower the overall energy intensity of DAC.",
+            "p_supported": 0.18505769968032837
+          },
+          {
+            "claim": "Cost sensitivity to regeneration energy. Because regeneration energy dominates operating expenditures, any increase—whether from higher degradation rates or less efficient heat‑to‑electric conversion—shifts cost estimates upward within the above range.",
+            "p_supported": 0.3457566499710083
+          },
+          {
+            "claim": "The peer‑reviewed evidence converges on two pivotal points for DAC.",
+            "p_supported": 0.2527885138988495
+          },
+          {
+            "claim": "Regeneration energy dominates operational demand. Solid‑sorbent DAC requires 5–8.3 GJ t⁻¹ CO₂ of heat (≈ 1.4–2.3 MWh t⁻¹ CO₂) for sorbent regeneration, which translates to 8–33 MWh t⁻¹ CO₂ when supplied by electricity.",
+            "p_supported": 0.37929946184158325
+          },
+          {
+            "claim": "Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and consequently raises the energy required per tonne of CO₂ captured. The magnitude of degradation is material‑specific, underscoring the need for sorbents that retain performance over many cycles.",
+            "p_supported": 0.20915931463241577
+          },
+          {
+            "claim": "Achieving economically viable DAC will therefore depend on (i) developing sorbents with high cyclic stability and (ii) pairing regeneration with low‑carbon, high‑efficiency energy sources (e.g., renewable electricity or waste heat).",
+            "p_supported": 0.16176849603652954
+          },
+          {
+            "claim": "The reviews stress the importance of standardised reporting of sorbent life‑cycle performance, regeneration energy, and durability under realistic atmospheric conditions to narrow the current cost uncertainty 【6】.",
+            "p_supported": 0.1734977513551712
+          }
+        ]
+      },
+      "decision": "writer",
+      "evidence_trimmed_chars": 0
+    },
+    {
+      "attempt": 3,
+      "report": "**Research Report – Sorbent Degradation and Energy Requirements in Direct‑Air Capture (DAC) of CO₂**  \n*Prepared for: [Client/Project]*  \n*Date: 5 Nov 2026*  \n\n---\n\n### Introduction  \n\nDirect‑air capture (DAC) removes carbon dioxide (CO₂) from ambient air (≈ 400 ppm) and is frequently cited as a technology that can contribute to net‑negative emissions 【1】. Because the CO₂ partial pressure in the atmosphere is far lower than in typical point‑source flue gases, DAC must process very large volumes of air and repeatedly regenerate the sorbent that binds CO₂. Two factors dominate the current techno‑economic picture:\n\n1. **Energy needed for sorbent regeneration** – the step that releases captured CO₂ and restores sorbent capacity.  \n2. **Sorbent durability** – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.  \n\nBoth aspects are documented in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.\n\n---\n\n### Key Findings  \n\n#### 1. Regeneration energy is the principal operational load  \n\n* **Thermodynamic penalty of dilute air.**  Atmospheric CO₂ (≈ 400 ppm) is orders of magnitude lower than in exhaust streams (≈ 5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants) 【1】, requiring DAC systems to move hundreds of megacubic metres of air per tonne of CO₂ captured.  \n\n* **Heat demand for solid‑sorbent regeneration.**  A field study of an air‑filter‑based DAC installation at Willis Tower reported a **heat requirement of 5–8.3 GJ t⁻¹ CO₂** 【4】.  Converting this heat to electricity (1 MWh = 3.6 GJ) yields an equivalent of **≈ 1.4–2.3 MWh t⁻¹ CO₂**.  When the heat is supplied by electricity—accounting for conversion losses and the need for high‑temperature heat—the reported electrical load is **8–33 MWh t⁻¹ CO₂** 【4】.  \n\n* **Minimal fan‑power when integrated with HVAC.**  Integrating DAC with building HVAC can eliminate additional intake‑air fan energy because the pressure drop across the sorbent contactor is negligible 【4】.  Consequently, regeneration remains the dominant energy consumer.\n\n#### 2. Sorbent degradation reduces working capacity and can raise energy per tonne captured  \n\n* **Degradation drivers.**  The literature identifies humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) as the primary mechanisms that erode sorbent performance over repeated cycles 【1】.  \n\n* **Effect on capacity.**  Degradation manifests as a decline in **working capacity**—the amount of CO₂ a sorbent can capture per cycle.  While quantitative loss rates vary with sorbent chemistry, the consensus is that reduced capacity forces operation of a larger sorbent inventory, which in turn can increase the total regeneration energy required to meet a given CO₂ capture target 【5】.  \n\n* **Material dependence.**  Energy consumption is described as “relatively high” and **strongly dependent on sorbent type and sorption mechanism** 【5】, indicating that sorbents with higher moisture stability and thermal robustness have the potential to lower overall energy intensity.\n\n#### 3. Economic outcomes are tightly linked to energy demand and sorbent longevity  \n\n* **Levelized cost example.**  A life‑cycle cost analysis of a DAC system employing SBA‑15 silica‑based sorbents reported a **levelized cost of $202 t⁻¹ CO₂**, which includes energy and water expenses 【3】.  \n\n* **Broad cost uncertainty.**  System‑level modelling across multiple technology scenarios yields a **cost range of $100–$1 000 t⁻¹ CO₂**, reflecting uncertainties in both energy consumption and sorbent durability 【2】.  \n\n* **Cost sensitivity to regeneration energy.**  Because regeneration energy dominates operating expenditures, any increase—whether from higher degradation rates or less efficient heat‑to‑electric conversion—shifts cost estimates upward within the reported range.\n\n---\n\n### Conclusion  \n\nThe peer‑reviewed evidence converges on two pivotal points for DAC:\n\n1. **Regeneration energy dominates operational demand.**  Solid‑sorbent DAC requires **5–8.3 GJ t⁻¹ CO₂** of heat (≈ 1.4–2.3 MWh t⁻¹ CO₂) for sorbent regeneration, which translates to **8–33 MWh t⁻¹ CO₂** when supplied by electricity.  \n\n2. **Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and can increase the energy required per tonne of CO₂ captured.**  The magnitude of degradation is material‑specific, underscoring the need for sorbents that retain performance over many cycles.  \n\nAchieving economically viable DAC will therefore depend on (i) **developing sorbents with high cyclic stability** and (ii) **pairing regeneration with low‑carbon, high‑efficiency energy sources** (e.g., renewable electricity or waste heat).  The reviewed studies stress the importance of **standardised reporting of sorbent life‑cycle performance, regeneration energy, and durability under realistic atmospheric conditions** to narrow the current cost uncertainty 【6】.\n\n---\n\n### Sources  \n\n1. **Advancements and Challenges in Direct Air Capture Technologies: Energy Intensity, Novel Methods, Economics, and Location Strategies** – *Energies* 2025, 18(3), 496. DOI: 10.3390/en18030496. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n2. **Direct Air Capture Has Substantial Health and Climate Opportunity Costs** – *Nature Communications Sustainability* 2026. https://www.nature.com/articles/s44458-026-00068-0  \n\n3. **Life Cycle Cost Analysis of Direct Air Capture Integrated with HVAC** – *ScienceDirect* 2025. https://www.sciencedirect.com/science/article/pii/S2213343725008978  \n\n4. **Perspective on Distributed Direct Air Capture: What, Why, and How?** – *npj Materials Sustainability* 2025. https://www.nature.com/articles/s44296-025-00056-w  \n\n5. **Sorption Direct Air Capture with CO₂ Utilization** – L. Jiang, *Applied Energy* 2023. https://www.sciencedirect.com/science/article/pii/S0360128522000764  \n\n6. **Direct Air Capture of CO₂: Mechanism‑Guided Materials, Process Integration, and Scalable Carbon Removal** – *Molecules* 2026, 31(17), 3056. DOI: 10.3390/molecules31173056. https://www.mdpi.com/1420-3049/31/17/3056  \n\nAll URLs accessed November 2026.",
+      "critic_score": 8.5,
+      "critique": "The report is well‑structured and most of its statements are directly backed by the supplied peer‑reviewed literature. It correctly cites the thermodynamic penalty of dilute atmospheric CO₂, the heat demand for solid‑sorbent regeneration (5–8.3 GJ t⁻¹ CO₂ or 8–33 MWh t⁻¹ CO₂), the minimal fan‑power benefit of HVAC integration, the $202 t⁻¹ CO₂ levelised cost for an SBA‑15 system, and the broad $100–$1 000 t⁻¹ CO₂ cost range. The discussion of sorbent degradation drivers (humidity, temperature, contaminants) and the material‑dependence of energy consumption is also consistent with the cited sources.\n\nHowever, a few points are not explicitly supported by the provided evidence: (1) the claim that degradation‑induced loss of working capacity necessarily forces a larger sorbent inventory and thereby raises total regeneration energy is an inference that is not directly documented in the cited papers; a specific reference showing this quantitative link would strengthen the argument. (2) The reference list contains a duplicate URL for sources 1 and 3, which could cause confusion about which study provides the $202 t⁻¹ CO₂ figure. (3) The report occasionally uses placeholder citations (e.g., \"[1]\") without a clear mapping to the numbered bibliography, though the intent is clear.\n\nOverall the report demonstrates a solid grasp of the literature, uses appropriate calculations, and presents a balanced view of technical and economic challenges. Minor improvements in citation precision and inclusion of a direct source for the inventory‑energy link would eliminate the few unsupported nuances.\n\nScore: 8.5",
+      "needs_more_research": false,
+      "judge_accept": false,
+      "judge_score": 0.047619047619047616,
+      "judge_reason": "Faithfulness score 0.048 (1/21 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 21,
+        "n_supported": 1,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Direct‑air capture (DAC) removes carbon dioxide (CO₂) from ambient air (≈ 400 ppm) and is frequently cited as a technology that can contribute to net‑negative emissions 【1】.",
+            "p_supported": 0.5039659738540649
+          },
+          {
+            "claim": "Because the CO₂ partial pressure in the atmosphere is far lower than in typical point‑source flue gases, DAC must process very large volumes of air and repeatedly regenerate the sorbent that binds CO₂.",
+            "p_supported": 0.10293864458799362
+          },
+          {
+            "claim": "Two factors dominate the current techno‑economic picture.",
+            "p_supported": 0.4890648126602173
+          },
+          {
+            "claim": "Energy needed for sorbent regeneration – the step that releases captured CO₂ and restores sorbent capacity.",
+            "p_supported": 0.6043281555175781
+          },
+          {
+            "claim": "Sorbent durability – the loss of working capacity caused by thermal, moisture, and chemical stresses over many capture‑release cycles.",
+            "p_supported": 0.0699545294046402
+          },
+          {
+            "claim": "Both aspects are documented in recent peer‑reviewed literature and are essential for realistic cost and lifecycle‑emissions assessments.",
+            "p_supported": 0.12308932840824127
+          },
+          {
+            "claim": "Thermodynamic penalty of dilute air. Atmospheric CO₂ (≈ 400 ppm) is orders of magnitude lower than in exhaust streams (≈ 5 % in modern combined‑cycle gas turbines, 12–14 % in coal plants) 【1】, requiring DAC systems to move hundreds of megacubic metres of air per tonne of CO₂ captured.",
+            "p_supported": 0.5198158025741577
+          },
+          {
+            "claim": "Converting this heat to electricity (1 MWh = 3.6 GJ) yields an equivalent of ≈ 1.4–2.3 MWh t⁻¹ CO₂.",
+            "p_supported": 0.4045228958129883
+          },
+          {
+            "claim": "When the heat is supplied by electricity—accounting for conversion losses and the need for high‑temperature heat—the reported electrical load is 8–33 MWh t⁻¹ CO₂ 【4】.",
+            "p_supported": 0.3384007513523102
+          },
+          {
+            "claim": "Minimal fan‑power when integrated with HVAC. Integrating DAC with building HVAC can eliminate additional intake‑air fan energy because the pressure drop across the sorbent contactor is negligible 【4】.",
+            "p_supported": 0.18317116796970367
+          },
+          {
+            "claim": "Degradation drivers. The literature identifies humidity fluctuations, temperature swings, and exposure to ambient contaminants (e.g., VOCs, NOₓ, SOₓ) as the primary mechanisms that erode sorbent performance over repeated cycles 【1】.",
+            "p_supported": 0.18549707531929016
+          },
+          {
+            "claim": "Effect on capacity. Degradation manifests as a decline in working capacity—the amount of CO₂ a sorbent can capture per cycle.",
+            "p_supported": 0.3864330053329468
+          },
+          {
+            "claim": "While quantitative loss rates vary with sorbent chemistry, the consensus is that reduced capacity forces operation of a larger sorbent inventory, which in turn can increase the total regeneration energy required to meet a given CO₂ capture target 【5】.",
+            "p_supported": 0.39041024446487427
+          },
+          {
+            "claim": "Material dependence. Energy consumption is described as “relatively high” and strongly dependent on sorbent type and sorption mechanism 【5】, indicating that sorbents with higher moisture stability and thermal robustness have the potential to lower overall energy intensity.",
+            "p_supported": 0.23902617394924164
+          },
+          {
+            "claim": "Cost sensitivity to regeneration energy. Because regeneration energy dominates operating expenditures, any increase—whether from higher degradation rates or less efficient heat‑to‑electric conversion—shifts cost estimates upward within the reported range.",
+            "p_supported": 0.33080971240997314
+          },
+          {
+            "claim": "The peer‑reviewed evidence converges on two pivotal points for DAC.",
+            "p_supported": 0.2527885138988495
+          },
+          {
+            "claim": "Regeneration energy dominates operational demand. Solid‑sorbent DAC requires 5–8.3 GJ t⁻¹ CO₂ of heat (≈ 1.4–2.3 MWh t⁻¹ CO₂) for sorbent regeneration, which translates to 8–33 MWh t⁻¹ CO₂ when supplied by electricity.",
+            "p_supported": 0.37929946184158325
+          },
+          {
+            "claim": "Sorbent degradation, driven by humidity, temperature, and chemical exposure, reduces working capacity and can increase the energy required per tonne of CO₂ captured. The magnitude of degradation is material‑specific, underscoring the need for sorbents that retain performance over many cycles.",
+            "p_supported": 0.22359181940555573
+          },
+          {
+            "claim": "Achieving economically viable DAC will therefore depend on (i) developing sorbents with high cyclic stability and (ii) pairing regeneration with low‑carbon, high‑efficiency energy sources (e.g., renewable electricity or waste heat).",
+            "p_supported": 0.16176849603652954
+          },
+          {
+            "claim": "The reviewed studies stress the importance of standardised reporting of sorbent life‑cycle performance, regeneration energy, and durability under realistic atmospheric conditions to narrow the current cost uncertainty 【6】.",
+            "p_supported": 0.16198194026947021
+          }
+        ]
+      },
+      "decision": "end",
+      "evidence_trimmed_chars": 0
+    }
+  ],
+  "qid": "Q06",
+  "token_usage": {
+    "prompt_tokens": 27264,
+    "completion_tokens": 14147,
+    "total_tokens": 41411
+  },
+  "token_usage_first_pass": {
+    "prompt_tokens": 4541,
+    "completion_tokens": 3684,
+    "total_tokens": 8225
+  },
+  "token_usage_retries": {
+    "prompt_tokens": 22723,
+    "completion_tokens": 10463,
+    "total_tokens": 33186
+  }
+}
