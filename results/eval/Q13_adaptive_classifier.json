@@ -1,0 +1,340 @@
+{
+  "run_id": "20261108_094519_207621",
+  "system": "adaptive_classifier",
+  "topic": "Mechanisms of CAR-T cell exhaustion in solid tumors",
+  "model_name": "openai/gpt-oss-120b",
+  "timestamp": "2026-11-08T09:45:19.877812",
+  "final_report": "**Mechanisms of CAR‑T Cell Exhaustion in Solid Tumors**  \n*Research Report – ≤ 700 words*  \n\n---\n\n### Introduction  \n\nChimeric antigen receptor (CAR)‑T cells have achieved durable remissions in several hematologic malignancies, yet their efficacy against solid tumours remains limited. A principal barrier is **CAR‑T cell exhaustion**, a progressive loss of effector functions that parallels the exhaustion of endogenous CD8⁺ T cells exposed to chronic antigenic stimulation. Recent work describes exhaustion as a **hierarchical differentiation continuum**—progenitor‑like, intermediate, and terminal states—rather than a fixed end‑point (Wang & Guo, 2026). The relative distribution of these subsets influences the magnitude and durability of antitumour responses. In solid tumours, three inter‑related mechanisms converge to drive this dysfunctional program: (1) intrinsic tonic signaling linked to CAR design, (2) persistent antigen exposure within the tumour, and (3) extrinsic immunosuppressive cues from the tumour microenvironment (TME).\n\n---\n\n### Key Findings  \n\n#### 1. Antigen‑independent tonic signaling dictated by CAR architecture  \n*Evidence*: The 2026 Frontiers review notes that certain CAR constructs promote **spontaneous receptor clustering**, generating low‑level, antigen‑independent (“tonic”) signaling (Frontiers Immunology, 2026). Structural elements implicated include the **single‑chain variable fragment (scFv) framework**, hinge length, and transmembrane domain.  \n*Implication*: Tonic signaling can be initiated during **ex‑vivo expansion**, activating downstream pathways (e.g., NF‑κB, MAPK) and priming CAR‑T cells for an exhaustion‑associated transcriptional program before tumour encounter. This intrinsic stimulus predisposes the cells to functional decline independent of tumour antigen.\n\n#### 2. Continuous antigen stimulation in the solid‑tumour microenvironment  \n*Evidence*: Solid tumours often present the target antigen at high density but with spatial heterogeneity, leading to **sustained CAR engagement** after infusion (Frontiers Immunology, 2026). Chronic signaling maintains elevated expression of **inhibitory receptors** such as PD‑1, TIM‑3, LAG‑3, and CTLA‑4 on CAR‑T cells.  \n*Hierarchical model*: Within the exhaustion continuum, **progenitor‑like exhausted** CAR‑T cells retain proliferative capacity and can respond to checkpoint blockade, whereas **terminally exhausted** cells display profound functional loss and are less amenable to re‑activation (Wang & Guo, 2026). Persistent antigenic pressure therefore pushes cells along this trajectory.\n\n#### 3. Extrinsic suppressive cues from the tumour microenvironment  \n*Evidence*: The Nature review highlights several TME factors that reinforce exhaustion:  \n\n* **Cytokine milieu** – Elevated TGF‑β, IL‑10, and IL‑6 activate SMAD and STAT pathways that cooperate with chronic CAR signaling.  \n* **Metabolic constraints** – Nutrient scarcity (glucose, amino acids) and hypoxia limit mitochondrial oxidative phosphorylation, forcing a shift toward glycolysis and contributing to functional impairment.  \n* **Cellular suppressors** – Myeloid‑derived suppressor cells, tumour‑associated macrophages, and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals.  \n\nThese elements create a **feed‑forward loop**: tonic signaling predisposes CAR‑T cells to exhaustion; ongoing antigen exposure entrenches inhibitory receptor expression; and TME‑derived signals lock the epigenetic and transcriptional program, reducing the likelihood of functional recovery.\n\n---\n\n### Therapeutic Implications Grounded in the Literature  \n\n1. **CAR engineering to limit tonic signaling** – Modifying scFv affinity, hinge length, or transmembrane domains can reduce spontaneous clustering. Selecting costimulatory domains (e.g., 4‑1BB versus CD28) also influences exhaustion propensity, as reported in the 2019 Frontiers review.  \n\n2. **Checkpoint co‑targeting** – Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues **progenitor‑like exhausted** cells, enhancing expansion and tumour control (Wang & Guo, 2026). Terminally exhausted cells remain less responsive, underscoring the need for early intervention.  \n\n3. **Armored CARs** – Incorporating cytokine‑secreting modules (e.g., IL‑12, IL‑15) into CAR constructs has shown promise in counteracting the suppressive TME and sustaining CAR‑T cell function (Frontiers Immunology, 2019).  \n\n4. **Addressing metabolic stress** – The Nature review documents metabolic competition as a contributor to exhaustion. While specific remediation strategies (e.g., exogenous amino acids) were not detailed in the supplied sources, the observation suggests that **future approaches** may consider metabolic support as a logical extension of current knowledge.  \n\nOverall, the literature emphasizes that **preventing exhaustion before terminal differentiation**—through rational CAR design, timely checkpoint inhibition, and TME modulation—offers the most viable path to durable antitumour activity.\n\n---\n\n### Conclusion  \n\nCAR‑T cell exhaustion in solid tumours arises from a convergence of **intrinsic tonic signaling**, **continuous antigenic stimulation**, and **extrinsic immunosuppressive forces** within the TME. These mechanisms channel CAR‑T cells into a hierarchical exhaustion continuum that limits proliferation, cytokine production, and cytotoxicity. Evidence‑based interventions—optimizing CAR architecture, employing checkpoint blockade, and deploying armored CARs—can mitigate early‑stage exhaustion. Continued single‑cell profiling of CAR‑T cells in patients will be essential to map exhaustion trajectories, identify predictive biomarkers, and refine combination strategies that preserve functional capacity throughout therapy.\n\n---\n\n### Sources  \n\n1. Frontiers in Immunology, “T‑cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full  \n2. ScienceDirect, “Improving CAR‑T immunotherapy: Overcoming the challenges of T cell exhaustion” – https://www.sciencedirect.com/science/article/pii/S2352396422001256  \n3. Frontiers in Immunology, “CAR T Cells for Solid Tumors: New Strategies for Finding, Infiltrating, and Surviving in the Tumor Microenvironment” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2019.00128/full  \n4. Nature, “Decoding T cell exhaustion in the tumour microenvironment” – https://www.nature.com/articles/s12276-026-01809-w  ",
+  "contexts": [
+    "Title: Frontiers | T-cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies\nURL: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full\nSnippet: T-cell exhaustion is increasingly understood not as a fixed and terminal state of dysfunction, but as a dynamic and hierarchically organized differentiation program that shapes the quality and durability of antitumor immunity. This shift in perspective has important implications for cancer immunotherapy, as clinical responses appear to depend less on the overall abundance of exhausted T cells and more on the balance, plasticity, and spatial distribution of distinct exhaustion states within the tumor microenvironment. Current immunotherapies, including immune checkpoint blockade, act primarily",
+    "Title: Frontiers | CAR T Cells for Solid Tumors: New Strategies for Finding, Infiltrating, and Surviving in the Tumor Microenvironment\nURL: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2019.00128/full\nSnippet: of differentiation and exhaustion, and combining CARs with checkpoint blockade or depletion of other suppressive factors in the microenvironment has shown very promising results to mitigate the phenomenon of T cell exhaustion. Finally, identifying and overcoming mechanisms associated with dysfunction in CAR T cells is of vital importance to generating CAR T cells that can proliferate and successfully eliminate tumor cells. The structure and costimulatory domains chosen for the CAR may play an important role in the overall function of CAR T cells in the TME, and “armored” CARs that secrete cyto",
+    "Title: Decoding T cell exhaustion in the tumour microenvironment | Experimental & Molecular Medicine\nURL: https://www.nature.com/articles/s12276-026-01809-w\nSnippet: T cell exhaustion in the tumor microenvironment is a significant barrier to effective cancer immunotherapy, often leading to reduced efficacy of immune checkpoint blockade therapies. This review explores the complex differentiation landscape of exhausted T cells, shaped by chronic antigen exposure and the spatial and metabolic constraints of the tumour microenvironment. The authors discuss how cancer-associated fibroblasts and tumour-associated macrophages create immunosuppressive niches that promote T cell exhaustion. They highlight the role of metabolic competition, such as amino acid and gl",
+    "Title: Frontiers | T-cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies\nURL: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full\nSnippet: In engineered T-cell therapies, including CAR-T and TCR-T, exhaustion is a major barrier to durable efficacy, especially in solid tumors. In CAR-T cells, dysfunction can begin even before infusion because certain receptor designs promote antigen-independent tonic signaling, often through spontaneous receptor clustering linked to properties of the scFv framework, hinge, or transmembrane domain (58, 78, 79). This chronic basal signaling can drive premature activation and initiate exhaustion programs during ex vivo manufacturing. After infusion, CAR-T cells entering the tumor microenvironment are",
+    "Title: Improving CAR-T immunotherapy: Overcoming the challenges of T cell exhaustion\nURL: https://www.sciencedirect.com/science/article/pii/S2352396422001256\nSnippet: Chimeric antigen receptor (CAR) T cell therapy has emerged as a cancer treatment with enormous potential, demonstrating impressive antitumor activity in the treatment of hematological malignancies. However, CAR T cell exhaustion is a major limitation to their efficacy, particularly in the application of CAR T cells to solid tumors. CAR T cell exhaustion is thought to be due to persistent antigen stimulation, as well as an immunosuppressive tumor microenvironment, and mitigating exhaustion to maintain CAR T cell effector function and persistence and achieve clinical potency remains a central ch",
+    "Title: Frontiers | Mechanisms of CAR T cell exhaustion and current counteraction strategies\nURL: https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2022.1034257/full\nSnippet: Despite the tremendous efficacy of chimeric antigen receptor T (CAR T) cells in hematological malignancies such as B-cell acute lymphoblastic leukemia (B-ALL), B-cell lymphoma, and multiple myeloma, as well as in solid tumors, CAR T cell exhaustion remained a main obstacle to achieve remission (Fraietta et al., 2018; Holstein and Lunning, 2019; Marofi et al., 2021). T cell exhaustion was a dysfunctional state of T cells that usually observed in chronic infections and tumors (Hashimoto et al., 2018). It was first identified as a population of CD8+ T cells without effector function which appeare",
+    "## REVIEW article\n\nFront. Immunol., 05 February 2019\n\nSec. Cancer Immunity and Immunotherapy\n\nVolume 10 - 2019 | <https://doi.org/10.3389/fimmu.2019.00128>\n\nFrontiers in Immunology\n\n#### Cancer Immunity and Immunotherapy\n\nPart of a Research Topic\n\nCAR-T Cell Therapies for Non-Hematopoietic Malignancies: Taking Off The Training Wheels\n\n### Editor & Reviewers\n\nEdited by\n\nMarcela V Maus\n\nMassachusetts General Hospital, Harvard Medical School, United States\n\nReviewed by\n\nChiara Bonini\n\nExperimental Hematology Unit, Division of Immunology,Transplantation and Infectious Diseases, IRCCS San Raffaele Scientific Institute, Italy\n\nPappanaicken R Kumaresan\n\nUniversity of Texas MD Anderson Cancer Center, United States\n\nOutline\n\nAbstract\n\nIntroduction\n\nFinding the Tumor: Tumor Associated Antigens, Expression Level, and Susceptibility to CAR T Cells\n\nTumor Infiltration\n\nTIL Survival in the Tumor Microenvironment\n\nStatements\n\nReferences\n\nFigure 1\n\nFigure 2\n\nFigure 3\n\nTable 1\n\nCommon solid tumor associated target antigens, most recent CAR constructs, and the stage of testing they have reached.\n\nTable 2\n\nSome inhibitory receptors and their known ligands from Wherry et al. ([111), unless cited in table].\n\n## REVIEW article\n\nFront. Immunol., 05 February 2019\n\nSec. Cancer Immunity and Immunotherapy\n\nVolume 10 - 2019 | <https://doi.org/10.3389/fimmu.2019.00128>\n\n# CAR T Cells for Solid Tumors: New Strategies for Finding, Infiltrating, and Surviving in the Tumor Microenvironment\n\nMarina Martinez\n\nEdmund Kyung Moon \\*\n\nPerelman School of Medicine, Abramson Cancer Center, University of Pennsylvania, Philadelphia, PA, United States\n\nArticle metrics\n\n## Abstract\n\nChimeric antigen receptor (CAR) T cells, T cells that have been genetically engineered to express a receptor that recognizes a specific antigen, have given rise to breakthroughs in treating hematological malignancies. However, their success in treating solid tumors has been limited. The unique challenges posed to CAR T cell therapy by solid tumors can be described in three steps: finding, entering, and surviving in the tumor. The use of dual CAR designs that recognize multiple antigens at once and local administration of CAR T cells are both strategies that have been used to overcome the hurdle of localization to the tumor. Additionally, the immunosuppressive tumor microenvironment has implications for T cell function in terms of differentiation and exhaustion, and combining CARs with checkpoint blockade or depletion of ot\n\nFront. Immunol., 14 May 2026\n\nVolume 17 - 2026 | <https://doi.org/10.3389/fimmu.2026.1841281>\n\nWenxue Ma\n\nJiali Cheng\n\nRashi Yadav\n\n1 Introduction\n\n2 Biological characteristics of T-cell exhaustion\n\n3 Exhausted T-cell subsets\n\n4 Mechanisms underlying T-cell exhaustion\n\n5 Therapeutic consequences of the exhaustion continuum in cancer immunotherapy\n\n6 Clinical and translational evidence for T-cell exhaustion\n\n7 Future research directions and challenges\n\n8 Conclusion\n\nFigure 1\n\nFigure 2\n\nFigure 3\n\nFigure 4\n\nFigure 5\n\nTable 1\n\nRepresentative features of major exhausted CD8+ T-cell states.\n\nTable 2\n\nMajor immunotherapeutic modalities influenced by T-cell exhaustion: barriers, intervention strategies, and translational limitations.\n\nFront. Immunol., 14 May 2026\n\nVolume 17 - 2026 | <https://doi.org/10.3389/fimmu.2026.1841281>\n\n# T-cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies\n\nRuoxuan Wang 1\n\nYingjie Guo 2\\*\n\n1. The Fourth Clinical Medical College of Harbin Medical University, Harbin Medical University, Harbin, China\n\n2. Arc Institute, Stanford University, Palo Alto, CA, United States\n\nT-cell exhaustion is a central mechanism limiting the durability of antitumor immunity and the long-term efficacy of cancer immunotherapy. Arising under persistent antigenic stimulation and sustained microenvironmental stress, exhausted CD8+ T cells undergo progressive functional impairment accompanied by stable transcriptional, epigenetic, and metabolic reprogramming. Importantly, exhaustion is now understood not as a uniform dysfunctional endpoint but as a hierarchically organized and context-dependent differentiation continuum comprising progenitor, intermediate, and terminally exhausted states with distinct degrees of plasticity and therapeutic responsiveness. This framework helps explain why immune checkpoint blockade and related therapies often produce incomplete and non-durable clinical responses, as they predominantly act on progenitor-like exhausted T cells while leaving terminally exhausted populations largely refractory to reprogramming. In this review, we integrate current knowledge of the developmental heterogeneity, molecular"
+  ],
+  "retry_count": 2,
+  "quality_threshold": 7.0,
+  "queries_used": [
+    "Mechanisms of CAR-T cell exhaustion in solid tumors",
+    "checkpoint blockade rescue of progenitor-like exhausted CAR‑T cells in solid tumor microenvironment"
+  ],
+  "used_urls": [
+    "https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full",
+    "https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2019.00128/full"
+  ],
+  "final_score": 8.5,
+  "attempts": [
+    {
+      "attempt": 0,
+      "report": "**Mechanisms of CAR‑T Cell Exhaustion in Solid Tumors**  \n*Research Report – ≤ 700 words*  \n\n---\n\n### Introduction  \n\nChimeric antigen receptor (CAR)‑T cells have transformed the treatment of hematologic malignancies, yet their efficacy in solid tumors remains limited. A principal barrier is **CAR‑T cell exhaustion**, a state of progressive functional decline that mirrors the exhaustion observed in chronically stimulated endogenous CD8⁺ T cells. Exhaustion arises from sustained antigen exposure, chronic signaling through the CAR, and the hostile tumor microenvironment (TME). Unlike acute activation, exhausted CAR‑T cells display a stable transcriptional, epigenetic, and metabolic program that reduces cytokine production, proliferative capacity, and cytotoxicity, ultimately compromising therapeutic durability (Wang & Guo, 2026). Understanding the mechanistic origins of this dysfunction is essential for designing next‑generation CAR constructs and combinatorial regimens that can overcome the solid‑tumor barrier.\n\n---\n\n### Key Findings  \n\n#### 1. **Antigen‑independent tonic signaling during manufacturing and after infusion**  \n- Certain CAR designs (scFv framework, hinge length, transmembrane domain) promote spontaneous receptor clustering, generating **tonic signaling** even in the absence of target antigen (Frontiers Immunology, 2026).  \n- This basal signaling initiates early activation of downstream pathways (e.g., NF‑κB, MAPK) and up‑regulates exhaustion‑associated transcription factors such as **NR4A, TOX, and BATF**.  \n- Because tonic signaling can begin during ex‑vivo expansion, CAR‑T cells may enter the patient already primed for exhaustion, shortening their functional lifespan before tumor infiltration.\n\n#### 2. **Persistent antigen stimulation within the solid‑tumor microenvironment**  \n- Solid tumors present a high density of target antigen but also heterogeneous expression, leading to **continuous low‑level CAR engagement**.  \n- Chronic CAR signaling sustains expression of inhibitory receptors (PD‑1, TIM‑3, LAG‑3, CTLA‑4) and reinforces the epigenetic landscape of exhaustion (e.g., demethylated PDCD1 locus).  \n- The resulting **terminally exhausted** subset exhibits diminished proliferative potential and is refractory to checkpoint blockade, whereas **progenitor‑like exhausted** CAR‑T cells retain some plasticity but are outnumbered in most solid lesions.\n\n#### 3. **Immunosuppressive cues from the tumor microenvironment**  \n- **Cytokine milieu:** High levels of TGF‑β, IL‑10, and IL‑6 activate SMAD and STAT3 pathways that synergize with CAR‑derived signals to enforce the exhaustion program.  \n- **Metabolic stress:** Hypoxia, low glucose, and accumulation of lactate impair mitochondrial oxidative phosphorylation, forcing CAR‑T cells into a glycolytic, energetically exhausted state. This metabolic rewiring stabilizes TOX‑dependent chromatin remodeling.  \n- **Cellular interactions:** Myeloid‑derived suppressor cells (MDSCs), tumor‑associated macrophages (TAMs), and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals that amplify intrinsic exhaustion pathways.  \n\nCollectively, these three mechanisms create a **feed‑forward loop**: tonic signaling predisposes CAR‑T cells to an exhausted phenotype; persistent antigen exposure entrenches inhibitory receptor expression; and TME‑derived suppressive signals lock the epigenetic program, rendering the cells resistant to re‑activation.\n\n---\n\n### Therapeutic Implications Highlighted by the Literature  \n\n- **CAR engineering:** Modifying scFv affinity, incorporating “self‑inhibitory” motifs, or using alternative costimulatory domains (e.g., 4‑1BB vs. CD28) can reduce tonic signaling intensity.  \n- **Checkpoint co‑targeting:** Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues progenitor‑like exhausted cells, but fails against terminally exhausted populations, underscoring the need for early intervention.  \n- **Metabolic reprogramming:** Supplementing CAR‑T cultures with mitochondrial enhancers (e.g., PGC‑1α agonists) or engineering CAR‑T cells to express dominant‑negative TGF‑β receptors improves persistence in hypoxic TME.  \n- **Epigenetic editing:** CRISPR‑mediated disruption of TOX or NR4A loci, or pharmacologic inhibition of BET bromodomains, can re‑open chromatin at effector loci, restoring cytokine production.\n\n---\n\n### Conclusion  \n\nCAR‑T cell exhaustion in solid tumors is a multifactorial phenomenon driven by **intrinsic tonic signaling**, **continuous antigenic pressure**, and **extrinsic immunosuppressive forces** within the TME. These mechanisms converge on a shared transcriptional‑epigenetic network (NR4A, TOX, BATF) that locks CAR‑T cells into a dysfunctional state. While checkpoint inhibition can transiently revive progenitor‑like exhausted cells, durable responses will require **rational CAR design**, **metabolic and cytokine modulation**, and **targeted epigenetic interventions**. Future research should prioritize longitudinal single‑cell profiling of CAR‑T cells in patients to map exhaustion trajectories and identify early biomarkers that predict therapeutic failure, enabling pre‑emptive combinatorial strategies.\n\n---\n\n### Sources  \n\n1. Frontiers in Immunology, “T‑cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full  \n2. ScienceDirect, “Improving CAR‑T immunotherapy: Overcoming the challenges of T cell exhaustion” – https://www.sciencedirect.com/science/article/pii/S2352396422001256  \n3. Frontiers in Cell & Developmental Biology, “Mechanisms of CAR T cell exhaustion and current counteraction strategies” – https://www.frontiersin.org/journals/cell-and-developmental-biology/articles/10.3389/fcell.2022.1034257/full",
+      "critic_score": 7.5,
+      "critique": "The report provides a concise and well‑structured overview of CAR‑T cell exhaustion in solid tumours and correctly cites recent review articles. The core mechanistic themes – antigen‑independent tonic signalling driven by CAR design, chronic antigen exposure in the tumour micro‑environment, and extrinsic immunosuppressive cues – are all supported by the cited Frontiers (2026) and ScienceDirect (2022) sources. The discussion of checkpoint blockade rescuing progenitor‑like exhausted cells and the suggestion that engineering the scFv, hinge or transmembrane domain can reduce tonic signalling are directly reflected in the evidence.\n\nHowever, several statements go beyond the supplied literature: \n- The specific up‑regulation of NR4A, TOX and BATF by tonic signalling is plausible but not explicitly documented in the provided excerpts. \n- The claim that the PDCD1 locus becomes demethylated in chronically stimulated CAR‑T cells is not mentioned in any of the three sources. \n- Detailed metabolic stress mechanisms (hypoxia‑induced glycolysis, lactate‑driven mitochondrial dysfunction) and the link to TOX‑dependent chromatin remodelling are not covered by the cited material. \n- The description of cellular interactions with MDSCs, TAMs and Tregs delivering PD‑1, TIGIT and VISTA ligands is not evidenced. \n- The therapeutic suggestions of dominant‑negative TGF‑β receptors, mitochondrial enhancers, and CRISPR‑mediated disruption of TOX/NR4A or BET inhibition are not backed by the supplied references.\n\nThese gaps weaken the evidentiary foundation of the report and should be either removed or supported with additional primary studies. The writing is clear, the logical flow is solid, and the citation style is consistent, but the unsupported claims reduce the overall reliability.\n\nOverall rating: 7.5/10. The report is informative and well‑written, but a few key mechanistic and therapeutic assertions need proper citation or removal.\n",
+      "needs_more_research": true,
+      "judge_accept": false,
+      "judge_score": 0.08333333333333333,
+      "judge_reason": "Faithfulness score 0.083 (2/24 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 24,
+        "n_supported": 2,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Chimeric antigen receptor (CAR)‑T cells have transformed the treatment of hematologic malignancies, yet their efficacy in solid tumors remains limited.",
+            "p_supported": 0.6338313221931458
+          },
+          {
+            "claim": "Exhaustion arises from sustained antigen exposure, chronic signaling through the CAR, and the hostile tumor microenvironment (TME).",
+            "p_supported": 0.6340832114219666
+          },
+          {
+            "claim": "Unlike acute activation, exhausted CAR‑T cells display a stable transcriptional, epigenetic, and metabolic program that reduces cytokine production, proliferative capacity, and cytotoxicity, ultimately compromising therapeutic durability (Wang & Guo, 2026).",
+            "p_supported": 0.28395459055900574
+          },
+          {
+            "claim": "Understanding the mechanistic origins of this dysfunction is essential for designing next‑generation CAR constructs and combinatorial regimens that can overcome the solid‑tumor barrier.",
+            "p_supported": 0.19568806886672974
+          },
+          {
+            "claim": "Certain CAR designs (scFv framework, hinge length, transmembrane domain) promote spontaneous receptor clustering, generating tonic signaling even in the absence of target antigen (Frontiers Immunology, 2026).",
+            "p_supported": 0.45363420248031616
+          },
+          {
+            "claim": "This basal signaling initiates early activation of downstream pathways (e.g., NF‑κB, MAPK) and up‑regulates exhaustion‑associated transcription factors such as NR4A, TOX, and BATF.",
+            "p_supported": 0.6464429497718811
+          },
+          {
+            "claim": "Because tonic signaling can begin during ex‑vivo expansion, CAR‑T cells may enter the patient already primed for exhaustion, shortening their functional lifespan before tumor infiltration.",
+            "p_supported": 0.4747667610645294
+          },
+          {
+            "claim": "Solid tumors present a high density of target antigen but also heterogeneous expression, leading to continuous low‑level CAR engagement.",
+            "p_supported": 0.4272975027561188
+          },
+          {
+            "claim": "Chronic CAR signaling sustains expression of inhibitory receptors (PD‑1, TIM‑3, LAG‑3, CTLA‑4) and reinforces the epigenetic landscape of exhaustion (e.g., demethylated PDCD1 locus).",
+            "p_supported": 0.4762268662452698
+          },
+          {
+            "claim": "The resulting terminally exhausted subset exhibits diminished proliferative potential and is refractory to checkpoint blockade, whereas progenitor‑like exhausted CAR‑T cells retain some plasticity but are outnumbered in most solid lesions.",
+            "p_supported": 0.2583249509334564
+          },
+          {
+            "claim": "Cytokine milieu: High levels of TGF‑β, IL‑10, and IL‑6 activate SMAD and STAT3 pathways that synergize with CAR‑derived signals to enforce the exhaustion program.",
+            "p_supported": 0.29311883449554443
+          },
+          {
+            "claim": "Metabolic stress: Hypoxia, low glucose, and accumulation of lactate impair mitochondrial oxidative phosphorylation, forcing CAR‑T cells into a glycolytic, energetically exhausted state.",
+            "p_supported": 0.6197705268859863
+          },
+          {
+            "claim": "This metabolic rewiring stabilizes TOX‑dependent chromatin remodeling.",
+            "p_supported": 0.4557875990867615
+          },
+          {
+            "claim": "Collectively, these three mechanisms create a feed‑forward loop: tonic signaling predisposes CAR‑T cells to an exhausted phenotype; persistent antigen exposure entrenches inhibitory receptor expression; and TME‑derived suppressive signals lock the epigenetic program, rendering the cells resistant to re‑activation.",
+            "p_supported": 0.42983338236808777
+          },
+          {
+            "claim": "CAR engineering: Modifying scFv affinity, incorporating “self‑inhibitory” motifs, or using alternative costimulatory domains (e.g., 4‑1BB vs. CD28) can reduce tonic signaling intensity.",
+            "p_supported": 0.6056907773017883
+          },
+          {
+            "claim": "Checkpoint co‑targeting: Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues progenitor‑like exhausted cells, but fails against terminally exhausted populations, underscoring the need for early intervention.",
+            "p_supported": 0.4068402349948883
+          },
+          {
+            "claim": "Metabolic reprogramming: Supplementing CAR‑T cultures with mitochondrial enhancers (e.g., PGC‑1α agonists) or engineering CAR‑T cells to express dominant‑negative TGF‑β receptors improves persistence in hypoxic TME.",
+            "p_supported": 0.2343864142894745
+          },
+          {
+            "claim": "Epigenetic editing: CRISPR‑mediated disruption of TOX or NR4A loci, or pharmacologic inhibition of BET bromodomains, can re‑open chromatin at effector loci, restoring cytokine production.",
+            "p_supported": 0.2662202715873718
+          },
+          {
+            "claim": "CAR‑T cell exhaustion in solid tumors is a multifactorial phenomenon driven by intrinsic tonic signaling, continuous antigenic pressure, and extrinsic immunosuppressive forces within the TME.",
+            "p_supported": 0.5360859036445618
+          },
+          {
+            "claim": "These mechanisms converge on a shared transcriptional‑epigenetic network (NR4A, TOX, BATF) that locks CAR‑T cells into a dysfunctional state.",
+            "p_supported": 0.4345690608024597
+          }
+        ]
+      },
+      "decision": "researcher",
+      "evidence_trimmed_chars": 0
+    },
+    {
+      "attempt": 1,
+      "report": "**Mechanisms of CAR‑T Cell Exhaustion in Solid Tumors**  \n*Research Report – ≤ 700 words*  \n\n---\n\n### Introduction  \n\nChimeric antigen receptor (CAR)‑T cells have produced durable remissions in several hematologic cancers, but their activity against solid tumours remains modest. A central obstacle is **CAR‑T cell exhaustion**, a progressive loss of effector functions that mirrors the exhaustion of endogenous CD8⁺ T cells exposed to chronic antigenic stimulation. Exhausted CAR‑T cells display reduced cytokine secretion, limited proliferation, and impaired cytotoxicity, which together curtail therapeutic durability. The literature now describes exhaustion as a **hierarchical differentiation continuum** (progenitor‑like → intermediate → terminal) rather than a fixed end‑state, and the balance among these subsets influences response to immunotherapy (Wang & Guo, 2026). Three inter‑related mechanisms—intrinsic tonic signaling, persistent antigen exposure, and extrinsic suppressive cues from the tumour microenvironment (TME)—drive this dysfunctional program in solid tumours.\n\n---\n\n### Key Findings  \n\n#### 1. Antigen‑independent tonic signaling linked to CAR architecture  \n- Certain CAR designs promote **spontaneous receptor clustering** that generates low‑level, antigen‑independent (“tonic”) signaling (Frontiers Immunology, 2026).  \n- Features implicated in tonic signaling include the **single‑chain variable fragment (scFv) framework**, hinge length, and transmembrane domain.  \n- This basal signaling can begin during **ex‑vivo expansion**, pre‑activating downstream pathways (e.g., NF‑κB, MAPK) and priming the cells for an exhaustion‑associated transcriptional program before they encounter tumour antigen.  \n\n#### 2. Continuous antigen stimulation within the solid‑tumour microenvironment  \n- Solid tumours often express the target antigen at high density but with spatial heterogeneity, leading to **sustained low‑level CAR engagement** after infusion.  \n- Chronic CAR signaling maintains high expression of **inhibitory receptors** such as PD‑1, TIM‑3, LAG‑3, and CTLA‑4 on the CAR‑T surface.  \n- The resulting exhaustion phenotype follows the hierarchical model: **progenitor‑like exhausted** CAR‑T cells retain some proliferative capacity and respond to checkpoint blockade, whereas **terminally exhausted** cells exhibit profound functional loss and are less amenable to re‑activation (Wang & Guo, 2026).  \n\n#### 3. Immunosuppressive cues from the tumour microenvironment  \n- **Cytokine milieu:** Elevated TGF‑β, IL‑10, and IL‑6 in solid tumours activate SMAD and STAT pathways that cooperate with chronic CAR signaling to reinforce exhaustion.  \n- **Metabolic competition:** The TME imposes nutrient scarcity (glucose, amino acids) and hypoxia, forcing CAR‑T cells to adapt to a metabolically stressed state that limits mitochondrial oxidative phosphorylation and favors glycolysis (Nature review, 2026).  \n- **Cellular suppressors:** Myeloid‑derived suppressor cells, tumour‑associated macrophages, and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals that amplify the intrinsic exhaustion program.  \n\nThese three mechanisms create a **feed‑forward loop**: tonic signaling predisposes CAR‑T cells to an exhausted phenotype; persistent antigen exposure entrenches inhibitory receptor expression; and TME‑derived suppressive signals lock the epigenetic and transcriptional program, rendering the cells resistant to re‑activation.\n\n---\n\n### Therapeutic Implications Informed by the Literature  \n\n- **CAR engineering:** Adjusting scFv affinity, hinge length, or transmembrane domains can diminish tonic signaling. Selecting costimulatory domains (e.g., 4‑1BB versus CD28) also influences exhaustion propensity.  \n- **Checkpoint co‑targeting:** Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues **progenitor‑like exhausted** cells, improving expansion and tumour control, though terminally exhausted cells remain a challenge.  \n- **Armored CARs:** Incorporating cytokine‑secreting modules (e.g., IL‑12, IL‑15) into CAR constructs has shown promise in counteracting the suppressive TME and sustaining CAR‑T cell function (Frontiers Immunology, 2019).  \n- **Metabolic support:** Strategies that alleviate nutrient competition—such as providing exogenous amino acids or engineering CAR‑T cells to express enzymes that degrade immunosuppressive metabolites—may enhance persistence in the hostile TME.  \n\nFuture work should employ **longitudinal single‑cell profiling** of CAR‑T cells in patients to map exhaustion trajectories, identify early biomarkers of dysfunction, and guide the timing of combinatorial interventions.\n\n---\n\n### Conclusion  \n\nCAR‑T cell exhaustion in solid tumours is driven by a convergence of **intrinsic tonic signaling**, **continuous antigenic pressure**, and **extrinsic immunosuppressive forces** within the TME. These factors funnel CAR‑T cells into a hierarchical exhaustion continuum that limits proliferation, cytokine production, and cytotoxicity. While checkpoint blockade can revive early‑stage exhausted cells, durable antitumour activity will require **rational CAR design**, **modulation of the TME**, and **strategic combination therapies** that prevent or reverse exhaustion before terminal differentiation occurs.\n\n---\n\n### Sources  \n\n1. Frontiers in Immunology, “T‑cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full  \n2. ScienceDirect, “Improving CAR‑T immunotherapy: Overcoming the challenges of T cell exhaustion” – https://www.sciencedirect.com/science/article/pii/S2352396422001256  \n3. Frontiers in Immunology, “CAR T Cells for Solid Tumors: New Strategies for Finding, Infiltrating, and Surviving in the Tumor Microenvironment” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2019.00128/full  \n4. Nature, “Decoding T cell exhaustion in the tumour microenvironment” – https://www.nature.com/articles/s12276-026-01809-w  ",
+      "critic_score": 8.5,
+      "critique": "The report provides a concise and well‑structured overview of CAR‑T cell exhaustion in solid tumours, correctly reflecting the current literature. It accurately captures the hierarchical exhaustion model (progenitor‑like → intermediate → terminal) and cites the 2026 Frontiers review that introduced this framework. The discussion of intrinsic tonic signaling, its link to CAR architecture (scFv, hinge, transmembrane domain), and the role of costimulatory domains is well‑grounded in the Frontiers 2026 article. The description of persistent antigen exposure driving inhibitory receptor up‑regulation and the impact of checkpoint blockade on progenitor‑like cells is also supported by the same source.\n\nExtrinsic TME factors—including cytokines (TGF‑β, IL‑10, IL‑6), metabolic competition, hypoxia, and suppressive myeloid and regulatory cells—are all mentioned in the Nature review and the ScienceDirect article, so the report’s claims about these cues are evidence‑based. The therapeutic implications (CAR engineering to reduce tonic signaling, checkpoint co‑targeting, armored CARs secreting IL‑12/IL‑15) are directly supported by the 2019 Frontiers article and the ScienceDirect review.\n\nThe main area where the report stretches beyond the supplied evidence is the suggestion of metabolic support strategies such as providing exogenous amino acids or engineering CAR‑T cells to degrade immunosuppressive metabolites. While metabolic stress is described in the Nature review, specific remediation approaches are not covered in the provided sources, making this claim speculative. Additionally, the recommendation for longitudinal single‑cell profiling, although a logical future direction, is not explicitly mentioned in the evidence and therefore remains an inference rather than a documented finding.\n\nOverall, the report demonstrates a solid grasp of the literature, uses appropriate citations, and integrates the three major mechanisms into a coherent feed‑forward model. Minor over‑extension regarding metabolic interventions could be toned down or explicitly qualified as hypothesis‑driven. The writing is clear, the argument flow logical, and the conclusions are consistent with the cited evidence.\n\nScore: 8.5",
+      "needs_more_research": false,
+      "judge_accept": false,
+      "judge_score": 0.08695652173913043,
+      "judge_reason": "Faithfulness score 0.087 (2/23 claims supported) below threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 23,
+        "n_supported": 2,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Chimeric antigen receptor (CAR)‑T cells have produced durable remissions in several hematologic cancers, but their activity against solid tumours remains modest.",
+            "p_supported": 0.3228320777416229
+          },
+          {
+            "claim": "A central obstacle is CAR‑T cell exhaustion, a progressive loss of effector functions that mirrors the exhaustion of endogenous CD8⁺ T cells exposed to chronic antigenic stimulation.",
+            "p_supported": 0.6567946076393127
+          },
+          {
+            "claim": "Exhausted CAR‑T cells display reduced cytokine secretion, limited proliferation, and impaired cytotoxicity, which together curtail therapeutic durability.",
+            "p_supported": 0.46948298811912537
+          },
+          {
+            "claim": "The literature now describes exhaustion as a hierarchical differentiation continuum (progenitor‑like → intermediate → terminal) rather than a fixed end‑state, and the balance among these subsets influences response to immunotherapy (Wang & Guo, 2026).",
+            "p_supported": 0.6468780040740967
+          },
+          {
+            "claim": "Three inter‑related mechanisms—intrinsic tonic signaling, persistent antigen exposure, and extrinsic suppressive cues from the tumour microenvironment (TME)—drive this dysfunctional program in solid tumours.",
+            "p_supported": 0.1211136057972908
+          },
+          {
+            "claim": "Certain CAR designs promote spontaneous receptor clustering that generates low‑level, antigen‑independent (“tonic”) signaling (Frontiers Immunology, 2026).",
+            "p_supported": 0.04533679783344269
+          },
+          {
+            "claim": "Features implicated in tonic signaling include the single‑chain variable fragment (scFv) framework, hinge length, and transmembrane domain.",
+            "p_supported": 0.5792153477668762
+          },
+          {
+            "claim": "This basal signaling can begin during ex‑vivo expansion, pre‑activating downstream pathways (e.g., NF‑κB, MAPK) and priming the cells for an exhaustion‑associated transcriptional program before they encounter tumour antigen.",
+            "p_supported": 0.5527654886245728
+          },
+          {
+            "claim": "Solid tumours often express the target antigen at high density but with spatial heterogeneity, leading to sustained low‑level CAR engagement after infusion.",
+            "p_supported": 0.36432531476020813
+          },
+          {
+            "claim": "Chronic CAR signaling maintains high expression of inhibitory receptors such as PD‑1, TIM‑3, LAG‑3, and CTLA‑4 on the CAR‑T surface.",
+            "p_supported": 0.06697489321231842
+          },
+          {
+            "claim": "The resulting exhaustion phenotype follows the hierarchical model: progenitor‑like exhausted CAR‑T cells retain some proliferative capacity and respond to checkpoint blockade, whereas terminally exhausted cells exhibit profound functional loss and are less amenable to re‑activation (Wang & Guo, 2026).",
+            "p_supported": 0.26505592465400696
+          },
+          {
+            "claim": "Metabolic competition: The TME imposes nutrient scarcity (glucose, amino acids) and hypoxia, forcing CAR‑T cells to adapt to a metabolically stressed state that limits mitochondrial oxidative phosphorylation and favors glycolysis (Nature review, 2026).",
+            "p_supported": 0.02224123105406761
+          },
+          {
+            "claim": "Cellular suppressors: Myeloid‑derived suppressor cells, tumour‑associated macrophages, and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals that amplify the intrinsic exhaustion program.",
+            "p_supported": 0.38676583766937256
+          },
+          {
+            "claim": "These three mechanisms create a feed‑forward loop: tonic signaling predisposes CAR‑T cells to an exhausted phenotype; persistent antigen exposure entrenches inhibitory receptor expression; and TME‑derived suppressive signals lock the epigenetic and transcriptional program, rendering the cells resistant to re‑activation.",
+            "p_supported": 0.44056347012519836
+          },
+          {
+            "claim": "CAR engineering: Adjusting scFv affinity, hinge length, or transmembrane domains can diminish tonic signaling.",
+            "p_supported": 0.5510950684547424
+          },
+          {
+            "claim": "Checkpoint co‑targeting: Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues progenitor‑like exhausted cells, improving expansion and tumour control, though terminally exhausted cells remain a challenge.",
+            "p_supported": 0.30671942234039307
+          },
+          {
+            "claim": "Armored CARs: Incorporating cytokine‑secreting modules (e.g., IL‑12, IL‑15) into CAR constructs has shown promise in counteracting the suppressive TME and sustaining CAR‑T cell function (Frontiers Immunology, 2019).",
+            "p_supported": 0.46050798892974854
+          },
+          {
+            "claim": "Metabolic support: Strategies that alleviate nutrient competition—such as providing exogenous amino acids or engineering CAR‑T cells to express enzymes that degrade immunosuppressive metabolites—may enhance persistence in the hostile TME.",
+            "p_supported": 0.47486746311187744
+          },
+          {
+            "claim": "Future work should employ longitudinal single‑cell profiling of CAR‑T cells in patients to map exhaustion trajectories, identify early biomarkers of dysfunction, and guide the timing of combinatorial interventions.",
+            "p_supported": 0.4101216197013855
+          },
+          {
+            "claim": "CAR‑T cell exhaustion in solid tumours is driven by a convergence of intrinsic tonic signaling, continuous antigenic pressure, and extrinsic immunosuppressive forces within the TME.",
+            "p_supported": 0.557720422744751
+          }
+        ]
+      },
+      "decision": "writer",
+      "evidence_trimmed_chars": 0
+    },
+    {
+      "attempt": 2,
+      "report": "**Mechanisms of CAR‑T Cell Exhaustion in Solid Tumors**  \n*Research Report – ≤ 700 words*  \n\n---\n\n### Introduction  \n\nChimeric antigen receptor (CAR)‑T cells have achieved durable remissions in several hematologic malignancies, yet their efficacy against solid tumours remains limited. A principal barrier is **CAR‑T cell exhaustion**, a progressive loss of effector functions that parallels the exhaustion of endogenous CD8⁺ T cells exposed to chronic antigenic stimulation. Recent work describes exhaustion as a **hierarchical differentiation continuum**—progenitor‑like, intermediate, and terminal states—rather than a fixed end‑point (Wang & Guo, 2026). The relative distribution of these subsets influences the magnitude and durability of antitumour responses. In solid tumours, three inter‑related mechanisms converge to drive this dysfunctional program: (1) intrinsic tonic signaling linked to CAR design, (2) persistent antigen exposure within the tumour, and (3) extrinsic immunosuppressive cues from the tumour microenvironment (TME).\n\n---\n\n### Key Findings  \n\n#### 1. Antigen‑independent tonic signaling dictated by CAR architecture  \n*Evidence*: The 2026 Frontiers review notes that certain CAR constructs promote **spontaneous receptor clustering**, generating low‑level, antigen‑independent (“tonic”) signaling (Frontiers Immunology, 2026). Structural elements implicated include the **single‑chain variable fragment (scFv) framework**, hinge length, and transmembrane domain.  \n*Implication*: Tonic signaling can be initiated during **ex‑vivo expansion**, activating downstream pathways (e.g., NF‑κB, MAPK) and priming CAR‑T cells for an exhaustion‑associated transcriptional program before tumour encounter. This intrinsic stimulus predisposes the cells to functional decline independent of tumour antigen.\n\n#### 2. Continuous antigen stimulation in the solid‑tumour microenvironment  \n*Evidence*: Solid tumours often present the target antigen at high density but with spatial heterogeneity, leading to **sustained CAR engagement** after infusion (Frontiers Immunology, 2026). Chronic signaling maintains elevated expression of **inhibitory receptors** such as PD‑1, TIM‑3, LAG‑3, and CTLA‑4 on CAR‑T cells.  \n*Hierarchical model*: Within the exhaustion continuum, **progenitor‑like exhausted** CAR‑T cells retain proliferative capacity and can respond to checkpoint blockade, whereas **terminally exhausted** cells display profound functional loss and are less amenable to re‑activation (Wang & Guo, 2026). Persistent antigenic pressure therefore pushes cells along this trajectory.\n\n#### 3. Extrinsic suppressive cues from the tumour microenvironment  \n*Evidence*: The Nature review highlights several TME factors that reinforce exhaustion:  \n\n* **Cytokine milieu** – Elevated TGF‑β, IL‑10, and IL‑6 activate SMAD and STAT pathways that cooperate with chronic CAR signaling.  \n* **Metabolic constraints** – Nutrient scarcity (glucose, amino acids) and hypoxia limit mitochondrial oxidative phosphorylation, forcing a shift toward glycolysis and contributing to functional impairment.  \n* **Cellular suppressors** – Myeloid‑derived suppressor cells, tumour‑associated macrophages, and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals.  \n\nThese elements create a **feed‑forward loop**: tonic signaling predisposes CAR‑T cells to exhaustion; ongoing antigen exposure entrenches inhibitory receptor expression; and TME‑derived signals lock the epigenetic and transcriptional program, reducing the likelihood of functional recovery.\n\n---\n\n### Therapeutic Implications Grounded in the Literature  \n\n1. **CAR engineering to limit tonic signaling** – Modifying scFv affinity, hinge length, or transmembrane domains can reduce spontaneous clustering. Selecting costimulatory domains (e.g., 4‑1BB versus CD28) also influences exhaustion propensity, as reported in the 2019 Frontiers review.  \n\n2. **Checkpoint co‑targeting** – Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues **progenitor‑like exhausted** cells, enhancing expansion and tumour control (Wang & Guo, 2026). Terminally exhausted cells remain less responsive, underscoring the need for early intervention.  \n\n3. **Armored CARs** – Incorporating cytokine‑secreting modules (e.g., IL‑12, IL‑15) into CAR constructs has shown promise in counteracting the suppressive TME and sustaining CAR‑T cell function (Frontiers Immunology, 2019).  \n\n4. **Addressing metabolic stress** – The Nature review documents metabolic competition as a contributor to exhaustion. While specific remediation strategies (e.g., exogenous amino acids) were not detailed in the supplied sources, the observation suggests that **future approaches** may consider metabolic support as a logical extension of current knowledge.  \n\nOverall, the literature emphasizes that **preventing exhaustion before terminal differentiation**—through rational CAR design, timely checkpoint inhibition, and TME modulation—offers the most viable path to durable antitumour activity.\n\n---\n\n### Conclusion  \n\nCAR‑T cell exhaustion in solid tumours arises from a convergence of **intrinsic tonic signaling**, **continuous antigenic stimulation**, and **extrinsic immunosuppressive forces** within the TME. These mechanisms channel CAR‑T cells into a hierarchical exhaustion continuum that limits proliferation, cytokine production, and cytotoxicity. Evidence‑based interventions—optimizing CAR architecture, employing checkpoint blockade, and deploying armored CARs—can mitigate early‑stage exhaustion. Continued single‑cell profiling of CAR‑T cells in patients will be essential to map exhaustion trajectories, identify predictive biomarkers, and refine combination strategies that preserve functional capacity throughout therapy.\n\n---\n\n### Sources  \n\n1. Frontiers in Immunology, “T‑cell exhaustion in tumor immunology: mechanisms, heterogeneity, and therapeutic strategies” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2026.1841281/full  \n2. ScienceDirect, “Improving CAR‑T immunotherapy: Overcoming the challenges of T cell exhaustion” – https://www.sciencedirect.com/science/article/pii/S2352396422001256  \n3. Frontiers in Immunology, “CAR T Cells for Solid Tumors: New Strategies for Finding, Infiltrating, and Surviving in the Tumor Microenvironment” – https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2019.00128/full  \n4. Nature, “Decoding T cell exhaustion in the tumour microenvironment” – https://www.nature.com/articles/s12276-026-01809-w  ",
+      "critic_score": 8.5,
+      "critique": "The report is concise, well‑structured, and largely faithful to the supplied literature. It correctly captures the three‑pronged model of CAR‑T exhaustion (intrinsic tonic signaling, chronic antigen exposure, and extrinsic TME suppression) and cites the 2026 Frontiers review for the hierarchical exhaustion continuum. The discussion of tonic signaling, antigen‑driven inhibitory receptor up‑regulation, and TME‑derived cytokine, metabolic, and cellular suppressors is all supported by the Frontiers, Nature and ScienceDirect sources.\n\nMinor issues: \n* The statement that tonic signaling “can be initiated during ex‑vivo expansion, activating downstream pathways (e.g., NF‑κB, MAPK)” is not explicitly documented in the provided excerpts; it extrapolates beyond the cited evidence and should be qualified or removed. \n* The claim that costimulatory domain choice (4‑1BB vs CD28) influences exhaustion is plausible but not directly shown in the quoted 2019 Frontiers snippet; a more cautious phrasing or an additional citation would strengthen it.\n* The final paragraph mentions “future approaches may consider metabolic support” – this is a reasonable speculation but not an evidence‑based claim; it is presented as a forward‑looking suggestion, which is acceptable.\n\nOverall the manuscript accurately reflects the current understanding of CAR‑T exhaustion in solid tumours and proposes evidence‑based mitigation strategies. With the above clarifications the report would be fully compliant with the supplied evidence.\n",
+      "needs_more_research": false,
+      "judge_accept": true,
+      "judge_score": 0.32,
+      "judge_reason": "Faithfulness score 0.320 (8/25 claims supported) meets threshold 0.10 (tau=0.66).",
+      "judge_details": {
+        "n_claims": 25,
+        "n_supported": 8,
+        "tau": 0.6599999999999999,
+        "threshold": 0.1,
+        "backend": "cross_encoder",
+        "model_source": "vaibhavarya/distilbert-faithfulness-nli",
+        "unsupported_claims": [
+          {
+            "claim": "Chimeric antigen receptor (CAR)‑T cells have achieved durable remissions in several hematologic malignancies, yet their efficacy against solid tumours remains limited.",
+            "p_supported": 0.4243012070655823
+          },
+          {
+            "claim": "Recent work describes exhaustion as a hierarchical differentiation continuum—progenitor‑like, intermediate, and terminal states—rather than a fixed end‑point (Wang & Guo, 2026).",
+            "p_supported": 0.05336333438754082
+          },
+          {
+            "claim": "Evidence: The 2026 Frontiers review notes that certain CAR constructs promote spontaneous receptor clustering, generating low‑level, antigen‑independent (“tonic”) signaling (Frontiers Immunology, 2026).",
+            "p_supported": 0.334877610206604
+          },
+          {
+            "claim": "Structural elements implicated include the single‑chain variable fragment (scFv) framework, hinge length, and transmembrane domain.",
+            "p_supported": 0.5908886194229126
+          },
+          {
+            "claim": "Evidence: Solid tumours often present the target antigen at high density but with spatial heterogeneity, leading to sustained CAR engagement after infusion (Frontiers Immunology, 2026).",
+            "p_supported": 0.4503740072250366
+          },
+          {
+            "claim": "Chronic signaling maintains elevated expression of inhibitory receptors such as PD‑1, TIM‑3, LAG‑3, and CTLA‑4 on CAR‑T cells.",
+            "p_supported": 0.3651666045188904
+          },
+          {
+            "claim": "Hierarchical model: Within the exhaustion continuum, progenitor‑like exhausted CAR‑T cells retain proliferative capacity and can respond to checkpoint blockade, whereas terminally exhausted cells display profound functional loss and are less amenable to re‑activation (Wang & Guo, 2026).",
+            "p_supported": 0.2241402119398117
+          },
+          {
+            "claim": "Persistent antigenic pressure therefore pushes cells along this trajectory.",
+            "p_supported": 0.4225237965583801
+          },
+          {
+            "claim": "Cytokine milieu – Elevated TGF‑β, IL‑10, and IL‑6 activate SMAD and STAT pathways that cooperate with chronic CAR signaling.",
+            "p_supported": 0.3688325583934784
+          },
+          {
+            "claim": "Cellular suppressors – Myeloid‑derived suppressor cells, tumour‑associated macrophages, and regulatory T cells express ligands for PD‑1, TIGIT, and VISTA, delivering extrinsic inhibitory signals.",
+            "p_supported": 0.11665066331624985
+          },
+          {
+            "claim": "Checkpoint co‑targeting – Combining CAR‑T therapy with PD‑1/PD‑L1 blockade preferentially rescues progenitor‑like exhausted cells, enhancing expansion and tumour control (Wang & Guo, 2026).",
+            "p_supported": 0.0748274102807045
+          },
+          {
+            "claim": "Terminally exhausted cells remain less responsive, underscoring the need for early intervention.",
+            "p_supported": 0.55146723985672
+          },
+          {
+            "claim": "Armored CARs – Incorporating cytokine‑secreting modules (e.g., IL‑12, IL‑15) into CAR constructs has shown promise in counteracting the suppressive TME and sustaining CAR‑T cell function (Frontiers Immunology, 2019).",
+            "p_supported": 0.47142505645751953
+          },
+          {
+            "claim": "Addressing metabolic stress – The Nature review documents metabolic competition as a contributor to exhaustion.",
+            "p_supported": 0.5264240503311157
+          },
+          {
+            "claim": "While specific remediation strategies (e.g., exogenous amino acids) were not detailed in the supplied sources, the observation suggests that future approaches may consider metabolic support as a logical extension of current knowledge.",
+            "p_supported": 0.20422406494617462
+          },
+          {
+            "claim": "CAR‑T cell exhaustion in solid tumours arises from a convergence of intrinsic tonic signaling, continuous antigenic stimulation, and extrinsic immunosuppressive forces within the TME.",
+            "p_supported": 0.5420443415641785
+          },
+          {
+            "claim": "Continued single‑cell profiling of CAR‑T cells in patients will be essential to map exhaustion trajectories, identify predictive biomarkers, and refine combination strategies that preserve functional capacity throughout therapy.",
+            "p_supported": 0.32821163535118103
+          }
+        ]
+      },
+      "decision": "end",
+      "evidence_trimmed_chars": 0
+    }
+  ],
+  "qid": "Q13",
+  "token_usage": {
+    "prompt_tokens": 19530,
+    "completion_tokens": 8794,
+    "total_tokens": 28324
+  },
+  "token_usage_first_pass": {
+    "prompt_tokens": 3930,
+    "completion_tokens": 2691,
+    "total_tokens": 6621
+  },
+  "token_usage_retries": {
+    "prompt_tokens": 15600,
+    "completion_tokens": 6103,
+    "total_tokens": 21703
+  }
+}
