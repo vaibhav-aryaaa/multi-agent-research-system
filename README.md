@@ -46,10 +46,10 @@ All metrics are copied directly from the committed analysis tables in `results/a
 
 | System Code | System Architecture | Mean Faithfulness | Median Faithfulness | Mean Relevancy | Mean Retries | Total Tokens |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: |
-| **S1** | Baseline (No Agents) | **0.085** | 0.083 | 0.883 | 0.00 | 35,596 |
-| **S2** | Fixed Pipeline (Attempt 0) | **0.236** | 0.242 | 0.879 | 0.00 | 147,417 |
-| **S3** | Adaptive (LLM Judge) | **0.366** | 0.364 | 0.870 | 0.65 | 305,288 |
-| **S4** | Adaptive (Classifier Judge) | **0.437** | 0.420 | 0.849 | 1.80 | 477,556 |
+| **S1** | Baseline (No Agents) | **0.085** | 0.062 | 0.883 | 0.00 | 35,596 |
+| **S2** | Fixed Pipeline (Attempt 0) | **0.236** | 0.244 | 0.878 | 0.00 | 147,417 |
+| **S3** | Adaptive (LLM Judge) | **0.366** | 0.327 | 0.869 | 0.70 | 305,288 |
+| **S4** | Adaptive (Classifier Judge) | **0.437** | 0.408 | 0.849 | 1.55 | 477,556 |
 
 ### Paired Statistical Significance (Two-Sided Wilcoxon with Step-Down Holm Correction)
 - **S2 $\rightarrow$ S3 (Fixed vs. Adaptive LLM)**: Mean $\Delta = \mathbf{+0.131}$, 95% Bootstrap CI `[+0.061, +0.208]`, Holm-adjusted $p = \mathbf{0.005}$ (**statistically significant**, $p < 0.01$).

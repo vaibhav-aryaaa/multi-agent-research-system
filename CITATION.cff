@@ -4,11 +4,13 @@ title: "Fixed vs. Adaptive: Self-Correcting Multi-Agent AI Pipelines"
 authors:
   - family-names: "Arya"
     given-names: "Vaibhav"
-    email: "vaibhavarya338@gmail.com"
+  - family-names: "Goel"
+    given-names: "Yash"
+  - family-names: "Aggarwal"
+    given-names: "Chelsi"
 year: 2026
 date-released: 2026-11-14
 url: "https://github.com/vaibhav-aryaaa/multi-agent-research-system"
-doi: "10.5281/zenodo.placeholder"
 keywords:
   - "multi-agent systems"
   - "adaptive rag"
