@@ -1,0 +1,5 @@
+category,count,n_lt_5,mean_first_pass_faithfulness,mean_first_pass_critic_score
+both_accept,1,True,0.2931,8.0
+both_retry,11,False,0.1855,4.97
+only_llm_retries,1,True,0.25,5.3
+only_classifier_retries,7,False,0.3045,7.24

@@ -480,6 +480,13 @@ def run_analysis(
     generate_cost_csv(eval_data, ragas_data, os.path.join(out_dir, "cost.csv"))
     generate_readme(out_dir, n_questions)
     
+    # Run Task I Confound checks and figures
+    try:
+        from scripts.analyze_confounds import run_confound_analysis
+    except ImportError:
+        from analyze_confounds import run_confound_analysis
+    run_confound_analysis(eval_dir=eval_dir, ragas_dir=ragas_dir, out_dir=out_dir)
+    
     print(f"[Analysis] Successfully generated all analysis artifacts in {out_dir}/")
 
 

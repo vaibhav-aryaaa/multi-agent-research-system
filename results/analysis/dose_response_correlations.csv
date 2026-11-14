@@ -1,0 +1,13 @@
+subset,variable,N,spearman_rho,p_value,note
+"Pooled (S2, S3, S4)",retry_count,60,0.5033,4e-05,valid
+"Pooled (S2, S3, S4)",n_contexts,60,0.5361,1e-05,valid
+"Pooled (S2, S3, S4)",context_characters,60,0.5011,5e-05,valid
+S2 (fixed),retry_count,20,,,constant
+S2 (fixed),n_contexts,20,,,constant
+S2 (fixed),context_characters,20,0.1579,0.50615,valid
+S3 (adaptive_llm),retry_count,20,0.2229,0.34494,valid
+S3 (adaptive_llm),n_contexts,20,0.2772,0.23676,valid
+S3 (adaptive_llm),context_characters,20,0.2091,0.37629,valid
+S4 (adaptive_classifier),retry_count,20,0.3435,0.13809,valid
+S4 (adaptive_classifier),n_contexts,20,0.5178,0.01936,valid
+S4 (adaptive_classifier),context_characters,20,0.5549,0.0111,valid

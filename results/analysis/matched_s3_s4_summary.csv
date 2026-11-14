@@ -1,0 +1,4 @@
+split,N,n_lt_5,mean_diff_s4_minus_s3,ci_95_lower,ci_95_upper,wins_s4,ties,losses_s4
+Matched retries (S3 == S4),6,False,0.0355,-0.0487,0.1277,2,2,2
+S3 retried more (S3 > S4),3,True,-0.108,-0.3333,0.0387,1,0,2
+S4 retried more (S4 > S3),11,False,0.1387,0.0809,0.188,9,0,2

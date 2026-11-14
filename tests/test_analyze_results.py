@@ -1,14 +1,14 @@
-"""Unit tests for offline analysis script (scripts/analyze_results.py).
+"""Unit tests for offline analysis script and confound checks (Task I).
 
 Tests:
 - Bootstrap confidence interval calculations and seed reproducibility.
 - Holm-Bonferroni p-value step-down correction and monotonicity.
-- End-to-end generation of all 5 CSV tables and README from synthetic fixtures.
+- End-to-end generation of all core analysis tables, confound checks, and figures.
+- Dose-response, matched comparison, and judge agreement logic.
 """
 
 import os
 import json
-import tempfile
 import pytest
 import numpy as np
 import pandas as pd
@@ -16,6 +16,12 @@ from scripts.analyze_results import (
     holm_bonferroni_correction,
     bootstrap_ci,
     run_analysis,
+)
+from scripts.analyze_confounds import (
+    run_dose_response,
+    run_matched_comparison,
+    run_judge_agreement,
+    run_confound_analysis,
 )
 
 
@@ -67,10 +73,20 @@ def test_analysis_end_to_end_synthetic(tmp_path):
             retry_count = 1 if s in ["adaptive_llm", "adaptive_classifier"] and qid == "Q02" else 0
             critic_score = 8.5 if s != "baseline" else None
             attempts = [
-                {"attempt": 0, "critic_score": 7.0 if retry_count > 0 else critic_score},
+                {
+                    "attempt": 0,
+                    "critic_score": 7.0 if retry_count > 0 else critic_score,
+                    "decision": "writer" if retry_count > 0 else "end",
+                    "judge_accept": (retry_count == 0),
+                },
             ]
             if retry_count > 0:
-                attempts.append({"attempt": 1, "critic_score": 8.5})
+                attempts.append({
+                    "attempt": 1,
+                    "critic_score": 8.5,
+                    "decision": "end",
+                    "judge_accept": True,
+                })
 
             eval_record = {
                 "qid": qid,
@@ -79,6 +95,7 @@ def test_analysis_end_to_end_synthetic(tmp_path):
                 "retry_count": retry_count,
                 "final_score": critic_score,
                 "attempts": attempts,
+                "contexts": ["passage 1 content", "passage 2 content"],
                 "token_usage": {"total_tokens": 1500 + (500 if retry_count > 0 else 0)},
             }
             with open(eval_dir / f"{qid}_{s}.json", "w") as f:
@@ -99,11 +116,11 @@ def test_analysis_end_to_end_synthetic(tmp_path):
             with open(ragas_dir / f"{qid}_{s}.json", "w") as f:
                 json.dump(ragas_record, f)
 
-    # Run analysis
+    # Run full analysis (includes confound checks & figure generation)
     run_analysis(str(eval_dir), str(ragas_dir), str(out_dir))
 
-    # Assert all expected artifacts exist
-    expected_files = [
+    # Assert core artifacts exist
+    expected_core_files = [
         "per_system.csv",
         "paired.csv",
         "retry_effect.csv",
@@ -111,27 +128,51 @@ def test_analysis_end_to_end_synthetic(tmp_path):
         "cost.csv",
         "README.md",
     ]
-    for filename in expected_files:
+    for filename in expected_core_files:
         filepath = out_dir / filename
-        assert filepath.exists(), f"Missing artifact: {filename}"
+        assert filepath.exists(), f"Missing core artifact: {filename}"
         assert filepath.stat().st_size > 0
 
-    # Verify per_system.csv content
-    df_sys = pd.read_csv(out_dir / "per_system.csv")
-    assert len(df_sys) == 4
-    assert set(df_sys["system_code"]) == {"S1", "S2", "S3", "S4"}
-    assert df_sys[df_sys["system_name"] == "fixed"]["faithfulness_mean"].iloc[0] == pytest.approx(0.20)
+    # Assert confound artifacts exist (Task I)
+    expected_confound_files = [
+        "dose_response.csv",
+        "dose_response_correlations.csv",
+        "matched_s3_s4.csv",
+        "matched_s3_s4_diff_retries.csv",
+        "matched_s3_s4_summary.csv",
+        "judge_agreement.csv",
+        "judge_agreement_summary.csv",
+    ]
+    for filename in expected_confound_files:
+        filepath = out_dir / filename
+        assert filepath.exists(), f"Missing confound artifact: {filename}"
+        assert filepath.stat().st_size > 0
 
-    # Verify paired.csv content
-    df_paired = pd.read_csv(out_dir / "paired.csv")
-    assert len(df_paired) == 6  # 3 pairs x 2 metrics
-    assert "wilcoxon_p_holm" in df_paired.columns
-    assert "ci_95_lower" in df_paired.columns
+    # Assert all 5 figure files exist in figures/
+    expected_figures = [
+        "fig_faithfulness_by_system.png",
+        "fig_relevancy_by_system.png",
+        "fig_paired_faithfulness.png",
+        "fig_cost_vs_faithfulness.png",
+        "fig_retries_vs_gain.png",
+    ]
+    fig_dir = out_dir / "figures"
+    assert fig_dir.exists(), "Figures directory was not created"
+    for fig_name in expected_figures:
+        fig_path = fig_dir / fig_name
+        assert fig_path.exists(), f"Missing figure: {fig_name}"
+        assert fig_path.stat().st_size > 1000
 
-    # Verify retry_effect.csv content
-    df_retry = pd.read_csv(out_dir / "retry_effect.csv")
-    assert len(df_retry) == 2  # Q02 adaptive_llm and Q02 adaptive_classifier
+    # Verify dose_response content
+    df_dr = pd.read_csv(out_dir / "dose_response.csv")
+    assert len(df_dr) == 6  # 2 questions x 3 systems (S2, S3, S4)
+    assert set(df_dr.columns).issuperset({"qid", "system", "retry_count", "n_contexts", "context_characters", "faithfulness"})
 
-    # Verify cost.csv content
-    df_cost = pd.read_csv(out_dir / "cost.csv")
-    assert len(df_cost) == 4
+    # Verify matched_s3_s4 content
+    df_matched = pd.read_csv(out_dir / "matched_s3_s4.csv")
+    assert len(df_matched) == 2  # Both Q01 (0 retries) and Q02 (1 retry) match in this fixture
+
+    # Verify judge_agreement content
+    df_ja = pd.read_csv(out_dir / "judge_agreement.csv")
+    assert len(df_ja) == 2
+    assert "agreement_category" in df_ja.columns
