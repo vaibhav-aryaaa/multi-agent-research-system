@@ -320,8 +320,8 @@ def resolve_gemini_model_id(api_key: str, candidate_model: Optional[str] = None)
     except Exception as e:
         if "Could not find '3.1 flash lite'" in str(e):
             raise
-        print(f"[RAGAS Judge] Model listing warning: {e}. Defaulting to 'gemini-2.0-flash-lite'.")
-        return "gemini-2.0-flash-lite"
+        print(f"[RAGAS Judge] Model listing warning: {e}. Defaulting to 'gemini-3.1-flash-lite'.")
+        return "gemini-3.1-flash-lite"
 
 
 def build_judge_llm(
@@ -497,6 +497,31 @@ def generate_pooled_reference(
     return ref_text
 
 
+def extract_unsupported_claims(eval_res: Any) -> List[Dict[str, Any]]:
+    """Extract claims marked unsupported (verdict == 0) from Ragas evaluation traces."""
+    unsupported = []
+    traces = getattr(eval_res, "ragas_traces", {})
+    if not isinstance(traces, dict):
+        return unsupported
+    for node in traces.values():
+        name = getattr(node, "name", "")
+        if "n_l_i" in name:
+            inputs = getattr(node, "inputs", {})
+            data = inputs.get("data") if isinstance(inputs, dict) else None
+            ctx = getattr(data, "context", "") if data else ""
+            outputs = getattr(node, "outputs", {})
+            out_list = outputs.get("output", []) if isinstance(outputs, dict) else []
+            for item in out_list:
+                for s in getattr(item, "statements", []):
+                    if getattr(s, "verdict", None) == 0:
+                        unsupported.append({
+                            "claim": getattr(s, "statement", ""),
+                            "reason": getattr(s, "reason", ""),
+                            "evidence": ctx,
+                        })
+    return unsupported
+
+
 # ---------------------------------------------------------------------------
 # Core Evaluation Loop
 # ---------------------------------------------------------------------------
@@ -656,10 +681,11 @@ def run_ragas_evaluation(
                     metrics_to_run = [context_precision, context_recall]
 
             scores_dict = {}
+            unsupported_claims = []
 
             if metrics_to_run:
                 try:
-                    run_cfg = RunConfig(max_workers=1, timeout=120)
+                    run_cfg = RunConfig(max_workers=1, timeout=300, max_retries=2)
                     eval_res = evaluate(
                         dataset=dataset,
                         metrics=metrics_to_run,
@@ -668,6 +694,7 @@ def run_ragas_evaluation(
                         run_config=run_cfg,
                         raise_exceptions=False,
                     )
+                    unsupported_claims = extract_unsupported_claims(eval_res)
                     df = eval_res.to_pandas()
                     for col in ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]:
                         if col in df.columns:
@@ -735,6 +762,7 @@ def run_ragas_evaluation(
                 "errors": errors_dict,
                 "contexts_trimmed_chars": trimmed_chars,
                 "think_stripped_count": think_stripped,
+                "unsupported_claims": unsupported_claims,
                 "timestamp": datetime.now().isoformat(),
             }
 
