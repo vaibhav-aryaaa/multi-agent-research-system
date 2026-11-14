@@ -12,6 +12,7 @@ results/*
 !results/ragas/**
 !results/analysis/
 !results/analysis/**
+!results/README.md
 .cache/
 hf_cache/
 *.npy
