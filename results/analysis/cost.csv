@@ -1,0 +1,5 @@
+system_code,system_name,total_tokens,mean_tokens_per_question,mean_faithfulness,faithfulness_gain_vs_s2,tokens_per_plus_0_1_faithfulness
+S1,baseline,35596,1779.8,0.0849,-0.1509,N/A (gain <= 0)
+S2,fixed,147417,7370.9,0.2357,0.0,baseline_s2
+S3,adaptive_llm,305288,15264.4,0.3663,0.1306,120923.1
+S4,adaptive_classifier,477556,23877.8,0.437,0.2013,164017.0

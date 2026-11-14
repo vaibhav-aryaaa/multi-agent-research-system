@@ -10,6 +10,8 @@ results/*
 !results/eval/**
 !results/ragas/
 !results/ragas/**
+!results/analysis/
+!results/analysis/**
 .cache/
 hf_cache/
 *.npy
