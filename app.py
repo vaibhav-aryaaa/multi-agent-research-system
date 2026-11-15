@@ -1,3 +1,4 @@
+from typing import Optional
 import os
 import sys
 import time
@@ -32,7 +33,7 @@ st.set_page_config(
 
 # 3. Defensive imports with clean user-facing diagnostics
 try:
-    from graph import graph, run_pipeline
+    from graph import graph
     from runlog import save_run
 except Exception as exc:
     st.error(f"### Application Initialization Error: `{type(exc).__name__}`")
@@ -348,13 +349,38 @@ if "active_suggestions" not in st.session_state:
 col_input, col_spacer, col_pipeline = st.columns([5, 0.6, 4])
 
 with col_input:
+    SYSTEM_OPTIONS = [
+        "Adaptive, LLM judge (S3)",
+        "Fixed pipeline (S2)",
+        "Adaptive, classifier judge (S4)",
+    ]
+
+    system_choice = st.selectbox(
+        "System",
+        SYSTEM_OPTIONS,
+        index=0,
+        help="Select pipeline architecture: Fixed pipeline (S2), Adaptive with LLM judge (S3), or Adaptive with classifier judge (S4)."
+    )
+
+    s4_disabled = False
+    if system_choice == "Adaptive, classifier judge (S4)":
+        try:
+            from faithfulness.cross_encoder import load_cross_encoder
+            load_cross_encoder()
+        except Exception as e:
+            s4_disabled = True
+            st.warning(f"⚠️ Classifier judge (S4) unavailable ({e}). Please select Fixed pipeline (S2) or Adaptive, LLM judge (S3).")
+
     topic_input = st.text_input(
         "RESEARCH OBJECTIVE",
         placeholder=st.session_state.active_placeholder,
         key="topic_field"
     )
     if st.button("Synthesize Data"):
-        if topic_input:
+        if s4_disabled:
+            st.error("Classifier judge (S4) cannot be loaded in this environment. Please switch to Fixed pipeline (S2) or Adaptive, LLM judge (S3).")
+        elif topic_input:
+            st.session_state.selected_system = system_choice
             st.session_state.results = {}
             st.session_state.stage = "running"
             st.rerun()
@@ -400,6 +426,7 @@ with col_input:
     for suggestion in st.session_state.active_suggestions:
         if st.button(suggestion, key=f"btn_{suggestion}"):
             st.session_state.pending_suggestion = suggestion
+            st.session_state.selected_system = system_choice
             st.session_state.results = {}
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
@@ -412,15 +439,16 @@ with col_pipeline:
     step3_ph = st.empty()
     step4_ph = st.empty()
 
-    def update_steps(active_step: str):
+    def update_steps(active_step: str, retry_text: Optional[str] = None):
+        step4_desc = retry_text if retry_text else "Evaluating for bias and accuracy"
         with step1_ph:
-            render_step("01", "Researcher", "running" if active_step == "researcher" else ("done" if active_step in ["reader", "writer", "critic", "finished"] else "waiting"), "Scanning high-authority web sources")
+            render_step("01", "Researcher", "running" if active_step == "researcher" else ("done" if active_step in ["reader", "writer", "critic", "revising", "finished"] else "waiting"), "Scanning high-authority web sources")
         with step2_ph:
-            render_step("02", "Deep Reader", "running" if active_step == "reader" else ("done" if active_step in ["writer", "critic", "finished"] else "waiting"), "Parsing & extracting structured content")
+            render_step("02", "Deep Reader", "running" if active_step == "reader" else ("done" if active_step in ["writer", "critic", "revising", "finished"] else "waiting"), "Parsing & extracting structured content")
         with step3_ph:
-            render_step("03", "Synthesis", "running" if active_step == "writer" else ("done" if active_step in ["critic", "finished"] else "waiting"), "Writing the final report")
+            render_step("03", "Synthesis", "running" if active_step == "writer" else ("done" if active_step in ["critic", "revising", "finished"] else "waiting"), "Writing the final report")
         with step4_ph:
-            render_step("04", "Quality Assurance", "running" if active_step == "critic" else ("done" if active_step == "finished" else "waiting"), "Evaluating for bias and accuracy")
+            render_step("04", "Quality Assurance", "running" if active_step in ["critic", "revising"] else ("done" if active_step == "finished" else "waiting"), step4_desc)
 
 if st.session_state.stage == "idle":
     update_steps("idle")
@@ -429,6 +457,20 @@ elif st.session_state.stage == "running":
     topic = st.session_state.topic_field
     update_steps("researcher")
     
+    selected_system = st.session_state.get("selected_system", "Adaptive, LLM judge (S3)")
+    if selected_system == "Fixed pipeline (S2)":
+        selected_mode = "fixed"
+        judge_name = "llm"
+        retry_enabled = False
+    elif selected_system == "Adaptive, classifier judge (S4)":
+        selected_mode = "adaptive_classifier"
+        judge_name = "classifier"
+        retry_enabled = True
+    else:
+        selected_mode = "adaptive_llm"
+        judge_name = "llm"
+        retry_enabled = True
+
     initial_state = {
         "topic": topic,
         "search_results": "",
@@ -440,8 +482,8 @@ elif st.session_state.stage == "running":
         "attempt": 0,
         "retry_count": 0,
         "decision": "",
-        "judge": "llm",
-        "retry_enabled": True,
+        "judge": judge_name,
+        "retry_enabled": retry_enabled,
         "used_urls": [],
         "queries_used": [],
         "attempts": [],
@@ -452,7 +494,12 @@ elif st.session_state.stage == "running":
     try:
         for step_output in graph.stream(initial_state, stream_mode="updates"):
             for node_name, node_state in step_output.items():
-                current_state.update(node_state)
+                if "attempts" in node_state:
+                    current_state.setdefault("attempts", []).extend(node_state["attempts"])
+                for k, v in node_state.items():
+                    if k != "attempts":
+                        current_state[k] = v
+                
                 if node_name == "researcher":
                     update_steps("reader")
                 elif node_name == "reader":
@@ -460,12 +507,18 @@ elif st.session_state.stage == "running":
                 elif node_name == "writer":
                     update_steps("critic")
                 elif node_name == "critic":
-                    update_steps("finished")
-        
-        save_run(current_state, system="adaptive_llm")
+                    decision = node_state.get("decision", "end")
+                    if decision != "end":
+                        retry_n = current_state.get("retry_count", 1)
+                        update_steps("revising", retry_text=f"Revising (retry {retry_n} of 3)")
+
+        update_steps("finished")
+        save_run(current_state, system=selected_mode)
         critic_display = f"Score: {current_state.get('score')}/10\n\nCritique: {current_state.get('feedback', '')}" if current_state.get("score") is not None else current_state.get("feedback", "")
         
         st.session_state.results = {
+            "system": selected_mode,
+            "system_label": selected_system,
             "search": current_state.get("search_results", ""),
             "reader": current_state.get("scraped_content", ""),
             "writer": current_state.get("report", ""),
@@ -473,6 +526,8 @@ elif st.session_state.stage == "running":
             "score": current_state.get("score"),
             "feedback": current_state.get("feedback", ""),
             "retry_count": current_state.get("retry_count", 0),
+            "attempts": current_state.get("attempts", []),
+            "token_usage": current_state.get("token_usage"),
         }
         st.session_state.stage = "finished"
         st.rerun()
@@ -488,38 +543,64 @@ elif st.session_state.stage == "finished":
     col_app1, col_app2 = st.columns(2)
     with col_app1:
         with st.expander("🔍 Search Engine Output"):
-            st.markdown(f'<div style="font-size:0.95rem; color:#4b5563; line-height:1.7;">{st.session_state.results.get("search", "")}</div>', unsafe_allow_html=True)
+            st.markdown(st.session_state.results.get("search", ""))
     with col_app2:
         with st.expander("📄 Reader Agent Extraction"):
-            st.markdown(f'<div style="font-size:0.95rem; color:#4b5563; line-height:1.7;">{st.session_state.results.get("reader", "")}</div>', unsafe_allow_html=True)
+            st.markdown(st.session_state.results.get("reader", ""))
 
-    st.markdown(f"""
-    <div class="report-container">
-        <div class="report-label">Formal Intelligence Synthesis</div>
-        <div class="report-content">
-            {st.session_state.results['writer']}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="report-container"><div class="report-label">Formal Intelligence Synthesis</div></div>', unsafe_allow_html=True)
+    st.markdown(st.session_state.results.get("writer", ""))
     
     st.download_button(
         label="Download Research Manuscript (.md)",
-        data=st.session_state.results['writer'],
+        data=st.session_state.results.get('writer', ''),
         file_name=f"agentflow_report_{int(time.time())}.md",
         mime="text/markdown"
     )
     
-    st.markdown(f"""
-    <div class="feedback-container">
-        <div style="font-family:'Playfair Display', serif; font-weight:700; font-size:1.3rem; color:#4c1d95; margin-bottom:1rem; letter-spacing:0.02em;">Critical Review Summary</div>
-        <div style="font-size:1.05rem; color:#374151; line-height:1.8;">
-            {st.session_state.results['critic']}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="feedback-container"><div style="font-family:\'Playfair Display\', serif; font-weight:700; font-size:1.3rem; color:#4c1d95; margin-bottom:1rem; letter-spacing:0.02em;">Critical Review Summary</div></div>', unsafe_allow_html=True)
+    st.markdown(st.session_state.results.get("critic", ""))
+
+    # Compact Loop Panel
+    st.markdown('<div style="margin-top:2.5rem; margin-bottom:1rem; font-family:\'Playfair Display\', serif; font-size:1.3rem; font-weight:700; color:#1e1b4b;">Run Summary & Loop Behavior</div>', unsafe_allow_html=True)
+    col_s1, col_s2, col_s3 = st.columns(3)
+    with col_s1:
+        st.metric("System Used", st.session_state.results.get("system_label", "N/A"))
+    with col_s2:
+        score_val = st.session_state.results.get("score")
+        st.metric("Final Critic Score", f"{score_val}/10" if score_val is not None else "N/A")
+    with col_s3:
+        st.metric("Retry Count", st.session_state.results.get("retry_count", 0))
+
+    attempts_data = st.session_state.results.get("attempts", [])
+    if attempts_data:
+        rows = []
+        for i, att in enumerate(attempts_data):
+            rows.append({
+                "Attempt": att.get("attempt", i + 1),
+                "Critic Score": att.get("critic_score", att.get("score")),
+                "Decision": att.get("decision", "end"),
+            })
+        import pandas as pd
+        st.caption("Attempts & Decisions")
+        st.dataframe(pd.DataFrame(rows), use_container_width=True)
+
+    token_usage = st.session_state.results.get("token_usage")
+    if token_usage and isinstance(token_usage, dict):
+        total_tokens = token_usage.get("total_tokens") or token_usage.get("total")
+        if total_tokens:
+            st.caption(f"Total tokens used: {total_tokens:,}")
+
+per_system_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", "analysis", "per_system.csv")
+if os.path.exists(per_system_path):
+    with st.expander("📊 About This Study"):
+        st.markdown("Adaptive loops raise RAGAS faithfulness over the fixed pipeline; the classifier judge's extra gain is not significant after correction.")
+        import pandas as pd
+        df_study = pd.read_csv(per_system_path)
+        st.dataframe(df_study, use_container_width=True)
 
 st.markdown("""
 <div class="notice">
-    AgentFlow · Powered by Groq & LangGraph · v1.1.0
+    AgentFlow · LangGraph · research build
 </div>
 """, unsafe_allow_html=True)

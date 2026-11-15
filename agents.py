@@ -5,8 +5,6 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from tools import web_search, scrape_url
 
-from groq import Groq
-
 load_dotenv()
 
 def get_groq_model() -> str:
@@ -47,6 +45,7 @@ def build_search_agent():
 
 # LEGACY: Unused in deterministic retrieval (kept for backward compatibility)
 def build_reader_agent():
+    from langgraph.prebuilt import create_react_agent
     system_message = (
         "You are an expert content extractor. Given a set of search results, "
         "you must use the scrape_url tool to visit the most relevant website, "

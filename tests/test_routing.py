@@ -117,5 +117,11 @@ def run_tests():
     print("All routing and decision tests passed successfully!")
     print("=" * 60)
 
+def test_agent_builders_no_name_error():
+    from agents import build_search_agent, build_reader_agent
+    assert build_search_agent() is not None and build_reader_agent() is not None
+
+
 if __name__ == "__main__":
+    test_agent_builders_no_name_error()
     run_tests()
