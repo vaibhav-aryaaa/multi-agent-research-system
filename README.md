@@ -1,5 +1,7 @@
 # Fixed vs. Adaptive: Self-Correcting Multi-Agent AI Pipelines
 
+[![CI](https://github.com/vaibhav-aryaaa/multi-agent-research-system/actions/workflows/ci.yml/badge.svg)](https://github.com/vaibhav-aryaaa/multi-agent-research-system/actions/workflows/ci.yml)
+
 This repository contains the empirical benchmark, multi-agent pipeline implementations, and reproduction artifacts for evaluating factual grounding, retry mechanisms, and judge architectures in automated scientific research report synthesis. Powered by LangGraph, open-weights large language models (`openai/gpt-oss-120b` via Groq), and fine-tuned cross-encoder natural language inference (NLI) models, this work systematically evaluates whether dynamic, critic-guided retry loops improve generation fidelity over static single-pass workflows.
 
 ### Research Questions
