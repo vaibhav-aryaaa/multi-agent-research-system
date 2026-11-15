@@ -465,6 +465,12 @@ def render_step(num: str, title: str, state: str, desc: str):
     </div>
     """, unsafe_allow_html=True)
 
+@st.cache_resource
+def load_s4_cross_encoder():
+    """Lazily load and cache the S4 cross-encoder model across Streamlit runs."""
+    from faithfulness.cross_encoder import load_cross_encoder
+    return load_cross_encoder()
+
 if "results" not in st.session_state:
     st.session_state.results = {}
 if "stage" not in st.session_state:
@@ -531,8 +537,7 @@ with col_input:
     s4_disabled = False
     if system_choice == "Adaptive, classifier judge (S4)":
         try:
-            from faithfulness.cross_encoder import load_cross_encoder
-            load_cross_encoder()
+            load_s4_cross_encoder()
         except Exception as e:
             s4_disabled = True
             st.warning(f"⚠️ Classifier judge (S4) unavailable ({e}). Please select Fixed pipeline (S2) or Adaptive, LLM judge (S3).")
@@ -757,7 +762,7 @@ elif st.session_state.stage == "finished":
             })
         import pandas as pd
         st.caption("Attempts & Decisions")
-        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
 
     token_usage = st.session_state.results.get("token_usage")
     if token_usage and isinstance(token_usage, dict):
@@ -771,7 +776,7 @@ if os.path.exists(per_system_path):
         st.markdown("Adaptive loops raise RAGAS faithfulness over the fixed pipeline; the classifier judge's extra gain is not significant after correction.")
         import pandas as pd
         df_study = pd.read_csv(per_system_path)
-        st.dataframe(df_study, use_container_width=True)
+        st.dataframe(df_study, width="stretch")
 
 st.markdown("""
 <div class="notice">
