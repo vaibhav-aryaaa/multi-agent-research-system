@@ -1,4 +1,9 @@
 import os
+import sys
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 # If Hugging Face cache contains the model locally, stay offline to prevent slow remote checks.
 # If not present (e.g. fresh CI runner), allow it to fetch without crashing.
