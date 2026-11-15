@@ -49,9 +49,20 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;700&display=swap');
 
 /* ── Reset & base ── */
-html, body, [class*="css"] {
+:root {
+    --text-color: #2d241e !important;
+    --background-color: #fdfcf0 !important;
+    --secondary-background-color: #fffef5 !important;
+}
+
+html, body, .stApp, [class*="css"], [data-testid="stAppViewContainer"], .block-container {
     font-family: 'Lora', serif;
-    color: #2d241e;
+    color: #2d241e !important;
+    background-color: #fdfcf0 !important;
+}
+
+.stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+    color: #2d241e !important;
 }
 
 .stApp {
@@ -118,6 +129,22 @@ html, body, [class*="css"] {
     margin: 2rem 0 4rem;
 }
 
+/* ── Streamlit Selectbox overrides ── */
+[data-testid="stSelectbox"] > div > div {
+    background-color: #fffef5 !important;
+    border: 2px solid #ddd6fe !important;
+    border-radius: 12px !important;
+    color: #1e1b4b !important;
+}
+[data-testid="stSelectbox"] span {
+    color: #1e1b4b !important;
+}
+[data-testid="stSelectbox"] label {
+    color: #4c1d95 !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+}
+
 /* ── Streamlit Input overrides ── */
 .stTextInput > div > div > input {
     background-color: #fffef5 !important;
@@ -161,6 +188,80 @@ html, body, [class*="css"] {
     background: #4c1d95 !important;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(91, 33, 182, 0.25) !important;
+}
+
+/* ── Download Button ── */
+.stDownloadButton > button {
+    background: #5b21b6 !important;
+    color: #ffffff !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.8rem 2rem !important;
+    box-shadow: 0 4px 15px rgba(91, 33, 182, 0.15) !important;
+    transition: all 0.2s !important;
+}
+.stDownloadButton > button:hover {
+    background: #4c1d95 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(91, 33, 182, 0.25) !important;
+}
+
+/* ── Metrics ── */
+[data-testid="stMetric"] {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    padding: 1.2rem 1.5rem !important;
+    box-shadow: 0 2px 8px rgba(91, 33, 182, 0.04) !important;
+}
+[data-testid="stMetricLabel"] * {
+    color: #6b7280 !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+[data-testid="stMetricValue"] * {
+    color: #1e1b4b !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    font-size: 1.8rem !important;
+}
+
+/* ── Expanders ── */
+[data-testid="stExpander"] {
+    background-color: #ffffff !important;
+    border: 1px solid #ddd6fe !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(91, 33, 182, 0.03) !important;
+    margin-bottom: 1rem !important;
+}
+[data-testid="stExpander"] summary * {
+    color: #4c1d95 !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] * {
+    color: #374151 !important;
+    font-family: 'Lora', serif !important;
+}
+
+/* ── Container Cards (Report & Feedback) ── */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 20px !important;
+    padding: 2.5rem 3rem !important;
+    box-shadow: 0 6px 30px rgba(91, 33, 182, 0.04) !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"] * {
+    color: #2d241e !important;
 }
 
 /* ── Pipeline Step Cards ── */
@@ -403,22 +504,25 @@ with col_input:
     st.markdown("""
         <style>
         .suggestion-chip-container div[data-testid="stButton"] button {
-            background: rgba(91, 33, 182, 0.7) !important;
-            border: 2px solid #5b21b6 !important;
+            background: #ede9fe !important;
+            border: 1.5px solid #c4b5fd !important;
             border-radius: 12px !important;
-            padding: 0.5rem 1.4rem !important;
-            font-size: 0.9rem !important;
-            color: #ffffff !important;
+            padding: 0.5rem 1.2rem !important;
+            font-size: 0.88rem !important;
+            color: #5b21b6 !important;
             font-family: 'DM Sans', sans-serif !important;
-            backdrop-filter: blur(10px) !important;
+            font-weight: 600 !important;
             transition: all 0.2s !important;
             width: auto !important;
             height: auto !important;
+            box-shadow: 0 2px 6px rgba(91, 33, 182, 0.08) !important;
         }
         .suggestion-chip-container div[data-testid="stButton"] button:hover {
-            background: rgba(91, 33, 182, 0.9) !important;
+            background: #5b21b6 !important;
+            color: #ffffff !important;
+            border-color: #5b21b6 !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(91, 33, 182, 0.3) !important;
+            box-shadow: 0 4px 15px rgba(91, 33, 182, 0.25) !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -548,8 +652,9 @@ elif st.session_state.stage == "finished":
         with st.expander("📄 Reader Agent Extraction"):
             st.markdown(st.session_state.results.get("reader", ""))
 
-    st.markdown('<div class="report-container"><div class="report-label">Formal Intelligence Synthesis</div></div>', unsafe_allow_html=True)
-    st.markdown(st.session_state.results.get("writer", ""))
+    with st.container(border=True):
+        st.markdown('<div class="report-label">FORMAL INTELLIGENCE SYNTHESIS</div>', unsafe_allow_html=True)
+        st.markdown(st.session_state.results.get("writer", ""))
     
     st.download_button(
         label="Download Research Manuscript (.md)",
@@ -558,8 +663,9 @@ elif st.session_state.stage == "finished":
         mime="text/markdown"
     )
     
-    st.markdown('<div class="feedback-container"><div style="font-family:\'Playfair Display\', serif; font-weight:700; font-size:1.3rem; color:#4c1d95; margin-bottom:1rem; letter-spacing:0.02em;">Critical Review Summary</div></div>', unsafe_allow_html=True)
-    st.markdown(st.session_state.results.get("critic", ""))
+    with st.container(border=True):
+        st.markdown('<div style="font-family:\'Playfair Display\', serif; font-weight:700; font-size:1.3rem; color:#4c1d95; margin-bottom:1rem; letter-spacing:0.02em;">Critical Review Summary</div>', unsafe_allow_html=True)
+        st.markdown(st.session_state.results.get("critic", ""))
 
     # Compact Loop Panel
     st.markdown('<div style="margin-top:2.5rem; margin-bottom:1rem; font-family:\'Playfair Display\', serif; font-size:1.3rem; font-weight:700; color:#1e1b4b;">Run Summary & Loop Behavior</div>', unsafe_allow_html=True)
@@ -576,14 +682,17 @@ elif st.session_state.stage == "finished":
     if attempts_data:
         rows = []
         for i, att in enumerate(attempts_data):
+            att_num = att.get("attempt", i)
+            # Display human-friendly 1-indexed attempt number
+            disp_attempt = att_num + 1 if isinstance(att_num, int) else i + 1
             rows.append({
-                "Attempt": att.get("attempt", i + 1),
+                "Attempt": f"Pass {disp_attempt}",
                 "Critic Score": att.get("critic_score", att.get("score")),
                 "Decision": att.get("decision", "end"),
             })
         import pandas as pd
         st.caption("Attempts & Decisions")
-        st.dataframe(pd.DataFrame(rows), use_container_width=True)
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
     token_usage = st.session_state.results.get("token_usage")
     if token_usage and isinstance(token_usage, dict):

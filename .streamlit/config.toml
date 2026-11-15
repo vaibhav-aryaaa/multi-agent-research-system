@@ -1,3 +1,11 @@
+[theme]
+base = "light"
+primaryColor = "#5b21b6"
+backgroundColor = "#fdfcf0"
+secondaryBackgroundColor = "#fffef5"
+textColor = "#2d241e"
+font = "serif"
+
 [client]
 showErrorDetails = "full"
 
