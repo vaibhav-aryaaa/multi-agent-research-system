@@ -14,13 +14,12 @@ Produces outputs in results/analysis/:
 """
 
 import os
-import sys
 import glob
 import json
 import argparse
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Tuple
 from scipy import stats
 
 SYSTEM_MAP = {
@@ -405,7 +404,6 @@ def generate_cost_csv(
         }
         
     s2_total_tokens = stats_dict["fixed"]["total_tokens"]
-    s2_mean_tokens = stats_dict["fixed"]["mean_tokens"]
     s2_mean_faith = stats_dict["fixed"]["mean_faith"]
     
     for sys_name in systems:

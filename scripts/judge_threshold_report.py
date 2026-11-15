@@ -190,7 +190,7 @@ def print_tables(data: Dict[str, Any]):
 
     print("=" * 115)
     print("\n" + "=" * 75)
-    print(f"REPORT ACCEPTANCE VS THETA (Accept if supported_fraction >= theta)")
+    print("REPORT ACCEPTANCE VS THETA (Accept if supported_fraction >= theta)")
     print("=" * 75)
     print(f"{'Theta':<8} | {'Human Accepted':<16} | {'Way 1 (CSV) Accepted':<22} | {'Way 2 (Full Top-3) Accepted':<26}")
     print("-" * 75)

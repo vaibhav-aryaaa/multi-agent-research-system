@@ -16,7 +16,7 @@ from graph import (
     route_after_critic,
     MAX_RETRIES,
 )
-from retrieval import parse_search_results, build_fallback_query, clean_scraped_text
+from retrieval import parse_search_results, clean_scraped_text
 
 class FakeWebSearch:
     def __init__(self):

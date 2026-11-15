@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import time
 import tempfile
 import pytest
 
@@ -18,10 +17,7 @@ from graph import (
     get_rolling_usage,
     estimate_tokens,
     govern_rate_limit,
-    run_first_pass,
-    run_pipeline_from_first_pass,
     GOVERNOR_TPM_LIMIT,
-    parse_critic_json_lenient,
     invoke_critic_with_recovery,
     trim_research_evidence_to_fit,
     get_last_evidence_trimmed_chars,

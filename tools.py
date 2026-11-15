@@ -3,7 +3,6 @@ import time
 from dotenv import load_dotenv
 from langchain_core.tools import tool
 from tavily import TavilyClient
-from rich import print
 from retrieval import clean_scraped_text
 
 load_dotenv()

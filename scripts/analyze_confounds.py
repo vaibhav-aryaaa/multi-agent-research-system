@@ -9,13 +9,12 @@ I4 — Figures: Publication-grade colorblind-safe matplotlib plots with N in tit
 """
 
 import os
-import sys
 import json
 import glob
 import argparse
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Any, Tuple
+from typing import Tuple
 from scipy import stats
 
 # Configure headless matplotlib
@@ -148,7 +147,6 @@ def run_dose_response(eval_data, ragas_data, qids, out_dir):
     ]
 
     for subset_name, sub_df in subsets:
-        n_obs = len(sub_df)
         for var_col, var_label in variables:
             x_vals = sub_df[var_col].values
             y_vals = sub_df["faithfulness"].values
@@ -373,7 +371,6 @@ def generate_figures(eval_data, ragas_data, qids, figures_dir):
     # 1. fig_faithfulness_by_system.png
     systems = ["baseline", "fixed", "adaptive_llm", "adaptive_classifier"]
     codes = ["S1", "S2", "S3", "S4"]
-    names = ["S1 (Baseline)", "S2 (Fixed)", "S3 (Adaptive LLM)", "S4 (Adaptive Classifier)"]
 
     f_data = {}
     ar_data = {}
@@ -668,15 +665,15 @@ def run_confound_analysis(
 
     # I1: Dose-response
     run_dose_response(eval_data, ragas_data, qids, out_dir)
-    print(f"[Confound Analysis] Generated dose_response.csv and dose_response_correlations.csv")
+    print("[Confound Analysis] Generated dose_response.csv and dose_response_correlations.csv")
 
     # I2: Matched comparison
     run_matched_comparison(eval_data, ragas_data, qids, out_dir)
-    print(f"[Confound Analysis] Generated matched_s3_s4.csv, matched_s3_s4_diff_retries.csv, matched_s3_s4_summary.csv")
+    print("[Confound Analysis] Generated matched_s3_s4.csv, matched_s3_s4_diff_retries.csv, matched_s3_s4_summary.csv")
 
     # I3: Judge agreement
     run_judge_agreement(eval_data, ragas_data, qids, out_dir)
-    print(f"[Confound Analysis] Generated judge_agreement.csv and judge_agreement_summary.csv")
+    print("[Confound Analysis] Generated judge_agreement.csv and judge_agreement_summary.csv")
 
     # I4: Figures
     generate_figures(eval_data, ragas_data, qids, figures_dir)
@@ -684,7 +681,7 @@ def run_confound_analysis(
 
     # Update README
     update_readme(out_dir, len(qids))
-    print(f"[Confound Analysis] Updated README.md")
+    print("[Confound Analysis] Updated README.md")
 
 
 if __name__ == "__main__":

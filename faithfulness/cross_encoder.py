@@ -198,7 +198,6 @@ def score_claims(
         if active_model is None or active_tokenizer is None:
             active_model, active_tokenizer, device = load_cross_encoder()
         else:
-            import torch
             device = next(active_model.parameters()).device
 
         import torch

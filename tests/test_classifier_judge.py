@@ -21,12 +21,9 @@ sys.path.insert(0, PROJECT_ROOT)
 os.environ.setdefault("GROQ_MODEL", "test-pinned-model")
 os.environ.setdefault("GROQ_API_KEY", "fake_key_for_test")
 
-from agents import CriticFeedback
-import graph
 from graph import DEPS, run_pipeline
 import judges
-from judges import classifier_judge, JudgeVerdict
-from config import FAITHFULNESS_THRESHOLD
+from judges import classifier_judge
 
 # 12 distinct factual sentences for testing
 TWELVE_CLAIMS_REPORT = (

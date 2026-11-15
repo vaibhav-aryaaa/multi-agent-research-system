@@ -5,7 +5,6 @@ Fails if any cell differs from per_system.csv by more than 0.0005.
 
 import os
 import re
-import pytest
 import pandas as pd
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

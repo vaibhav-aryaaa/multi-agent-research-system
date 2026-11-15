@@ -9,7 +9,6 @@ import os
 import sys
 import argparse
 import pandas as pd
-import numpy as np
 from typing import Dict, Any, Tuple
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -1,6 +1,6 @@
 """Lazy-loaded sentence-transformer embedder using all-MiniLM-L6-v2 on CPU."""
 
-from typing import List, Optional
+from typing import List
 import numpy as np
 
 _MODEL = None

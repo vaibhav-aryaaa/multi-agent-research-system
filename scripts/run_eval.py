@@ -21,14 +21,13 @@ import os
 import sys
 import time
 import json
-import shutil
 import argparse
 import tempfile
 import traceback
 import signal
 import uuid
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Optional, Tuple
 
 # Ensure project root is on sys.path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,11 +43,8 @@ from graph import (
     run_first_pass,
     run_pipeline_from_first_pass,
     set_usage_log_path,
-    append_to_usage_log,
-    MAX_RETRIES,
 )
 from baseline import run_baseline
-from runlog import save_run
 
 
 DEFAULT_QUESTIONS_FILE = os.path.join(PROJECT_ROOT, "data", "eval_questions.txt")
@@ -115,8 +111,8 @@ def is_question_complete(out_dir: str, qid: str) -> bool:
 def clean_partial_question_files(out_dir: str, qid: str) -> None:
     """Remove any orphan/partial output files for a question to maintain transactional integrity."""
     systems = ["baseline", "fixed", "adaptive_llm", "adaptive_classifier"]
-    for sys in systems:
-        fpath = os.path.join(out_dir, f"{qid}_{sys}.json")
+    for s_name in systems:
+        fpath = os.path.join(out_dir, f"{qid}_{s_name}.json")
         if os.path.exists(fpath):
             try:
                 os.remove(fpath)

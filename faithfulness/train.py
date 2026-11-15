@@ -113,7 +113,6 @@ def train_faithfulness_model(total_samples: int = 30000, random_seed: int = 42):
 
     # Evaluate on held-out public test split
     y_pred = final_clf.predict(X_test)
-    y_prob = final_clf.predict_proba(X_test)[:, 1]
 
     acc = float(accuracy_score(y_test, y_pred))
     prec = float(precision_score(y_test, y_pred))

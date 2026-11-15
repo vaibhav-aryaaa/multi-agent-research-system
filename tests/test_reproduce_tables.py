@@ -6,8 +6,6 @@ Tests:
 - CSV comparison failure on column mismatch, shape mismatch, or value divergence.
 """
 
-import os
-import pytest
 import pandas as pd
 from scripts.reproduce_tables import compare_csv_files
 

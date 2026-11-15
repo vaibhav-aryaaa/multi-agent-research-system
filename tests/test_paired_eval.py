@@ -1,7 +1,5 @@
 import os
 import sys
-import copy
-import pytest
 
 # Ensure project root is on sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,7 +12,6 @@ from graph import (
     DEPS,
     run_first_pass,
     run_pipeline_from_first_pass,
-    MAX_RETRIES,
 )
 
 

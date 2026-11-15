@@ -265,7 +265,7 @@ def test_generator_offline_logic():
 
 def test_merge_labeled_script():
     """Verify merge_labeled validates labels, computes agreement, and enforces gates."""
-    from scripts.merge_labeled import merge_datasets, validate_and_count_labels
+    from scripts.merge_labeled import merge_datasets
 
     with tempfile.TemporaryDirectory() as tmpdir:
         rep_csv = os.path.join(tmpdir, "rep.csv")

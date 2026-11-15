@@ -7,7 +7,6 @@ Tests:
 - Dose-response, matched comparison, and judge agreement logic.
 """
 
-import os
 import json
 import pytest
 import numpy as np
@@ -16,12 +15,6 @@ from scripts.analyze_results import (
     holm_bonferroni_correction,
     bootstrap_ci,
     run_analysis,
-)
-from scripts.analyze_confounds import (
-    run_dose_response,
-    run_matched_comparison,
-    run_judge_agreement,
-    run_confound_analysis,
 )
 
 

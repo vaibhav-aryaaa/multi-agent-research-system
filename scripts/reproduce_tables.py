@@ -17,7 +17,7 @@ import tempfile
 import argparse
 import numpy as np
 import pandas as pd
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 
 # Ensure repository root is on sys.path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +25,6 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from scripts.analyze_results import run_analysis
-from scripts.analyze_confounds import run_confound_analysis
 
 DEFAULT_EVAL_DIR = os.path.join(PROJECT_ROOT, "results", "eval")
 DEFAULT_RAGAS_DIR = os.path.join(PROJECT_ROOT, "results", "ragas")

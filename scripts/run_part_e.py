@@ -21,9 +21,9 @@ from graph import run_pipeline
 topic = "Perpetual mechanical energy extraction from Casimir cavity forces"
 
 print("=" * 70)
-print(f"PHASE 2 PART E: FIXED-MODEL REAL RUN")
+print("PHASE 2 PART E: FIXED-MODEL REAL RUN")
 print(f"PINNED MODEL: {model_name}")
-print(f"MODE: fixed (System 2: single pass)")
+print("MODE: fixed (System 2: single pass)")
 print(f"TOPIC: {topic}")
 print("=" * 70, flush=True)
 

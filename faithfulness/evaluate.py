@@ -7,7 +7,6 @@ Baselines (always supported, cosine-only threshold) are computed on the same hel
 """
 
 import os
-import sys
 import json
 import argparse
 import joblib

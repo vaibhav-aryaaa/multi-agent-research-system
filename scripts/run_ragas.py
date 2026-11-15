@@ -32,7 +32,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import BaseMessage, AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langchain_core.outputs import ChatResult, ChatGeneration
 from langchain_community.embeddings import HuggingFaceEmbeddings
 

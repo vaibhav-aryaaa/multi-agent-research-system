@@ -9,7 +9,6 @@ human-labeled in-domain evidence from the actual research pipeline (Part D & E).
 """
 
 import os
-import sys
 import json
 import argparse
 import numpy as np

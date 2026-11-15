@@ -8,7 +8,7 @@ from typing import TypedDict, Optional, Annotated, Any, Tuple
 from langgraph.graph import StateGraph, START, END
 from langchain_core.callbacks import BaseCallbackHandler
 
-from config import QUALITY_THRESHOLD, MAX_RETRIES
+from config import MAX_RETRIES
 from tools import web_search, scrape_url
 from retrieval import parse_search_results, build_fallback_query
 from agents import (
@@ -80,7 +80,6 @@ def reset_rolling_window():
     ROLLING_WINDOW_TOKENS = []
 
 def record_rolling_usage(tokens: int):
-    global ROLLING_WINDOW_TOKENS
     if tokens > 0:
         now = TIME_FN()
         ROLLING_WINDOW_TOKENS.append((now, tokens))
@@ -141,7 +140,6 @@ def set_usage_log_path(path: Optional[str]):
     USAGE_LOG_PATH = path
 
 def append_to_usage_log(tokens_dict: dict, source: str = "llm_call"):
-    global USAGE_LOG_PATH
     if not USAGE_LOG_PATH:
         return
     tot = tokens_dict.get("total_tokens", 0)
@@ -166,7 +164,6 @@ def append_to_usage_log(tokens_dict: dict, source: str = "llm_call"):
         print(f"[Warning] Failed to append to usage log: {e}")
 
 def reset_token_usage():
-    global TOKEN_USAGE
     TOKEN_USAGE.clear()
     TOKEN_USAGE.update({"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0})
 
@@ -175,7 +172,6 @@ def get_token_usage() -> dict:
 
 def record_token_usage(source_name: str, usage_dict_or_response: Any):
     """Extract and accumulate token usage."""
-    global TOKEN_USAGE
     prompt = 0
     completion = 0
     total = 0
@@ -242,7 +238,6 @@ TOKEN_CALLBACK = TokenUsageCallback()
 LAST_EVIDENCE_TRIMMED_CHARS: int = 0
 
 def get_last_evidence_trimmed_chars() -> int:
-    global LAST_EVIDENCE_TRIMMED_CHARS
     return LAST_EVIDENCE_TRIMMED_CHARS
 
 def reset_last_evidence_trimmed_chars() -> None:
@@ -453,7 +448,7 @@ def invoke_critic_with_recovery(inputs: dict) -> Tuple[Optional[float], str, boo
             return score, critique, needs_more_research, True
 
         # Lenient recovery failed on first attempt: retry the call ONCE
-        print(f"[critic] Lenient recovery failed on raw text. Retrying critic call once...")
+        print("[critic] Lenient recovery failed on raw text. Retrying critic call once...")
         try:
             retry_output = invoke_with_retry(
                 DEPS.critic_chain,
@@ -470,7 +465,7 @@ def invoke_critic_with_recovery(inputs: dict) -> Tuple[Optional[float], str, boo
                 print(f"[critic] Lenient recovery succeeded on retry: score={score}")
                 return score, critique, needs_more_research, True
 
-            print(f"[critic] Retry also failed. Failing question cleanly.")
+            print("[critic] Retry also failed. Failing question cleanly.")
             raise RuntimeError(f"Critic structured-output parse failure: {retry_exc}") from retry_exc
 
 

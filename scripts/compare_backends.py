@@ -81,7 +81,7 @@ def main():
     best_candidate = max(rows, key=lambda r: r["dev_f1"])
     passes_gate = bool(best_candidate["heldout_f1"] >= 0.70)
 
-    print(f"\nSelection Decision (strictly by DEV Macro-F1):")
+    print("\nSelection Decision (strictly by DEV Macro-F1):")
     print(f"-> Selected Backend: '{best_candidate['name']}' (Dev Macro-F1: {best_candidate['dev_f1']:.4f})")
     print(f"-> Selected Tau:     {best_candidate['tau']:.3f}")
     print(f"-> Unbiased Heldout Performance: Macro-F1={best_candidate['heldout_f1']:.4f}, Accuracy={best_candidate['heldout_acc']:.4f}")
