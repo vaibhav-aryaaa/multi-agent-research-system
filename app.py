@@ -55,10 +55,21 @@ st.markdown("""
     --secondary-background-color: #fffef5 !important;
 }
 
-html, body, .stApp, [class*="css"], [data-testid="stAppViewContainer"], .block-container {
+html, body, .stApp, [data-testid="stAppViewContainer"], .block-container {
     font-family: 'Lora', serif;
     color: #2d241e !important;
     background-color: #fdfcf0 !important;
+}
+
+/* Ensure Material Symbols, Lucide, and Streamlit icons keep their icon fonts */
+.material-symbols-rounded,
+.material-symbols-outlined,
+[data-testid="stIconMaterial"],
+[data-testid="stExpanderToggleIcon"],
+span[class*="material-symbols"],
+[data-testid="stExpander"] summary svg,
+[data-testid="stExpander"] summary span:first-child {
+    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', sans-serif !important;
 }
 
 .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
@@ -239,29 +250,83 @@ html, body, .stApp, [class*="css"], [data-testid="stAppViewContainer"], .block-c
     border-radius: 12px !important;
     box-shadow: 0 2px 8px rgba(91, 33, 182, 0.03) !important;
     margin-bottom: 1rem !important;
+    overflow: hidden !important;
 }
-[data-testid="stExpander"] summary * {
+[data-testid="stExpander"] summary {
+    padding: 0.6rem 1rem !important;
+}
+/* Style only the label text in expander summary - NEVER icon or wildcards */
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary div[data-testid="stMarkdownContainer"] p,
+[data-testid="stExpander"] summary span[data-testid="stMarkdownContainer"] {
     color: #4c1d95 !important;
     font-family: 'Playfair Display', serif !important;
     font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    margin: 0 !important;
 }
-[data-testid="stExpander"] [data-testid="stExpanderDetails"] * {
+[data-testid="stExpander"] summary svg {
+    color: #5b21b6 !important;
+    fill: currentColor !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    max-height: 420px !important;
+    overflow-y: auto !important;
+    padding: 1.2rem 1.4rem !important;
+    background: #fafaf5 !important;
+    border-top: 1px solid #ede9fe !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] h1 {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #1e1b4b !important;
+    margin-top: 0.8rem !important;
+    margin-bottom: 0.4rem !important;
+    line-height: 1.3 !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] h2 {
+    font-size: 1.15rem !important;
+    font-weight: 600 !important;
+    color: #1e1b4b !important;
+    margin-top: 0.6rem !important;
+    margin-bottom: 0.3rem !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] h3,
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] h4 {
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    color: #1e1b4b !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] p,
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] li,
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] span {
     color: #374151 !important;
     font-family: 'Lora', serif !important;
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
 }
 
 /* ── Container Cards (Report & Feedback) ── */
 [data-testid="stVerticalBlockBorderWrapper"] {
     background-color: #ffffff !important;
     border: 1px solid #e5e7eb !important;
-    border-radius: 20px !important;
-    padding: 2.5rem 3rem !important;
-    box-shadow: 0 6px 30px rgba(91, 33, 182, 0.04) !important;
+    border-radius: 18px !important;
+    padding: 2.2rem 2.8rem !important;
+    box-shadow: 0 4px 20px rgba(91, 33, 182, 0.04) !important;
     margin-top: 1rem !important;
     margin-bottom: 1.5rem !important;
 }
-[data-testid="stVerticalBlockBorderWrapper"] * {
+[data-testid="stVerticalBlockBorderWrapper"] p,
+[data-testid="stVerticalBlockBorderWrapper"] li,
+[data-testid="stVerticalBlockBorderWrapper"] span,
+[data-testid="stVerticalBlockBorderWrapper"] div {
     color: #2d241e !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"] h1,
+[data-testid="stVerticalBlockBorderWrapper"] h2,
+[data-testid="stVerticalBlockBorderWrapper"] h3 {
+    color: #1e1b4b !important;
+    font-family: 'Playfair Display', serif !important;
 }
 
 /* ── Pipeline Step Cards ── */
