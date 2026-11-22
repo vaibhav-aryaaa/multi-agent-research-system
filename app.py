@@ -46,7 +46,7 @@ except Exception as exc:
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block');
 
 /* ── Reset & base ── */
 :root {
@@ -61,15 +61,42 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container {
     background-color: #fdfcf0 !important;
 }
 
-/* Ensure Material Symbols, Lucide, and Streamlit icons keep their icon fonts */
+/* Ensure Material Symbols, Lucide, and Streamlit icons keep their icon fonts and never bleed text */
 .material-symbols-rounded,
 .material-symbols-outlined,
 [data-testid="stIconMaterial"],
 [data-testid="stExpanderToggleIcon"],
-span[class*="material-symbols"],
-[data-testid="stExpander"] summary svg,
+span[class*="material-symbols"] {
+    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    direction: ltr !important;
+    -webkit-font-feature-settings: 'liga' 1 !important;
+    font-feature-settings: 'liga' 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    overflow: hidden !important;
+    max-width: 1.5rem !important;
+    max-height: 1.5rem !important;
+}
+
+[data-testid="stExpander"] summary [data-testid="stIconMaterial"],
 [data-testid="stExpander"] summary span:first-child {
-    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined', sans-serif !important;
+    width: 1.25rem !important;
+    min-width: 1.25rem !important;
+    max-width: 1.25rem !important;
+    height: 1.25rem !important;
+    max-height: 1.25rem !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    flex-shrink: 0 !important;
+    margin-right: 0.5rem !important;
 }
 
 .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
